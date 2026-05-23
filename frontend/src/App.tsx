@@ -7,7 +7,7 @@ import { RpgDialogue } from "./components/RpgDialogue";
 import { RpgModal } from "./components/RpgModal";
 import { config } from "./config";
 import type { MobileInputState } from "./game/RoomScene";
-import { getObjectDialogue } from "./game/assets/dialogueConfig";
+import { getInteractionPreview, opensPortfolio, type InteractionSource } from "./game/assets/interactionConfig";
 import { useAudioSystem } from "./hooks/useAudioSystem";
 import { trackEvent } from "./services/analytics";
 import { PortfolioContent } from "./sections/PortfolioContent";
@@ -15,8 +15,8 @@ import type { RoomObject, SectionId } from "./types";
 
 export function App() {
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
-  const [activeDialogue, setActiveDialogue] = useState<{ objectId: string; title: string; text: string; section: SectionId } | null>(null);
   const [nearbyObject, setNearbyObject] = useState<RoomObject | null>(null);
+  const [hoveredObject, setHoveredObject] = useState<RoomObject | null>(null);
   const [mobileInput, setMobileInput] = useState<MobileInputState>({ up: false, down: false, left: false, right: false });
   const [interactSignal, setInteractSignal] = useState(0);
   const [discovered, setDiscovered] = useState<SectionId[]>(() => {
@@ -54,43 +54,41 @@ export function App() {
       remote: "click",
       watch: "prompt",
       phone: "prompt",
+      cat: "cat",
     };
 
-    if (activeDialogue?.objectId !== object.object_id) {
-      setActiveDialogue({
-        objectId: object.object_id,
-        title: object.display_name,
-        text: getObjectDialogue(object.object_id, object.display_name),
-        section: object.linked_portfolio_section,
-      });
+    if (!opensPortfolio(object)) {
       audio.play(interactionSounds[object.object_id] ?? "prompt");
+      void trackEvent({
+        eventType: "object_interaction",
+        metadata: { objectId: object.object_id, displayName: object.display_name },
+      });
       return;
     }
 
-    setActiveDialogue(null);
     openSection(object.linked_portfolio_section);
     audio.play(interactionSounds[object.object_id] ?? "prompt");
     void trackEvent({
       eventType: "object_interaction",
       metadata: { objectId: object.object_id, displayName: object.display_name },
     });
-  }, [activeDialogue, audio, openSection]);
+  }, [audio, openSection]);
+
+  const activePreview = activeSection ? null : nearbyObject ?? hoveredObject;
+  const activePreviewSource: InteractionSource | null = nearbyObject ? "nearby" : hoveredObject ? "hover" : null;
+  const preview = activePreview && activePreviewSource ? getInteractionPreview(activePreview, activePreviewSource) : null;
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         audio.play("menuClose");
-        if (activeDialogue) {
-          setActiveDialogue(null);
-        } else {
-          setActiveSection(null);
-        }
+        setActiveSection(null);
       }
-      if (event.key.toLowerCase() === "m" && !activeDialogue) setActiveSection("intro");
+      if (event.key.toLowerCase() === "m") setActiveSection("intro");
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [activeDialogue, audio]);
+  }, [audio]);
 
   const modalContent = activeSection ? <PortfolioContent openSection={openSection} section={activeSection} /> : null;
 
@@ -120,6 +118,7 @@ export function App() {
         <div className="game-panel">
           <GameRoom
             interactSignal={interactSignal}
+            onHoverChange={setHoveredObject}
             mobileInput={mobileInput}
             onInteract={interact}
             onNearbyChange={setNearbyObject}
@@ -138,19 +137,7 @@ export function App() {
         </aside>
       </section>
 
-      <RpgDialogue
-        onClose={() => {
-          audio.play("menuClose");
-          setActiveDialogue(null);
-        }}
-        onContinue={() => {
-          if (!activeDialogue) return;
-          setActiveDialogue(null);
-          openSection(activeDialogue.section);
-        }}
-        text={activeDialogue?.text ?? ""}
-        title={activeDialogue?.title ?? ""}
-      />
+      <RpgDialogue prompt={preview?.prompt ?? ""} text={preview?.text ?? ""} title={preview?.title ?? ""} />
 
       <RpgModal
         onClose={() => {

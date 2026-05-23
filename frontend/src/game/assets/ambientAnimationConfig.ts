@@ -33,21 +33,6 @@ export const ambientParticles: AmbientParticleConfig[] = [
   { id: "drift-5", x: 398, y: 94, size: 1.1, alpha: 0.08, driftX: 0, driftY: 4, duration: 9000, delay: 1800 },
 ];
 
-export const ambientSprites: AmbientSpriteConfig[] = [
-  {
-    id: "fluff-cat",
-    assetKey: "catSprite",
-    x: 140,
-    y: 374,
-    displayWidth: 58,
-    displayHeight: 44,
-    originX: 0.5,
-    originY: 1,
-    bobAmplitude: 4,
-    bobDuration: 4600,
-  },
-];
-
 export const bulbMotion = {
   swayAmplitude: 0.3,
   swayDuration: 6000,

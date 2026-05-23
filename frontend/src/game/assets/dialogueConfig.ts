@@ -13,6 +13,7 @@ export const objectDialogues: ObjectDialogueConfig[] = [
   { objectId: "watch", line: "time has stopped here." },
   { objectId: "tag", line: "someone forgot to pick this up." },
   { objectId: "phone", line: "there's only static." },
+  { objectId: "cat", line: "waiting for something to happen?" },
 ];
 
 const dialogueMap = new Map(objectDialogues.map((entry) => [entry.objectId, entry.line]));

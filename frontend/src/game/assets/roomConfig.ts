@@ -1,4 +1,5 @@
 import { generatedAssetManifest } from "./generatedAssetManifest";
+import { roomLayout } from "./roomLayoutConfig";
 
 export interface RoomAssetConfig {
   key: string;
@@ -25,10 +26,10 @@ export const mainRoomConfig: RoomAssetConfig = {
   tilesetAssetKey: hasTileset ? "rooms_whitespace_tileset" : undefined,
   width: 800,
   height: 450,
-  bounds: { x: 248, y: 132, width: 304, height: 190 },
+  bounds: roomLayout.bounds,
   wrapBounds: { x: 0, y: 0, width: 800, height: 450 },
   wrapPadding: 18,
-  playerStart: { x: 404, y: 255 },
+  playerStart: roomLayout.playerStart,
   fallbackStyle: "whiteDream",
   assumptions: [
     "Full-room background is preferred when available.",

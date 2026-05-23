@@ -6,28 +6,31 @@ import type { RoomObject } from "../types";
 
 export function GameRoom({
   onNearbyChange,
+  onHoverChange,
   onInteract,
   mobileInput,
   interactSignal,
 }: {
   onNearbyChange: (object: RoomObject | null) => void;
+  onHoverChange: (object: RoomObject | null) => void;
   onInteract: (object: RoomObject) => void;
   mobileInput: MobileInputState;
   interactSignal: number;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<RoomScene | null>(null);
-  const callbacksRef = useRef({ onNearbyChange, onInteract });
+  const callbacksRef = useRef({ onNearbyChange, onHoverChange, onInteract });
 
   useEffect(() => {
-    callbacksRef.current = { onNearbyChange, onInteract };
-  }, [onInteract, onNearbyChange]);
+    callbacksRef.current = { onNearbyChange, onHoverChange, onInteract };
+  }, [onHoverChange, onInteract, onNearbyChange]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const scene = new RoomScene(roomObjects, {
       onNearbyChange: (object) => callbacksRef.current.onNearbyChange(object),
+      onHoverChange: (object) => callbacksRef.current.onHoverChange(object),
       onInteract: (object) => callbacksRef.current.onInteract(object),
     });
     sceneRef.current = scene;

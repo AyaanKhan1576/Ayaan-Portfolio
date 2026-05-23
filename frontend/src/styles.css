@@ -323,6 +323,29 @@ a {
   padding: 18px;
 }
 
+.rpg-preview {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 1000;
+  width: min(420px, calc(100vw - 28px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.rpg-preview .rpg-window {
+  width: 100%;
+  max-height: none;
+}
+
+.rpg-preview .rpg-window-header {
+  padding: 12px 14px;
+}
+
+.rpg-preview .rpg-window-body {
+  padding: 14px;
+}
+
 .dialogue-copy {
   display: grid;
   gap: 14px;

@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { ambientParticles, ambientSprites, bulbMotion } from "./assets/ambientAnimationConfig";
+import { ambientParticles, bulbMotion } from "./assets/ambientAnimationConfig";
 import { mainRoomConfig } from "./assets/roomConfig";
 import { playerSprite } from "./assets/playerConfig";
 import { croppedFrames, objectSpriteMap, sourceImages } from "./assets/spriteConfig";
@@ -8,6 +8,7 @@ import type { RoomObject } from "../types";
 
 export interface RoomSceneCallbacks {
   onNearbyChange: (object: RoomObject | null) => void;
+  onHoverChange: (object: RoomObject | null) => void;
   onInteract: (object: RoomObject) => void;
 }
 
@@ -24,13 +25,10 @@ export class RoomScene extends Phaser.Scene {
   private player?: Phaser.GameObjects.Sprite;
   private playerShadow?: Phaser.GameObjects.Ellipse;
   private objectFeedback = new Map<string, { target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite; baseX: number; baseY: number; scaleX: number; scaleY: number }>();
-  private promptContainer?: Phaser.GameObjects.Container;
-  private promptText?: Phaser.GameObjects.Text;
-  private promptFullText = "";
-  private promptTypeEvent?: Phaser.Time.TimerEvent;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private keys?: Record<string, Phaser.Input.Keyboard.Key>;
   private nearbyObject: RoomObject | null = null;
+  private hoveredObject: RoomObject | null = null;
   private mobileInput: MobileInputState = { up: false, down: false, left: false, right: false };
   private lastInteractAt = 0;
   private lastDirection: PlayerDirection = "down";
@@ -179,7 +177,12 @@ export class RoomScene extends Phaser.Scene {
     this.nearbyObject = nextNearby;
     this.callbacks.onNearbyChange(nextNearby);
     this.updateObjectFeedback(nextNearby);
-    this.updatePrompt(nextNearby);
+  }
+
+  private setHoveredObject(object: RoomObject | null) {
+    if (object?.object_id === this.hoveredObject?.object_id) return;
+    this.hoveredObject = object;
+    this.callbacks.onHoverChange(object);
   }
 
   private tryInteract(object: RoomObject | null, time: number) {
@@ -271,27 +274,6 @@ export class RoomScene extends Phaser.Scene {
         ease: "Sine.inOut",
       });
     }
-
-    for (const sprite of ambientSprites) {
-      const config = objectSpriteMap[sprite.assetKey];
-      if (!this.textures.getFrame(config.sourceKey, config.frameKey)) continue;
-
-      const ambient = this.add.sprite(sprite.x, sprite.y, config.sourceKey, config.frameKey);
-      ambient.setOrigin(sprite.originX ?? 0.5, sprite.originY ?? 0.5);
-      ambient.setDisplaySize(sprite.displayWidth, sprite.displayHeight);
-      ambient.setDepth(sprite.y);
-      if (sprite.assetKey === "catSprite") {
-        ambient.play("fluff_breathe");
-      }
-      this.tweens.add({
-        targets: ambient,
-        y: ambient.y - sprite.bobAmplitude,
-        duration: sprite.bobDuration,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.inOut",
-      });
-    }
   }
 
   private drawObjects() {
@@ -299,7 +281,11 @@ export class RoomScene extends Phaser.Scene {
       const { x, y } = object.position;
       const { width, height } = object.size;
       const zone = this.add.zone(x + width / 2, y + height / 2, width + 18, height + 18).setInteractive({ useHandCursor: true });
-      zone.on("pointerdown", () => this.tryInteract(object, this.time.now));
+      zone.on("pointerover", () => this.setHoveredObject(object));
+      zone.on("pointerout", () => {
+        if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
+      });
+      zone.on("pointerdown", () => this.callbacks.onInteract(object));
 
       this.add.ellipse(x + width / 2 + 3, y + height + 4, width * 0.68, 8, 0x111111, 0.055);
       const sprite = this.drawAssetObject(object);
@@ -327,7 +313,6 @@ export class RoomScene extends Phaser.Scene {
         sprite.play("cat_idle");
       }
     }
-    this.createPrompt();
   }
 
   private drawAssetObject(object: RoomObject) {
@@ -398,57 +383,6 @@ export class RoomScene extends Phaser.Scene {
         this.spawnSparkle(feedback.baseX, feedback.baseY);
       }
     }
-  }
-
-  private createPrompt() {
-    const config = objectSpriteMap.promptBoxSprite;
-    const box = this.createCroppedImage(0, 0, config);
-    box.setDepth(2000);
-    const text = this.add
-      .text(0, 0, "", {
-        fontFamily: '"Courier New", monospace',
-        fontSize: "13px",
-        color: "#ffffff",
-        align: "center",
-        wordWrap: { width: 360 },
-      })
-      .setOrigin(0.5)
-      .setDepth(2001);
-    this.promptText = text;
-    this.promptContainer = this.add.container(400, 400, [box, text]).setDepth(2000).setVisible(false);
-  }
-
-  private updatePrompt(active: RoomObject | null) {
-    if (!this.promptContainer || !this.promptText) return;
-    if (!active) {
-      this.promptTypeEvent?.remove(false);
-      this.promptFullText = "";
-      this.promptText.setText("");
-      this.promptContainer.setVisible(false);
-      return;
-    }
-
-    const nextText = active.interactionPrompt ?? `${active.display_name} - press E`;
-    this.promptContainer.setPosition(400, 400);
-    this.promptContainer.setVisible(true);
-    if (nextText === this.promptFullText) return;
-    this.startPromptTypewriter(nextText);
-  }
-
-  private startPromptTypewriter(text: string) {
-    if (!this.promptText) return;
-    this.promptTypeEvent?.remove(false);
-    this.promptFullText = text;
-    this.promptText.setText("");
-    let index = 0;
-    this.promptTypeEvent = this.time.addEvent({
-      delay: 24,
-      repeat: text.length - 1,
-      callback: () => {
-        index += 1;
-        this.promptText?.setText(text.slice(0, index));
-      },
-    });
   }
 
   private spawnSparkle(x: number, y: number) {
