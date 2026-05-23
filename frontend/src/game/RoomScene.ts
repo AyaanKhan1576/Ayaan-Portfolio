@@ -58,7 +58,6 @@ export class RoomScene extends Phaser.Scene {
     this.cameras.main.roundPixels = true;
     this.registerCroppedFrames();
     this.registerMonochromeFrames();
-    this.registerGeneratedPlayerFrames();
     this.createPlayerAnimations();
     this.drawRoom();
     this.drawObjects();
@@ -163,77 +162,6 @@ export class RoomScene extends Phaser.Scene {
     return `${frameKey}_mono`;
   }
 
-  private registerGeneratedPlayerFrames() {
-    if (!playerSprite.generatedFallback || this.textures.exists(playerSprite.sourceKey)) return;
-
-    const frameWidth = playerSprite.width;
-    const frameHeight = playerSprite.height;
-    const directions: PlayerDirection[] = ["up", "left", "right", "down"];
-    const canvasTexture = this.textures.createCanvas(playerSprite.sourceKey, frameWidth * 3, frameHeight * directions.length);
-    const context = canvasTexture?.getContext();
-    if (!canvasTexture || !context) return;
-
-    context.imageSmoothingEnabled = false;
-    directions.forEach((direction, row) => {
-      for (let frame = 0; frame < 3; frame += 1) {
-        this.drawGeneratedPlayerFrame(context, frame * frameWidth, row * frameHeight, direction, frame);
-      }
-    });
-    canvasTexture.refresh();
-
-    const rowForDirection: Record<PlayerDirection, number> = { up: 0, left: 1, right: 2, down: 3 };
-    for (const [direction, row] of Object.entries(rowForDirection) as [PlayerDirection, number][]) {
-      const capitalized = direction[0].toUpperCase() + direction.slice(1);
-      for (let frame = 0; frame < 3; frame += 1) {
-        canvasTexture.add(`player_walk_${direction}_${frame}`, 0, frame * frameWidth, row * frameHeight, frameWidth, frameHeight);
-      }
-      canvasTexture.add(`player_idle_${direction}`, 0, 0, row * frameHeight, frameWidth, frameHeight);
-      const animationFrames = playerSprite.animations[`walk${capitalized}` as keyof typeof playerSprite.animations];
-      animationFrames.forEach((frameKey, index) => {
-        if (!canvasTexture.has(frameKey)) {
-          canvasTexture.add(frameKey, 0, index * frameWidth, row * frameHeight, frameWidth, frameHeight);
-        }
-      });
-      const idleFrame = playerSprite.animations[`idle${capitalized}` as keyof typeof playerSprite.animations][0];
-      if (!canvasTexture.has(idleFrame)) {
-        canvasTexture.add(idleFrame, 0, 0, row * frameHeight, frameWidth, frameHeight);
-      }
-    }
-  }
-
-  private drawGeneratedPlayerFrame(context: CanvasRenderingContext2D, x: number, y: number, direction: PlayerDirection, frame: number) {
-    const step = frame === 1 ? 1 : frame === 2 ? -1 : 0;
-    context.clearRect(x, y, playerSprite.width, playerSprite.height);
-    context.fillStyle = "#111111";
-
-    if (direction === "down") {
-      context.fillRect(x + 7, y + 4, 12, 6);
-      context.fillRect(x + 5, y + 8, 16, 8);
-      context.fillStyle = "#ffffff";
-      context.fillRect(x + 8, y + 10, 10, 6);
-      context.fillStyle = "#111111";
-      context.fillRect(x + 8, y + 11, 2, 2);
-      context.fillRect(x + 16, y + 11, 2, 2);
-    } else if (direction === "up") {
-      context.fillRect(x + 6, y + 5, 15, 12);
-      context.fillRect(x + 7, y + 3, 12, 5);
-    } else {
-      const facingRight = direction === "right";
-      context.fillRect(x + 6, y + 5, 14, 12);
-      context.fillStyle = "#ffffff";
-      context.fillRect(x + (facingRight ? 14 : 6), y + 10, 5, 5);
-      context.fillStyle = "#111111";
-      context.fillRect(x + (facingRight ? 18 : 6), y + 11, 2, 2);
-    }
-
-    context.fillStyle = "#111111";
-    context.fillRect(x + 9, y + 17, 8, 9);
-    context.fillRect(x + 5, y + 18, 4, 7);
-    context.fillRect(x + 17, y + 18, 4, 7);
-    context.fillRect(x + 8, y + 25, 4, 5 + Math.max(0, step));
-    context.fillRect(x + 15, y + 25, 4, 5 + Math.max(0, -step));
-  }
-
   private axis(negative: keyof MobileInputState, positive: keyof MobileInputState) {
     const keyboardNegative =
       negative === "left" ? this.cursors?.left.isDown || this.keys?.A.isDown : this.cursors?.up.isDown || this.keys?.W.isDown;
@@ -305,7 +233,7 @@ export class RoomScene extends Phaser.Scene {
     const bulbConfig = objectSpriteMap.lightbulbSprite;
     const bulb = this.add.container(400, 0);
     const cord = this.add.rectangle(0, 48, 2, 94, 0x111111, 0.88);
-    const bulbImage = this.createCroppedImage(0, 112, bulbConfig);
+    const bulbImage = this.createCroppedImage(0, 96, bulbConfig);
     bulb.add([cord, bulbImage]);
     this.tweens.add({ targets: bulb, angle: { from: -1.1, to: 1.1 }, duration: 4200, yoyo: true, repeat: -1, ease: "Sine.inOut" });
     this.tweens.add({ targets: bulbImage, alpha: { from: 0.82, to: 1 }, duration: 2600, yoyo: true, repeat: -1, ease: "Sine.inOut" });

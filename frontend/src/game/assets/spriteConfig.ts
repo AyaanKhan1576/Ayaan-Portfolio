@@ -45,7 +45,6 @@ export interface PlayerSpriteConfig {
   scale: number;
   originX: number;
   originY: number;
-  generatedFallback: boolean;
   fallbackAssumption: string;
   animations: PlayerAnimationFrames;
 }
@@ -79,14 +78,13 @@ const hudSource = "sprites_hud_battleui";
 // The walk section is arranged by row: up/back, left, right, down/front.
 // Only three walk frames are used because the fourth column in the raw sheet belongs to the run set.
 export const playerSprite = {
-  sourceKey: "generated_player",
-  width: 26,
-  height: 32,
+  sourceKey: playerSource,
+  width: 24,
+  height: 29,
   scale: 1.62,
   originX: 0.5,
   originY: 1,
-  generatedFallback: true,
-  fallbackAssumption: "The provided player sheet includes separator/adjacent pixels in some movement crops, so the runtime uses clean generated directional frames. The original sheet remains loaded for future manual crop replacement.",
+  fallbackAssumption: "The downloaded player sheet is mixed, so movement uses tight manual crops around complete walk sprites instead of grid slicing.",
   animations: {
     idleUp: ["player_idle_up"],
     idleRight: ["player_idle_right"],
@@ -100,29 +98,29 @@ export const playerSprite = {
 } satisfies PlayerSpriteConfig;
 
 export const croppedFrames: CroppedFrameConfig[] = [
-  { key: "player_idle_up", sourceKey: playerSource, x: 3, y: 17, width: 26, height: 32 },
-  { key: "player_walk_up_0", sourceKey: playerSource, x: 3, y: 17, width: 26, height: 32 },
-  { key: "player_walk_up_1", sourceKey: playerSource, x: 36, y: 17, width: 26, height: 32 },
-  { key: "player_walk_up_2", sourceKey: playerSource, x: 69, y: 17, width: 26, height: 32 },
+  { key: "player_idle_up", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
+  { key: "player_walk_up_0", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
+  { key: "player_walk_up_1", sourceKey: playerSource, x: 37, y: 17, width: 24, height: 29 },
+  { key: "player_walk_up_2", sourceKey: playerSource, x: 70, y: 17, width: 24, height: 29 },
 
-  { key: "player_idle_left", sourceKey: playerSource, x: 3, y: 50, width: 26, height: 32 },
-  { key: "player_walk_left_0", sourceKey: playerSource, x: 3, y: 50, width: 26, height: 32 },
-  { key: "player_walk_left_1", sourceKey: playerSource, x: 36, y: 50, width: 26, height: 32 },
-  { key: "player_walk_left_2", sourceKey: playerSource, x: 69, y: 50, width: 26, height: 32 },
+  { key: "player_idle_left", sourceKey: playerSource, x: 4, y: 50, width: 24, height: 29 },
+  { key: "player_walk_left_0", sourceKey: playerSource, x: 4, y: 50, width: 24, height: 29 },
+  { key: "player_walk_left_1", sourceKey: playerSource, x: 37, y: 50, width: 24, height: 29 },
+  { key: "player_walk_left_2", sourceKey: playerSource, x: 70, y: 50, width: 24, height: 29 },
 
-  { key: "player_idle_right", sourceKey: playerSource, x: 3, y: 83, width: 26, height: 32 },
-  { key: "player_walk_right_0", sourceKey: playerSource, x: 3, y: 83, width: 26, height: 32 },
-  { key: "player_walk_right_1", sourceKey: playerSource, x: 36, y: 83, width: 26, height: 32 },
-  { key: "player_walk_right_2", sourceKey: playerSource, x: 69, y: 83, width: 26, height: 32 },
+  { key: "player_idle_right", sourceKey: playerSource, x: 4, y: 83, width: 24, height: 29 },
+  { key: "player_walk_right_0", sourceKey: playerSource, x: 4, y: 83, width: 24, height: 29 },
+  { key: "player_walk_right_1", sourceKey: playerSource, x: 37, y: 83, width: 24, height: 29 },
+  { key: "player_walk_right_2", sourceKey: playerSource, x: 70, y: 83, width: 24, height: 29 },
 
-  { key: "player_idle_down", sourceKey: playerSource, x: 3, y: 116, width: 26, height: 32 },
-  { key: "player_walk_down_0", sourceKey: playerSource, x: 3, y: 116, width: 26, height: 32 },
-  { key: "player_walk_down_1", sourceKey: playerSource, x: 36, y: 116, width: 26, height: 32 },
-  { key: "player_walk_down_2", sourceKey: playerSource, x: 69, y: 116, width: 26, height: 32 },
+  { key: "player_idle_down", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
+  { key: "player_walk_down_0", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
+  { key: "player_walk_down_1", sourceKey: playerSource, x: 37, y: 116, width: 24, height: 29 },
+  { key: "player_walk_down_2", sourceKey: playerSource, x: 70, y: 116, width: 24, height: 29 },
 
   { key: "obj_cat_0", sourceKey: whitespaceSource, x: 96, y: 8, width: 32, height: 24 },
   { key: "obj_cat_1", sourceKey: whitespaceSource, x: 128, y: 8, width: 32, height: 24 },
-  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 286, y: 124, width: 28, height: 36 },
+  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 290, y: 126, width: 23, height: 36 },
 
   // White-on-black charm crops are manually tightened to whole connected objects.
   { key: "obj_about_laptop", sourceKey: charmSource, x: 555, y: 342, width: 80, height: 73 },
@@ -138,7 +136,7 @@ export const croppedFrames: CroppedFrameConfig[] = [
   { key: "obj_media_piano", sourceKey: blackspaceSource, x: 0, y: 842, width: 126, height: 58 },
   { key: "obj_picture_frame", sourceKey: blackspaceSource, x: 686, y: 1352, width: 86, height: 74 },
 
-  { key: "ui_prompt_box", sourceKey: hudSource, x: 18, y: 1186, width: 394, height: 96 },
+  { key: "ui_prompt_box", sourceKey: hudSource, x: 18, y: 1186, width: 360, height: 96 },
 ];
 
 export const objectSpriteMap = {

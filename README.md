@@ -283,14 +283,14 @@ If an object crop looks fragmented, tighten the crop to the connected object bou
 
 Player behavior is centralized in [frontend/src/game/assets/playerConfig.ts](frontend/src/game/assets/playerConfig.ts), which currently re-exports the `playerSprite` config from `spriteConfig.ts`.
 
-The current player uses generated directional frames because the downloaded character sheet has separator/adjacent pixels in some movement crops. The configured animation keys still describe the expected directions:
+The current player uses tight manual crops from the downloaded `character_omori.png` replacement sheet. The sheet is mixed, so player frames are registered by named rectangles rather than equal grid slicing. The configured animation keys describe the expected directions:
 
 - `walkUp` / `idleUp`: back-facing
 - `walkDown` / `idleDown`: front-facing
 - `walkLeft` / `idleLeft`: left-facing
 - `walkRight` / `idleRight`: right-facing
 
-Idle preserves the last faced direction. If you replace the player with a clean sheet later, update the named frame rectangles in `spriteConfig.ts` and set the player source back to that sheet.
+Idle preserves the last faced direction. If you replace the player with a cleaner sheet later, update the named frame rectangles in `spriteConfig.ts` while keeping the player source pointed at an actual downloaded asset.
 
 ### Adding New Audio
 
