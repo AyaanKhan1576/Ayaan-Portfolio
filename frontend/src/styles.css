@@ -345,27 +345,45 @@ a {
   background-size: 100% 100%;
   background-position: center;
   color: #ffffff;
-  box-shadow: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), inset 0 -10px 18px rgba(0, 0, 0, 0.18);
   overflow: hidden;
+}
+
+.rpg-preview .rpg-window::before {
+  content: "";
+  position: absolute;
+  inset: 8px 10px 8px 10px;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 0;
+}
+
+.rpg-preview .rpg-window::after {
+  content: "";
+  position: absolute;
+  inset: 8px 10px 8px 10px;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 4px;
+  mix-blend-mode: screen;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .rpg-preview .rpg-window-content {
   position: absolute;
-  left: 28px;
-  right: 18px;
-  top: 15px;
+  left: 24px;
+  right: 22px;
+  top: 16px;
   bottom: 14px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  justify-content: center;
+  gap: 7px;
   z-index: 0;
 }
 
 .rpg-preview .rpg-window-header {
   position: static;
-  left: auto;
-  right: auto;
-  top: auto;
   padding: 0;
   border-bottom: 0;
   background: transparent;
@@ -373,25 +391,27 @@ a {
 
 .rpg-preview .rpg-window-body {
   position: static;
-  left: auto;
-  right: auto;
-  top: auto;
-  bottom: auto;
+  align-self: stretch;
   padding: 0;
   color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 4px;
+  gap: 7px;
   overflow: hidden;
   z-index: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
 }
 
 .rpg-preview .rpg-window-body > p:first-child {
   margin: 0;
-  font-family: "Courier New", ui-monospace, monospace;
-  font-size: 18px;
-  line-height: 1.45;
+  font-family: "IBM Plex Mono", "Courier Prime", "Courier New", ui-monospace, monospace;
+  font-size: 21px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: #ffffff;
   overflow-wrap: anywhere;
 }
 
@@ -406,29 +426,43 @@ a {
 }
 
 .rpg-preview .pixel-label {
-  font-family: "Courier New", ui-monospace, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-family: "IBM Plex Mono", "Courier Prime", "Courier New", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .rpg-preview .rpg-window-header h2 {
-  font-family: "Courier New", ui-monospace, monospace;
-  margin: 1px 0 0;
-  font-size: 0.82rem;
-  line-height: 1.05;
+  font-family: "IBM Plex Mono", "Courier Prime", "Courier New", ui-monospace, monospace;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .rpg-preview .rpg-window-body p {
-  font-family: "Courier New", ui-monospace, monospace;
+  font-family: "IBM Plex Mono", "Courier Prime", "Courier New", ui-monospace, monospace;
   margin: 0;
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 21px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .rpg-preview .rpg-window-body .pixel-label {
-  margin-top: 4px;
-  font-family: "Courier New", ui-monospace, monospace;
+  margin-top: 2px;
+  align-self: flex-start;
+  margin-left: 2px;
+  padding-right: 28px;
+  width: 100%;
+  text-align: left;
+  font-family: "IBM Plex Mono", "Courier Prime", "Courier New", ui-monospace, monospace;
   font-size: 11px;
+  font-weight: 600;
+  opacity: 0.78;
 }
 
 @media (max-width: 720px) {

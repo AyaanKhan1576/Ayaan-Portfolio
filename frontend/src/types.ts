@@ -4,8 +4,8 @@ export type SectionId =
   | "skills"
   | "featured"
   | "projects"
-  | "simulations"
   | "media"
+  | "education"
   | "experience"
   | "resume"
   | "contact";
@@ -29,16 +29,6 @@ export interface Project {
   status: ProjectStatus;
 }
 
-export interface Simulation {
-  id: string;
-  title: string;
-  description: string;
-  iframe_url?: string;
-  fallback_url?: string;
-  thumbnail?: string;
-  technologies: string[];
-}
-
 export interface MediaItem {
   id: string;
   title: string;
@@ -54,7 +44,6 @@ export interface AnalyticsEvent {
     | "object_interaction"
     | "project_view"
     | "resume_download"
-    | "simulation_launch"
     | "contact_submit";
   metadata?: Record<string, unknown>;
 }
@@ -74,5 +63,6 @@ export interface RoomObject {
   label: string;
   assetKey?: string;
   frameKey?: string;
+  directImage?: boolean;
   interactionPrompt?: string;
 }

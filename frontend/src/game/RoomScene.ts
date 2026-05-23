@@ -51,6 +51,14 @@ export class RoomScene extends Phaser.Scene {
       this.load.image("lightbulb", "/assets/sprites/lightbulb.png");
     }
 
+    if (!this.textures.exists("honors")) {
+      this.load.image("honors", "/assets/sprites/honors.png");
+    }
+
+    if (!this.textures.exists("education")) {
+      this.load.image("education", "/assets/sprites/education.png");
+    }
+
     this.load.on("loaderror", (file: { key?: string; src?: string }) => {
       console.warn(`Asset failed to load: ${file.key ?? file.src ?? "unknown"}`);
     });
@@ -318,7 +326,11 @@ export class RoomScene extends Phaser.Scene {
     for (const object of this.objects) {
       const { x, y } = object.position;
       const { width, height } = object.size;
-      const zone = this.add.zone(x + width / 2, y + height / 2, width + 18, height + 18).setInteractive({ useHandCursor: true });
+      const assetKey = object.assetKey as ObjectSpriteKey | undefined;
+      const config = assetKey ? objectSpriteMap[assetKey] : undefined;
+      const hitboxWidth = config?.hitboxWidth ?? width + 18;
+      const hitboxHeight = config?.hitboxHeight ?? height + 18;
+      const zone = this.add.zone(x + width / 2, y + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
       zone.on("pointerover", () => this.setHoveredObject(object));
       zone.on("pointerout", () => {
         if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
@@ -363,20 +375,29 @@ export class RoomScene extends Phaser.Scene {
       return this.drawMissingAssetPlaceholder(centerX, centerY, object.size.width, object.size.height);
     }
 
-    const blendConfig = config as { blendMode?: "normal" | "difference" };
-    const textureKey = blendConfig.blendMode === "difference" ? this.monochromeTextureKey(config.frameKey) : config.sourceKey;
-    const frameKey = blendConfig.blendMode === "difference" ? undefined : config.frameKey;
-    const hasTexture = blendConfig.blendMode === "difference" ? this.textures.exists(textureKey) : Boolean(this.textures.getFrame(config.sourceKey, config.frameKey));
+    const blendConfig = config as { blendMode?: "normal" | "difference"; directImage?: boolean };
+    const textureKey = blendConfig.blendMode === "difference" ? this.monochromeTextureKey(config.frameKey!) : config.sourceKey;
+    const frameKey = blendConfig.blendMode === "difference" || blendConfig.directImage ? undefined : config.frameKey;
+    const hasTexture = blendConfig.blendMode === "difference"
+      ? this.textures.exists(textureKey)
+      : blendConfig.directImage
+        ? this.textures.exists(config.sourceKey)
+        : Boolean(config.frameKey && this.textures.getFrame(config.sourceKey, config.frameKey));
     if (!hasTexture) {
       return this.drawMissingAssetPlaceholder(centerX, centerY, object.size.width, object.size.height);
     }
 
     const image = object.object_id === "cat"
-      ? this.add.sprite(centerX, centerY, this.catCutoutTextureKey(config.frameKey))
-      : this.add.image(centerX, centerY, textureKey, frameKey);
+      ? this.add.sprite(centerX, centerY, this.catCutoutTextureKey(config.frameKey!))
+      : blendConfig.directImage
+        ? this.add.image(centerX, centerY, config.sourceKey)
+        : this.add.image(centerX, centerY, textureKey, frameKey);
 
     const originConfig = config as { originX?: number; originY?: number };
     image.setOrigin(originConfig.originX ?? 0.5, originConfig.originY ?? 0.5);
+    if (blendConfig.directImage && config.sourceCrop) {
+      image.setCrop(config.sourceCrop.x, config.sourceCrop.y, config.sourceCrop.width, config.sourceCrop.height);
+    }
     image.setDisplaySize(config.displayWidth, config.displayHeight);
     image.setDepth(centerY);
     return image;

@@ -51,7 +51,6 @@ export function App() {
       book: "page",
       ticket: "reward",
       tag: "page",
-      remote: "click",
       watch: "prompt",
       phone: "prompt",
       cat: "cat",

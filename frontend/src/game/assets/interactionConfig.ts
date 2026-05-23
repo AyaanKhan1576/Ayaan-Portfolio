@@ -16,7 +16,7 @@ const dialogueLines: Record<string, string> = {
   book: "there's nothing written inside.",
   ticket: "it feels half-remembered.",
   door: "you're not ready yet.",
-  remote: "the signal never arrives.",
+  education: "old notes still remember the answers.",
   piano: "a familiar melody lingers.",
   watch: "time has stopped here.",
   tag: "someone forgot to pick this up.",

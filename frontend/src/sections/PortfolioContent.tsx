@@ -1,9 +1,9 @@
-import { ExternalLink, FileDown, Play, Send } from "lucide-react";
+import { ExternalLink, FileDown, Send } from "lucide-react";
 import { FormEvent, useState } from "react";
+import { education } from "../data/education";
 import { experience } from "../data/experience";
 import { mediaItems } from "../data/media";
 import { projects } from "../data/projects";
-import { simulations } from "../data/simulations";
 import { skills } from "../data/skills";
 import { downloadResume, submitContact } from "../services/api";
 import { trackEvent } from "../services/analytics";
@@ -22,9 +22,9 @@ export function PortfolioContent({ section, openSection }: { section: SectionId;
     case "projects":
       return <Projects />;
     case "media":
-      return <MediaGallery />;
-    case "simulations":
-      return <SimulationConsole />;
+      return <LeadershipAndHonors />;
+    case "education":
+      return <Education />;
     case "experience":
       return <ExperienceTimeline />;
     case "resume":
@@ -132,7 +132,7 @@ function Projects({ onlyFeatured = false }: { onlyFeatured?: boolean }) {
   );
 }
 
-function MediaGallery() {
+function LeadershipAndHonors() {
   return (
     <div className="quest-grid">
       {mediaItems.map((item) => (
@@ -153,28 +153,30 @@ function MediaGallery() {
   );
 }
 
-function SimulationConsole() {
+function Education() {
   return (
-    <div className="quest-grid">
-      {simulations.map((simulation) => (
-        <article className="quest-card static" key={simulation.id}>
-          <span>program</span>
-          <b>{simulation.title}</b>
-          <p>{simulation.description}</p>
-          <div className="tag-row">{simulation.technologies.map((tech) => <span key={tech}>{tech}</span>)}</div>
-          {simulation.iframe_url ? <iframe className="media-frame" src={simulation.iframe_url} title={simulation.title} /> : <small>Embedded demo not configured.</small>}
-          {simulation.fallback_url ? (
-            <a
-              href={simulation.fallback_url}
-              onClick={() => void trackEvent({ eventType: "simulation_launch", metadata: { simulationId: simulation.id } })}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <Play size={14} /> Launch fallback
-            </a>
-          ) : null}
-        </article>
-      ))}
+    <div className="dialogue-copy">
+      <h3>Education</h3>
+      <p className="soft-role">{education.degree}</p>
+      <p>{education.summary}</p>
+      <div className="two-column">
+        <div className="paper-card">
+          <b>University</b>
+          <p>{education.university}</p>
+        </div>
+        <div className="paper-card">
+          <b>Expected Graduation</b>
+          <p>{education.expectedGraduation}</p>
+        </div>
+      </div>
+      <div className="paper-card">
+        <b>Relevant Coursework</b>
+        <p>{education.coursework.join(" • ")}</p>
+      </div>
+      <div className="paper-card">
+        <b>Academic Highlights</b>
+        <p>{education.highlights.join(" • ")}</p>
+      </div>
     </div>
   );
 }

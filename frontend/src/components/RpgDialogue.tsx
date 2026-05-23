@@ -44,10 +44,7 @@ export function RpgDialogue({
         >
           <div className="rpg-window-content">
             <div className="rpg-window-header">
-              <div>
-                <p className="pixel-label">Ayaan's Room</p>
-                <h2>{title}</h2>
-              </div>
+              <h2>{title}</h2>
             </div>
             <div className="rpg-window-body">
               <p>{visibleText}</p>

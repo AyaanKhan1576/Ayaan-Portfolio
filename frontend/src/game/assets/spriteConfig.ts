@@ -29,12 +29,16 @@ export interface PlayerAnimationFrames {
 export interface ObjectSpriteConfig {
   id: string;
   sourceKey: string;
-  frameKey: string;
+  frameKey?: string;
   displayWidth: number;
   displayHeight: number;
+  hitboxWidth?: number;
+  hitboxHeight?: number;
   originX?: number;
   originY?: number;
   blendMode?: "normal" | "difference";
+  directImage?: boolean;
+  sourceCrop?: { x: number; y: number; width: number; height: number };
   notes: string;
 }
 
@@ -167,24 +171,6 @@ export const objectSpriteMap = {
     blendMode: "difference",
     notes: "Uses the ticket/coupon charm as a featured-project memory marker.",
   },
-  remoteSprite: {
-    id: "remoteSprite",
-    sourceKey: charmSource,
-    frameKey: "obj_sim_remote",
-    displayWidth: 30,
-    displayHeight: 50,
-    blendMode: "difference",
-    notes: "Uses the remote charm as the Simulation Bay launcher.",
-  },
-  headphonesSprite: {
-    id: "headphonesSprite",
-    sourceKey: charmSource,
-    frameKey: "obj_media_headphones",
-    displayWidth: 46,
-    displayHeight: 28,
-    blendMode: "difference",
-    notes: "Uses the headphones charm for media/demo content.",
-  },
   watchSprite: {
     id: "watchSprite",
     sourceKey: charmSource,
@@ -220,13 +206,26 @@ export const objectSpriteMap = {
     displayHeight: 44,
     notes: "Uses the monochrome arched door crop from /assets/sprites/tileset_blackspace.png.",
   },
-  pianoSprite: {
-    id: "pianoSprite",
-    sourceKey: blackspaceSource,
-    frameKey: "obj_media_piano",
-    displayWidth: 72,
+  honorsSprite: {
+    id: "honorsSprite",
+    sourceKey: "honors",
+    displayWidth: 30,
+    displayHeight: 31,
+    hitboxWidth: 30,
+    hitboxHeight: 31,
+    directImage: true,
+    sourceCrop: { x: 5, y: 7, width: 18, height: 19 },
+    notes: "Uses the standalone honors.png image directly for the Leadership and Honors object.",
+  },
+  educationSprite: {
+    id: "educationSprite",
+    sourceKey: "education",
+    displayWidth: 34,
     displayHeight: 34,
-    notes: "Uses the monochrome piano crop from /assets/sprites/tileset_blackspace.png.",
+    hitboxWidth: 34,
+    hitboxHeight: 34,
+    directImage: true,
+    notes: "Uses the standalone education.png image directly for the Education object.",
   },
   frameSprite: {
     id: "frameSprite",

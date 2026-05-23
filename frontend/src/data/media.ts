@@ -2,26 +2,25 @@ import type { MediaItem } from "../types";
 
 export const mediaItems: MediaItem[] = [
   {
-    id: "pose2play-demo",
-    title: "Pose2Play Demo Reel",
-    type: "video",
-    url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    projectId: "pose2play",
-    description: "Demo video slot for the VR rehabilitation system.",
+    id: "leadership-photo-1",
+    title: "Student Leadership Night",
+    type: "image",
+    url: "",
+    description: "A small frame of a night that mattered more than it looked.",
   },
   {
-    id: "microservices-diagram",
-    title: "Event Platform Architecture",
+    id: "honor-award-1",
+    title: "Honor Roll / Award Note",
     type: "diagram",
     url: "",
     projectId: "event-booking",
-    description: "Architecture diagram placeholder for service boundaries and data flow.",
+    description: "Proof that a few quiet semesters still left a mark.",
   },
   {
-    id: "resume-pdf",
-    title: "Resume Archive",
+    id: "conference-memory",
+    title: "Conference Memory",
     type: "pdf",
     url: "",
-    description: "Configurable PDF/media slot for resume or slides.",
+    description: "One of those moments where the room finally stayed still.",
   },
 ];
