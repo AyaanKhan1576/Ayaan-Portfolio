@@ -1,0 +1,608 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "AyaanRoomPixel";
+  src: url("/assets/fonts/OMORI_GAME.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AyaanRoomPixelAlt";
+  src: url("/assets/fonts/OMORI_GAME2.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #fbfbfb;
+  color: #171717;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #fbfbfb;
+}
+
+button,
+a,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+.room-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 24px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.dream-backdrop {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: transparent;
+}
+
+.room-header,
+.room-layout {
+  position: relative;
+  z-index: 2;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.room-header h1 {
+  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  margin: 4px 0 0;
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+  color: #2b2437;
+  text-shadow: none;
+}
+
+.pixel-label {
+  margin: 0;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.73rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #786a8d;
+}
+
+.room-layout {
+  display: block;
+}
+
+.game-panel {
+  position: relative;
+  height: calc(100vh - 150px);
+  min-height: 430px;
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.game-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.game-shell canvas {
+  position: relative;
+  z-index: 1;
+  image-rendering: pixelated;
+}
+
+.interaction-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(92%, 520px);
+  border: 2px solid #111111;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 10px 13px;
+  text-align: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 0.88rem;
+  color: #111111;
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.1);
+}
+
+.interaction-prompt.active {
+  color: #2f293b;
+  animation: promptPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes promptPulse {
+  50% {
+    transform: translateX(-50%) translateY(-3px);
+  }
+}
+
+.quest-log,
+.controls-card,
+.audio-card {
+  border: 2px solid #111111;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+}
+
+.quest-log {
+  position: absolute;
+  z-index: 6;
+  left: 18px;
+  top: 18px;
+  width: 142px;
+  padding: 10px;
+  opacity: 0.82;
+  transition: opacity 140ms ease;
+}
+
+.quest-log:hover,
+.quest-log:focus-within {
+  opacity: 1;
+}
+
+.controls-card {
+  display: none;
+}
+
+.quest-log div {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.quest-log button {
+  border: 1px solid #bbbbbb;
+  border-radius: 0;
+  padding: 7px 8px;
+  font-size: 0.82rem;
+  color: #777777;
+  background: #ffffff;
+  text-align: left;
+}
+
+.quest-log button.found {
+  border-color: #111111;
+  color: #111111;
+  background: #ffffff;
+}
+
+.quest-log.unlocked button.found:hover {
+  transform: translateY(-1px);
+  border-color: #1d1d1d;
+}
+
+.quest-log button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.controls-card p:not(.pixel-label) {
+  margin: 12px 0 0;
+  font-size: 0.88rem;
+}
+
+.audio-card {
+  display: grid;
+  gap: 10px;
+  min-width: 420px;
+  padding: 10px;
+}
+
+.audio-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.audio-card input {
+  width: 100px;
+  accent-color: #7a6e91;
+}
+
+.music-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.music-switcher button {
+  border: 1px solid #cfcfcf;
+  border-radius: 0;
+  background: #fff;
+  padding: 6px 7px;
+  color: #5a5363;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 0.68rem;
+}
+
+.music-switcher button.selected {
+  border-color: #111111;
+  background: #f8f8f8;
+  color: #111111;
+}
+
+.audio-card span {
+  min-width: 64px;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: #5f536f;
+}
+
+.pixel-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid #111111;
+  border-radius: 0;
+  background: #ffffff;
+  color: #111111;
+  box-shadow: none;
+}
+
+.rpg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(1px);
+}
+
+.rpg-window {
+  position: relative;
+  z-index: 1001;
+  width: min(900px, 96vw);
+  max-height: min(82vh, 760px);
+  border: 3px solid #111111;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.12);
+  overflow: hidden;
+}
+
+.rpg-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 2px solid #111111;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.rpg-window-header h2 {
+  margin: 3px 0 0;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  color: #111111;
+}
+
+.rpg-window-body {
+  max-height: calc(82vh - 86px);
+  overflow: auto;
+  padding: 18px;
+}
+
+.dialogue-copy {
+  display: grid;
+  gap: 14px;
+  line-height: 1.75;
+  color: #43374f;
+}
+
+.dialogue-copy h3 {
+  margin: 0;
+  font-size: 1.65rem;
+  color: #2f293b;
+}
+
+.soft-role {
+  color: #736084;
+  font-weight: 700;
+}
+
+.two-column,
+.quest-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.paper-card,
+.quest-card,
+.stat-row,
+.timeline-path article {
+  border: 1px solid #111111;
+  border-radius: 0;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 2px 2px 0 rgba(17, 17, 17, 0.08);
+}
+
+.quest-card {
+  min-height: 150px;
+  text-align: left;
+  color: #372f44;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.quest-card:not(.static):hover {
+  transform: translateY(-2px);
+  border-color: #74668d;
+}
+
+.quest-card span,
+.timeline-path span {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7c6b8f;
+}
+
+.quest-card b,
+.timeline-path b,
+.stat-row b {
+  display: block;
+  color: #2f293b;
+}
+
+.quest-card p,
+.timeline-path p,
+.stat-row p,
+.paper-card p {
+  margin: 8px 0 0;
+  color: #5c516a;
+  line-height: 1.55;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.tag-row span {
+  border: 1px solid #d8cfe3;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #f8f2fb;
+  font-size: 0.75rem;
+}
+
+.pixel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pixel-actions button,
+.pixel-actions a,
+.download-button,
+.contact-form button,
+.quest-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px solid #111111;
+  border-radius: 0;
+  background: #111111;
+  color: #fffaff;
+  padding: 9px 12px;
+  text-decoration: none;
+  box-shadow: 4px 4px 0 rgba(47, 41, 59, 0.14);
+}
+
+.back-link {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: #675677;
+  text-decoration: underline;
+}
+
+.stats-list,
+.timeline-path,
+.contact-form {
+  display: grid;
+  gap: 12px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 14px;
+  align-items: center;
+}
+
+.stat-meter {
+  height: 16px;
+  border: 2px solid #30283e;
+  background: #f4eef7;
+}
+
+.stat-meter span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #7b6f91, #bed8ee);
+}
+
+.media-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 12px;
+  border: 2px solid #30283e;
+  border-radius: 4px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: 2px solid #d8cfe3;
+  border-radius: 4px;
+  background: #fff;
+  padding: 11px 12px;
+  color: #30283e;
+}
+
+.contact-form textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.success {
+  color: #35664d;
+}
+
+.warning {
+  color: #8b4b62;
+}
+
+.mobile-controls {
+  display: none;
+  position: absolute;
+  right: 14px;
+  bottom: 82px;
+  align-items: end;
+  gap: 16px;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 42px);
+  grid-template-rows: repeat(3, 42px);
+  gap: 4px;
+}
+
+.pad,
+.interact-pad {
+  border: 2px solid #30283e;
+  border-radius: 4px;
+  background: rgba(255, 250, 255, 0.88);
+  color: #30283e;
+  font-weight: 800;
+}
+
+.up {
+  grid-column: 2;
+}
+
+.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.interact-pad {
+  width: 58px;
+  height: 58px;
+}
+
+@media (max-width: 980px) {
+  .room-page {
+    padding: 14px;
+  }
+
+  .room-header,
+  .room-layout {
+    max-width: 760px;
+  }
+
+  .room-layout {
+    display: block;
+  }
+
+  .controls-card {
+    display: none;
+  }
+
+  .mobile-controls {
+    display: flex;
+  }
+}
+
+@media (max-width: 680px) {
+  .room-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .audio-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .music-switcher {
+    grid-template-columns: 1fr;
+  }
+
+  .game-panel,
+  .game-shell {
+    height: 430px;
+    min-height: 430px;
+  }
+
+  .two-column,
+  .quest-grid,
+  .stat-row {
+    grid-template-columns: 1fr;
+  }
+
+  .interaction-prompt {
+    bottom: 14px;
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,75 @@
+import type { Project } from "../types";
+
+export const projects: Project[] = [
+  {
+    id: "pose2play",
+    title: "Pose2Play VR Rehabilitation System",
+    short_description: "Computer-vision guided rehab experience using pose tracking and immersive feedback.",
+    long_description:
+      "A VR rehabilitation platform that turns movement therapy into guided interactive sessions. The system combines pose estimation, patient feedback loops, progress tracking, and an extensible activity model for future therapy modules.",
+    technologies: ["Python", "OpenCV", "Unity", "VR", "Pose Estimation"],
+    role: "System designer and implementation lead",
+    screenshots: [],
+    demo_video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    slide_url: "",
+    github_url: "",
+    live_demo_url: "",
+    tags: ["AI", "HealthTech", "VR"],
+    featured: true,
+    status: "prototype",
+  },
+  {
+    id: "event-booking",
+    title: "Event Booking Microservices Platform",
+    short_description: "Distributed event booking architecture with service boundaries and API orchestration.",
+    long_description:
+      "A backend-oriented platform exploring booking workflows, modular services, fault boundaries, and deployment-ready API design for event discovery and ticket reservation.",
+    technologies: ["FastAPI", "PostgreSQL", "Docker", "REST", "Microservices"],
+    role: "Backend architect",
+    screenshots: [],
+    github_url: "",
+    live_demo_url: "",
+    tags: ["Backend", "Distributed Systems"],
+    featured: true,
+    status: "deployed",
+  },
+  {
+    id: "ai-weather-agent",
+    title: "Modular AI Assistant / Weather Agent",
+    short_description: "Tool-using assistant architecture for weather queries and modular agent workflows.",
+    long_description:
+      "A modular assistant that separates intent handling, tool execution, response formatting, and external API reliability concerns. Designed as a base for adding more agent tools without coupling every workflow together.",
+    technologies: ["Python", "OpenAI API", "FastAPI", "Tool Calling"],
+    role: "AI workflow engineer",
+    screenshots: [],
+    tags: ["AI", "Agents", "APIs"],
+    featured: true,
+    status: "prototype",
+  },
+  {
+    id: "torcs-ai",
+    title: "TORCS AI Driving Controller",
+    short_description: "Autonomous racing controller for simulated driving behavior.",
+    long_description:
+      "An AI controller for TORCS focused on steering, throttle, braking, and track response behavior. Built to experiment with control policies and telemetry-driven iteration.",
+    technologies: ["Python", "AI Control", "Simulation", "Telemetry"],
+    role: "AI controller developer",
+    screenshots: [],
+    tags: ["Simulation", "AI"],
+    featured: false,
+    status: "research",
+  },
+  {
+    id: "opencl-convolution",
+    title: "SIMD Image Convolution with OpenCL",
+    short_description: "Parallel image convolution pipeline accelerated with OpenCL.",
+    long_description:
+      "A performance-focused implementation of image convolution using SIMD concepts and OpenCL kernels to compare acceleration strategies for image processing workloads.",
+    technologies: ["C++", "OpenCL", "SIMD", "Image Processing"],
+    role: "Performance engineer",
+    screenshots: [],
+    tags: ["Systems", "GPU", "Performance"],
+    featured: false,
+    status: "research",
+  },
+];

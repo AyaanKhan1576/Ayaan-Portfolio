@@ -1,0 +1,1 @@
+export { playerSprite } from "./spriteConfig";

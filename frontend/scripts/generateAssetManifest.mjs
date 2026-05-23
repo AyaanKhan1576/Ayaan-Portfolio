@@ -1,0 +1,135 @@
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import path from "node:path";
+
+const projectRoot = path.resolve(import.meta.dirname, "..");
+const assetsRoot = path.join(projectRoot, "public", "assets");
+const outputPath = path.join(projectRoot, "src", "game", "assets", "generatedAssetManifest.ts");
+
+const imageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
+const audioExtensions = new Set([".mp3", ".ogg", ".wav", ".m4a"]);
+
+function toKey(relativePath) {
+  return relativePath
+    .replace(/\\/g, "/")
+    .replace(/\.[^/.]+$/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function inferAudioCategory(relativePath, filename) {
+  const value = `${relativePath}/${filename}`.toLowerCase();
+  if (value.includes("bgm") || value.includes("music") || value.includes("song") || value.includes("piano") || value.includes("space")) return "music";
+  if (value.includes("ambience") || value.includes("ambient") || value.includes("forest") || value.includes("hum") || value.includes("static")) return "ambience";
+  if (value.includes("ui") || value.includes("select") || value.includes("cursor") || value.includes("click") || value.includes("quest") || value.includes("item")) return "ui";
+  if (value.includes("transition") || value.includes("spiral") || value.includes("up") || value.includes("down")) return "transition";
+  if (value.includes("foot") || value.includes("step") || value.includes("movement") || value.includes("sand")) return "movement";
+  return "interaction";
+}
+
+function inferImageUsage(relativePath, filename, width, height) {
+  const value = `${relativePath}/${filename}`.toLowerCase();
+  if (value.includes("character") || value.includes("player") || value.includes("hero") || value.includes("omori")) return "spriteSheet";
+  if (value.includes("tile")) return "tileset";
+  if (value.includes("object") || value.includes("misc") || value.includes("prop")) return "objectSheet";
+  if (value.includes("background") || value.includes("room") || value.includes("screen") || width >= 500 || height >= 320) return "background";
+  if (width > 96 || height > 96) return "spriteSheet";
+  return "singleSprite";
+}
+
+function suggestedFrameSize(width, height, usage) {
+  if (usage === "background") return { frameWidth: width, frameHeight: height };
+  const candidates = [64, 48, 32, 24, 16];
+  for (const size of candidates) {
+    if (width % size === 0 && height % size === 0) {
+      return { frameWidth: size, frameHeight: size };
+    }
+  }
+  for (const size of [...candidates].reverse()) {
+    if (width >= size && height >= size) {
+      return { frameWidth: size, frameHeight: size };
+    }
+  }
+  return { frameWidth: width, frameHeight: height };
+}
+
+function readPngDimensions(buffer) {
+  const signature = buffer.subarray(0, 8).toString("hex");
+  if (signature !== "89504e470d0a1a0a") return null;
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20),
+  };
+}
+
+async function walk(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await walk(fullPath));
+    } else {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+const files = await walk(assetsRoot);
+const images = [];
+const audio = [];
+
+for (const file of files) {
+  const extension = path.extname(file).toLowerCase();
+  const relativeDiskPath = path.relative(assetsRoot, file).replace(/\\/g, "/");
+  const publicPath = `/assets/${relativeDiskPath}`;
+  const filename = path.basename(file);
+  const key = toKey(relativeDiskPath);
+
+  if (imageExtensions.has(extension)) {
+    let dimensions = null;
+    if (extension === ".png") {
+      dimensions = readPngDimensions(await readFile(file));
+    }
+    const width = dimensions?.width ?? 0;
+    const height = dimensions?.height ?? 0;
+    const inferredType = inferImageUsage(path.dirname(relativeDiskPath), filename, width, height);
+    const frame = width && height ? suggestedFrameSize(width, height, inferredType) : { frameWidth: 32, frameHeight: 32 };
+    images.push({
+      key,
+      path: publicPath,
+      filename,
+      extension: extension.slice(1),
+      inferredType,
+      width,
+      height,
+      suggestedFrameWidth: frame.frameWidth,
+      suggestedFrameHeight: frame.frameHeight,
+      frameCount: frame.frameWidth && frame.frameHeight ? Math.floor(width / frame.frameWidth) * Math.floor(height / frame.frameHeight) : 1,
+    });
+  }
+
+  if (audioExtensions.has(extension)) {
+    audio.push({
+      key,
+      path: publicPath,
+      filename,
+      extension: extension.slice(1),
+      inferredCategory: inferAudioCategory(path.dirname(relativeDiskPath), filename),
+    });
+  }
+}
+
+await mkdir(path.dirname(outputPath), { recursive: true });
+const banner = "/* This file is generated by frontend/scripts/generateAssetManifest.mjs. */";
+const content = `${banner}
+import type { GeneratedAssetManifest } from "./assetManifest";
+
+export const generatedAssetManifest = ${JSON.stringify({ images, audio }, null, 2)} as const satisfies GeneratedAssetManifest;
+`;
+
+await writeFile(outputPath, content, "utf8");
+console.log(`Generated ${outputPath}`);
+console.log(`Images: ${images.length}`);
+console.log(`Audio: ${audio.length}`);
