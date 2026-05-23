@@ -75,7 +75,7 @@ const charmSource = "sprites_items_charms";
 const blackspaceSource = "sprites_tileset_blackspace";
 const hudSource = "sprites_hud_battleui";
 
-// The walk section is arranged by row: up/back, left, right, down/front.
+// The walk section is arranged by row: down/front, left, right, up/back.
 // Only three walk frames are used because the fourth column in the raw sheet belongs to the run set.
 export const playerSprite = {
   sourceKey: playerSource,
@@ -98,10 +98,10 @@ export const playerSprite = {
 } satisfies PlayerSpriteConfig;
 
 export const croppedFrames: CroppedFrameConfig[] = [
-  { key: "player_idle_up", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
-  { key: "player_walk_up_0", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
-  { key: "player_walk_up_1", sourceKey: playerSource, x: 37, y: 17, width: 24, height: 29 },
-  { key: "player_walk_up_2", sourceKey: playerSource, x: 70, y: 17, width: 24, height: 29 },
+  { key: "player_idle_up", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
+  { key: "player_walk_up_0", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
+  { key: "player_walk_up_1", sourceKey: playerSource, x: 37, y: 116, width: 24, height: 29 },
+  { key: "player_walk_up_2", sourceKey: playerSource, x: 70, y: 116, width: 24, height: 29 },
 
   { key: "player_idle_left", sourceKey: playerSource, x: 4, y: 50, width: 24, height: 29 },
   { key: "player_walk_left_0", sourceKey: playerSource, x: 4, y: 50, width: 24, height: 29 },
@@ -113,14 +113,14 @@ export const croppedFrames: CroppedFrameConfig[] = [
   { key: "player_walk_right_1", sourceKey: playerSource, x: 37, y: 83, width: 24, height: 29 },
   { key: "player_walk_right_2", sourceKey: playerSource, x: 70, y: 83, width: 24, height: 29 },
 
-  { key: "player_idle_down", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
-  { key: "player_walk_down_0", sourceKey: playerSource, x: 4, y: 116, width: 24, height: 29 },
-  { key: "player_walk_down_1", sourceKey: playerSource, x: 37, y: 116, width: 24, height: 29 },
-  { key: "player_walk_down_2", sourceKey: playerSource, x: 70, y: 116, width: 24, height: 29 },
+  { key: "player_idle_down", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
+  { key: "player_walk_down_0", sourceKey: playerSource, x: 4, y: 17, width: 24, height: 29 },
+  { key: "player_walk_down_1", sourceKey: playerSource, x: 37, y: 17, width: 24, height: 29 },
+  { key: "player_walk_down_2", sourceKey: playerSource, x: 70, y: 17, width: 24, height: 29 },
 
   { key: "obj_cat_0", sourceKey: whitespaceSource, x: 96, y: 8, width: 32, height: 24 },
   { key: "obj_cat_1", sourceKey: whitespaceSource, x: 128, y: 8, width: 32, height: 24 },
-  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 290, y: 126, width: 23, height: 36 },
+  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 290, y: 117, width: 23, height: 39 },
 
   // White-on-black charm crops are manually tightened to whole connected objects.
   { key: "obj_about_laptop", sourceKey: charmSource, x: 555, y: 342, width: 80, height: 73 },
@@ -252,7 +252,7 @@ export const objectSpriteMap = {
     displayHeight: 45,
     originX: 0.5,
     originY: 0.1,
-    notes: "Uses the downloaded hanging bulb crop from /assets/sprites/whitespace_misc.png.",
+    notes: "Uses the hanging bulb crop from /assets/sprites/whitespace_misc.png with the string included.",
   },
   promptBoxSprite: {
     id: "promptBoxSprite",

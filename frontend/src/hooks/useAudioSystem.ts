@@ -29,15 +29,15 @@ export const availableMusicModes = musicTracks.length
 export function useAudioSystem(enabled: boolean) {
   const fallbackContextRef = useRef<AudioContext | null>(null);
   const fallbackMusicRef = useRef<{ oscillators: OscillatorNode[]; gain: GainNode } | null>(null);
+  const generatedSoundsRef = useRef<Set<{ oscillator: OscillatorNode; gain: GainNode }>>(new Set());
   const initialPreferences = audioManager.getPreferences();
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [muted, setMutedState] = useState(true);
+  const [muted, setMutedState] = useState(() => initialPreferences.muted);
   const [volume, setVolumeState] = useState(() => initialPreferences.masterVolume);
   const [musicMode, setMusicModeState] = useState<MusicMode>(() => initialPreferences.musicKey || availableMusicModes[0]?.id || "");
 
   useEffect(() => {
     audioManager.preload();
-    audioManager.setMuted(true);
   }, []);
 
   const ensureFallbackContext = useCallback(() => {
@@ -61,6 +61,24 @@ export function useAudioSystem(enabled: boolean) {
     } finally {
       fallbackMusicRef.current = null;
     }
+  }, []);
+
+  const stopGeneratedSounds = useCallback(() => {
+    for (const sound of generatedSoundsRef.current) {
+      try {
+        sound.gain.gain.setTargetAtTime(0.0001, sound.gain.context.currentTime, 0.04);
+        sound.oscillator.stop(sound.gain.context.currentTime + 0.08);
+      } catch {
+        // Audio failures must not affect the UI.
+      }
+      try {
+        sound.oscillator.disconnect();
+        sound.gain.disconnect();
+      } catch {
+        // Ignore cleanup failures.
+      }
+    }
+    generatedSoundsRef.current.clear();
   }, []);
 
   const startFallbackMusic = useCallback(() => {
@@ -100,9 +118,14 @@ export function useAudioSystem(enabled: boolean) {
     } else {
       audioManager.stopMusic();
       stopFallbackMusic();
+      stopGeneratedSounds();
     }
-    return stopFallbackMusic;
-  }, [audioEnabled, muted, musicMode, startMusic, stopFallbackMusic]);
+    return () => {
+      audioManager.stopMusic();
+      stopFallbackMusic();
+      stopGeneratedSounds();
+    };
+  }, [audioEnabled, muted, musicMode, startMusic, stopFallbackMusic, stopGeneratedSounds]);
 
   const enableAudio = useCallback(async () => {
     if (!enabled) return;
@@ -119,8 +142,12 @@ export function useAudioSystem(enabled: boolean) {
 
   const setMuted = useCallback((value: boolean) => {
     setMutedState(value);
+    if (value) {
+      stopFallbackMusic();
+      stopGeneratedSounds();
+    }
     audioManager.setMuted(value);
-  }, []);
+  }, [stopFallbackMusic, stopGeneratedSounds]);
 
   const setVolume = useCallback((value: number) => {
     setVolumeState(value);
@@ -160,6 +187,18 @@ export function useAudioSystem(enabled: boolean) {
       oscillator.type = type === "boot" ? "sine" : "triangle";
       gain.gain.setValueAtTime(volume * 0.3, context.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.12);
+      const sound = { oscillator, gain };
+      generatedSoundsRef.current.add(sound);
+      const cleanup = () => {
+        generatedSoundsRef.current.delete(sound);
+        try {
+          oscillator.disconnect();
+          gain.disconnect();
+        } catch {
+          // Ignore cleanup failures.
+        }
+      };
+      oscillator.addEventListener("ended", cleanup, { once: true });
       oscillator.connect(gain);
       gain.connect(context.destination);
       oscillator.start();

@@ -19,6 +19,7 @@ const defaultPreferences: AudioPreferences = {
 export class AudioManager {
   private tracks = new Map<string, AudioTrackConfig>();
   private elements = new Map<string, HTMLAudioElement>();
+  private activeSounds = new Set<HTMLAudioElement>();
   private currentMusic: HTMLAudioElement | null = null;
   private preferences: AudioPreferences;
 
@@ -52,6 +53,9 @@ export class AudioManager {
 
   setMuted(muted: boolean) {
     this.preferences = { ...this.preferences, muted };
+    if (muted) {
+      this.silenceActiveSounds();
+    }
     this.applyVolumes();
     this.savePreferences();
   }
@@ -112,12 +116,24 @@ export class AudioManager {
     const source = this.elements.get(key);
     const track = this.tracks.get(key);
     if (!source || !track) return false;
+    let cleanup = () => undefined;
     try {
       const element = source.cloneNode(true) as HTMLAudioElement;
+      cleanup = () => {
+        this.activeSounds.delete(element);
+        element.removeEventListener("ended", cleanup);
+        element.removeEventListener("pause", cleanup);
+        element.removeEventListener("error", cleanup);
+      };
+      this.activeSounds.add(element);
+      element.addEventListener("ended", cleanup, { once: true });
+      element.addEventListener("pause", cleanup, { once: true });
+      element.addEventListener("error", cleanup, { once: true });
       element.volume = Math.min(1, this.preferences.masterVolume * this.preferences.sfxVolume * track.preferredVolume);
       await element.play();
       return true;
     } catch {
+      cleanup();
       console.warn(`SFX playback blocked or failed: ${key}`);
       return false;
     }
@@ -147,6 +163,21 @@ export class AudioManager {
         void this.currentMusic.play().catch(() => console.warn("Music resume was blocked by the browser."));
       }
     }
+    if (this.preferences.muted) {
+      this.silenceActiveSounds();
+    }
+  }
+
+  private silenceActiveSounds() {
+    for (const element of this.activeSounds) {
+      try {
+        element.pause();
+        element.currentTime = 0;
+      } catch {
+        // If an element refuses to pause, the best fallback is to drop it.
+      }
+    }
+    this.activeSounds.clear();
   }
 
   private loadPreferences(): AudioPreferences {
