@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function RpgDialogue({
   title,
@@ -9,6 +10,27 @@ export function RpgDialogue({
   text: string;
   prompt: string;
 }) {
+  const [visibleText, setVisibleText] = useState("");
+
+  useEffect(() => {
+    let timer: number | undefined;
+    let index = 0;
+    setVisibleText("");
+
+    if (!text) return;
+
+    timer = window.setInterval(() => {
+      index += 1;
+      setVisibleText(text.slice(0, index));
+      if (index >= text.length && timer) window.clearInterval(timer);
+    }, 22);
+
+    return () => {
+      if (timer) window.clearInterval(timer);
+      setVisibleText("");
+    };
+  }, [text, title]);
+
   if (!title || !text) return null;
 
   return (
@@ -27,7 +49,7 @@ export function RpgDialogue({
             </div>
           </div>
           <div className="rpg-window-body">
-            <p style={{ marginBottom: "0.35rem" }}>{text}</p>
+            <p style={{ marginBottom: "0.35rem" }}>{visibleText}</p>
             <p className="pixel-label" style={{ margin: 0, opacity: 0.78 }}>{prompt}</p>
           </div>
         </motion.div>

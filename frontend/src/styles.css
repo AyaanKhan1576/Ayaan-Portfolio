@@ -292,9 +292,9 @@ a {
 .rpg-window {
   position: relative;
   z-index: 1001;
-  width: min(900px, 96vw);
-  max-height: min(82vh, 760px);
-  border: 3px solid #111111;
+  width: min(680px, 80vw);
+  max-height: 180px;
+  border: 2px solid #111111;
   border-radius: 0;
   background: #ffffff;
   box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.12);
@@ -307,43 +307,55 @@ a {
   justify-content: space-between;
   gap: 14px;
   border-bottom: 2px solid #111111;
-  padding: 16px;
+  padding: 10px 14px;
   background: #ffffff;
 }
 
 .rpg-window-header h2 {
   margin: 3px 0 0;
-  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
   color: #111111;
 }
 
 .rpg-window-body {
-  max-height: calc(82vh - 86px);
+  max-height: 120px;
   overflow: auto;
-  padding: 18px;
+  padding: 12px 14px 14px;
+  line-height: 1.55;
 }
 
 .rpg-preview {
   position: fixed;
   left: 50%;
-  bottom: 20px;
+  bottom: 40px;
   z-index: 1000;
-  width: min(420px, calc(100vw - 28px));
+  width: min(680px, 80vw);
   transform: translateX(-50%);
   pointer-events: none;
 }
 
 .rpg-preview .rpg-window {
   width: 100%;
-  max-height: none;
+  max-height: 180px;
 }
 
 .rpg-preview .rpg-window-header {
-  padding: 12px 14px;
+  padding: 10px 14px;
 }
 
 .rpg-preview .rpg-window-body {
-  padding: 14px;
+  padding: 12px 14px 14px;
+}
+
+@media (max-width: 720px) {
+  .rpg-preview {
+    bottom: 32px;
+    width: min(92vw, 680px);
+  }
+
+  .rpg-window {
+    max-height: 190px;
+  }
 }
 
 .dialogue-copy {

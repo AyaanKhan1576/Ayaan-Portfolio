@@ -236,13 +236,13 @@ export class RoomScene extends Phaser.Scene {
       mainRoomConfig.bounds.height - 4,
     );
 
-    const bulbConfig = objectSpriteMap.lightbulbSprite;
     const bulb = this.add.container(400, 0);
     const cord = this.add.rectangle(0, 44, 2, 88, 0x111111, 0.88);
-    const bulbImage = this.createCroppedImage(0, 88, bulbConfig);
-    bulb.add([cord, bulbImage]);
+    const socket = this.add.rectangle(0, 88, 5, 8, 0x111111, 1);
+    const bulbBody = this.add.circle(0, 100, 8, 0xffffff, 0).setStrokeStyle(2, 0x111111, 1);
+    const bulbBase = this.add.rectangle(0, 108, 6, 4, 0x111111, 1);
+    bulb.add([cord, socket, bulbBody, bulbBase]);
     this.tweens.add({ targets: bulb, angle: { from: -bulbMotion.swayAmplitude, to: bulbMotion.swayAmplitude }, y: { from: 0, to: bulbMotion.bobAmplitude }, duration: bulbMotion.swayDuration, yoyo: true, repeat: -1, ease: "Sine.inOut" });
-    this.tweens.add({ targets: bulbImage, alpha: { from: 0.86, to: 1 }, duration: 3200, yoyo: true, repeat: -1, ease: "Sine.inOut" });
   }
 
   private createAmbientAnimationFrames() {
