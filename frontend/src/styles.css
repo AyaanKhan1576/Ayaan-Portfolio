@@ -326,10 +326,10 @@ a {
 
 .rpg-preview {
   position: fixed;
-  left: 42%;
-  bottom: 28px;
+  left: 37%;
+  bottom: 34px;
   z-index: 9999;
-  width: min(540px, 68vw);
+  width: min(560px, 70vw);
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -337,7 +337,7 @@ a {
 .rpg-preview .rpg-window {
   position: relative;
   width: 100%;
-  height: min(102px, 14vw);
+  height: min(112px, 15vw);
   border: 0;
   background: transparent;
   background-image: url("/assets/sprites/dialogue_box.png");
@@ -351,13 +351,13 @@ a {
 
 .rpg-preview .rpg-window-content {
   position: absolute;
-  left: 14px;
-  right: 16px;
-  top: 12px;
-  bottom: 11px;
+  left: 28px;
+  right: 18px;
+  top: 15px;
+  bottom: 14px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
   z-index: 0;
 }
 
@@ -382,15 +382,16 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 6px;
+  gap: 4px;
   overflow: hidden;
   z-index: 1;
 }
 
 .rpg-preview .rpg-window-body > p:first-child {
   margin: 0;
-  font-size: clamp(0.9rem, 1.15vw, 1.03rem);
-  line-height: 1.18;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 18px;
+  line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
@@ -405,28 +406,29 @@ a {
 }
 
 .rpg-preview .pixel-label {
-  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
-  font-size: 0.48rem;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
 }
 
 .rpg-preview .rpg-window-header h2 {
-  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  font-family: "Courier New", ui-monospace, monospace;
   margin: 1px 0 0;
-  font-size: 0.64rem;
+  font-size: 0.82rem;
   line-height: 1.05;
 }
 
 .rpg-preview .rpg-window-body p {
-  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  font-family: "Courier New", ui-monospace, monospace;
   margin: 0;
-  font-size: 0.6rem;
-  line-height: 1.12;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .rpg-preview .rpg-window-body .pixel-label {
   margin-top: 4px;
-  font-size: 0.46rem;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 11px;
 }
 
 @media (max-width: 720px) {

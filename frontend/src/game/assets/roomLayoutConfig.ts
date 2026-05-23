@@ -4,16 +4,16 @@ export const roomLayout = {
 } as const;
 
 export const roomObjectLayout = [
-  { id: "laptop", x: 286, y: 156, width: 48, height: 44, interactionRadius: 56 },
-  { id: "book", x: 270, y: 196, width: 34, height: 38, interactionRadius: 50 },
-  { id: "ticket", x: 474, y: 156, width: 58, height: 36, interactionRadius: 54 },
+  { id: "laptop", x: 256, y: 136, width: 48, height: 44, interactionRadius: 56 },
+  { id: "book", x: 268, y: 206, width: 34, height: 38, interactionRadius: 50 },
+  { id: "ticket", x: 500, y: 150, width: 58, height: 36, interactionRadius: 54 },
   { id: "door", x: 150, y: 60, width: 40, height: 58, interactionRadius: 58 },
-  { id: "remote", x: 96, y: 350, width: 30, height: 50, interactionRadius: 52 },
-  { id: "piano", x: 462, y: 284, width: 72, height: 34, interactionRadius: 58 },
-  { id: "watch", x: 286, y: 232, width: 30, height: 48, interactionRadius: 50 },
-  { id: "tag", x: 510, y: 246, width: 36, height: 48, interactionRadius: 52 },
-  { id: "phone", x: 586, y: 210, width: 30, height: 46, interactionRadius: 52 },
-  { id: "cat", x: 172, y: 380, width: 58, height: 44, interactionRadius: 54 },
+  { id: "remote", x: 612, y: 96, width: 30, height: 50, interactionRadius: 52 },
+  { id: "piano", x: 470, y: 282, width: 72, height: 34, interactionRadius: 58 },
+  { id: "watch", x: 294, y: 232, width: 30, height: 48, interactionRadius: 50 },
+  { id: "tag", x: 540, y: 246, width: 36, height: 48, interactionRadius: 52 },
+  { id: "phone", x: 606, y: 214, width: 30, height: 46, interactionRadius: 52 },
+  { id: "cat", x: 176, y: 308, width: 58, height: 44, interactionRadius: 54 },
 ] as const;
 
 export function getRoomObjectLayout(objectId: string) {
