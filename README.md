@@ -169,6 +169,8 @@ The Phaser scene reads this config and creates clickable/tappable zones automati
 
 Interaction feedback is intentionally diegetic. Objects do not show selection rectangles; nearby objects gently float/scale and show a small HUD-dialog prompt using the local `HUD_battleUI` dialog-box crop.
 
+Object visual scale is controlled in [frontend/src/game/assets/spriteConfig.ts](frontend/src/game/assets/spriteConfig.ts), while object placement and interaction radius are controlled in `objectConfig.ts`. Keep the configured object `width`/`height` close to the rendered `displayWidth`/`displayHeight` so proximity checks match what visitors see.
+
 ## Asset Guide
 
 Put assets under:
@@ -225,7 +227,9 @@ The handwritten replacement font is used only for the main `Ayaan's Room` title.
 
 ### Asset Selection Logic
 
-Prefer monochrome or black-and-white sketch/pixel crops for portfolio objects. `items_charms.png` is white line art on a black background, so those crops are rendered with Phaser difference blending to appear as black sketches on the white room without black rectangular cutouts. Use colorful assets only when no readable monochrome replacement exists.
+Prefer monochrome or black-and-white sketch/pixel crops for portfolio objects. Mixed sheets are not sliced as equal grids unless they are clearly grid-aligned. Instead, `spriteConfig.ts` defines manual `x/y/width/height` crop rectangles around complete visible objects.
+
+`items_charms.png` is white line art on a black background. The scene converts those crops into runtime canvas textures where white line art becomes black pixels and the black sheet background becomes transparent. This avoids black rectangular cutouts. Use colorful assets only when no readable monochrome replacement exists.
 
 Current object crops live in `spriteConfig.ts`, and object-to-section mappings live in `objectConfig.ts`.
 
@@ -248,28 +252,45 @@ Frame-size inference tries common pixel-art sizes:
 
 When metadata is uncertain, the app uses conservative fallbacks and continues running.
 
-### Manual Sprite Override Example
+### Manual Crop And Scale Override
 
-Use [frontend/src/game/assets/spriteConfig.ts](frontend/src/game/assets/spriteConfig.ts) to override inferred metadata:
+Use [frontend/src/game/assets/spriteConfig.ts](frontend/src/game/assets/spriteConfig.ts) to override inferred metadata. For mixed object sheets, prefer named crop rectangles and explicit display size:
 
 ```ts
 {
-  key: "player",
-  path: "/assets/sprites/player.png",
-  usage: "spritesheet",
-  frameWidth: 32,
-  frameHeight: 32,
-  animations: {
-    idleDown: [0],
-    walkDown: [0, 1, 2, 3],
-    walkLeft: [4, 5, 6, 7],
-    walkRight: [8, 9, 10, 11],
-    walkUp: [12, 13, 14, 15],
-  },
+  key: "obj_example_book",
+  sourceKey: "sprites_items_charms",
+  x: 22,
+  y: 448,
+  width: 64,
+  height: 72,
+}
+
+bookSprite: {
+  id: "bookSprite",
+  sourceKey: "sprites_items_charms",
+  frameKey: "obj_example_book",
+  displayWidth: 34,
+  displayHeight: 38,
+  blendMode: "difference",
+  notes: "White-on-black crop converted to black-on-transparent at runtime.",
 }
 ```
 
-The current player config uses row-based crops from `character_omori.png`: up/back, right, left, and down/front. Idle preserves the last faced direction. If directional frames are missing in a future sheet, create simple directional fallback frames instead of using an incorrect facing animation.
+If an object crop looks fragmented, tighten the crop to the connected object bounds or swap to a clean fallback placeholder. Do not display partial sheet fragments.
+
+### Player Direction Mapping
+
+Player behavior is centralized in [frontend/src/game/assets/playerConfig.ts](frontend/src/game/assets/playerConfig.ts), which currently re-exports the `playerSprite` config from `spriteConfig.ts`.
+
+The current player uses generated directional frames because the downloaded character sheet has separator/adjacent pixels in some movement crops. The configured animation keys still describe the expected directions:
+
+- `walkUp` / `idleUp`: back-facing
+- `walkDown` / `idleDown`: front-facing
+- `walkLeft` / `idleLeft`: left-facing
+- `walkRight` / `idleRight`: right-facing
+
+Idle preserves the last faced direction. If you replace the player with a clean sheet later, update the named frame rectangles in `spriteConfig.ts` and set the player source back to that sheet.
 
 ### Adding New Audio
 
@@ -341,6 +362,14 @@ Tracked events:
 Frontend analytics are best-effort through [frontend/src/services/analytics.ts](frontend/src/services/analytics.ts). Failed analytics calls are ignored. Backend persistence is isolated in repository classes and logs failures without crashing user-facing routes.
 
 ## Movement And Audio
+
+Wraparound is configured in [frontend/src/game/assets/roomConfig.ts](frontend/src/game/assets/roomConfig.ts). `bounds` controls only the decorative room outline. `wrapBounds` controls actual player wrapping and is currently the full Phaser canvas:
+
+```ts
+wrapBounds: { x: 0, y: 0, width: 800, height: 450 }
+```
+
+The player wraps only after crossing the visible canvas edge plus `wrapPadding`; the inner rectangle never blocks movement.
 
 Audio starts muted. The visitor must explicitly enable sound. Volume and mute preferences are stored in `localStorage`. Background music loops through the audio manager, and UI/interaction sounds are one-shots. Walking/footstep sounds are intentionally disabled.
 

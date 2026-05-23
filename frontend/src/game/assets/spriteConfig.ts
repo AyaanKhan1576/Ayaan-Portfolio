@@ -38,6 +38,18 @@ export interface ObjectSpriteConfig {
   notes: string;
 }
 
+export interface PlayerSpriteConfig {
+  sourceKey: string;
+  width: number;
+  height: number;
+  scale: number;
+  originX: number;
+  originY: number;
+  generatedFallback: boolean;
+  fallbackAssumption: string;
+  animations: PlayerAnimationFrames;
+}
+
 function findImage(key: string): GeneratedImageAsset | undefined {
   return generatedAssetManifest.images.find((asset) => asset.key === key);
 }
@@ -64,16 +76,17 @@ const charmSource = "sprites_items_charms";
 const blackspaceSource = "sprites_tileset_blackspace";
 const hudSource = "sprites_hud_battleui";
 
-// The walk section is arranged by row: up/back, right, left, down/front.
+// The walk section is arranged by row: up/back, left, right, down/front.
 // Only three walk frames are used because the fourth column in the raw sheet belongs to the run set.
 export const playerSprite = {
-  sourceKey: playerSource,
-  width: 32,
-  height: 34,
-  scale: 1.55,
+  sourceKey: "generated_player",
+  width: 26,
+  height: 32,
+  scale: 1.62,
   originX: 0.5,
   originY: 1,
-  fallbackAssumption: "If the sheet changes, preserve row-based directional crops so movement never uses the wrong facing direction.",
+  generatedFallback: true,
+  fallbackAssumption: "The provided player sheet includes separator/adjacent pixels in some movement crops, so the runtime uses clean generated directional frames. The original sheet remains loaded for future manual crop replacement.",
   animations: {
     idleUp: ["player_idle_up"],
     idleRight: ["player_idle_right"],
@@ -83,46 +96,46 @@ export const playerSprite = {
     walkRight: ["player_walk_right_0", "player_walk_right_1", "player_walk_right_2"],
     walkLeft: ["player_walk_left_0", "player_walk_left_1", "player_walk_left_2"],
     walkDown: ["player_walk_down_0", "player_walk_down_1", "player_walk_down_2"],
-  } satisfies PlayerAnimationFrames,
-};
+  },
+} satisfies PlayerSpriteConfig;
 
 export const croppedFrames: CroppedFrameConfig[] = [
-  { key: "player_idle_up", sourceKey: playerSource, x: 0, y: 16, width: 32, height: 34 },
-  { key: "player_walk_up_0", sourceKey: playerSource, x: 0, y: 16, width: 32, height: 34 },
-  { key: "player_walk_up_1", sourceKey: playerSource, x: 33, y: 16, width: 32, height: 34 },
-  { key: "player_walk_up_2", sourceKey: playerSource, x: 66, y: 16, width: 32, height: 34 },
+  { key: "player_idle_up", sourceKey: playerSource, x: 3, y: 17, width: 26, height: 32 },
+  { key: "player_walk_up_0", sourceKey: playerSource, x: 3, y: 17, width: 26, height: 32 },
+  { key: "player_walk_up_1", sourceKey: playerSource, x: 36, y: 17, width: 26, height: 32 },
+  { key: "player_walk_up_2", sourceKey: playerSource, x: 69, y: 17, width: 26, height: 32 },
 
-  { key: "player_idle_right", sourceKey: playerSource, x: 0, y: 49, width: 32, height: 34 },
-  { key: "player_walk_right_0", sourceKey: playerSource, x: 0, y: 49, width: 32, height: 34 },
-  { key: "player_walk_right_1", sourceKey: playerSource, x: 33, y: 49, width: 32, height: 34 },
-  { key: "player_walk_right_2", sourceKey: playerSource, x: 66, y: 49, width: 32, height: 34 },
+  { key: "player_idle_left", sourceKey: playerSource, x: 3, y: 50, width: 26, height: 32 },
+  { key: "player_walk_left_0", sourceKey: playerSource, x: 3, y: 50, width: 26, height: 32 },
+  { key: "player_walk_left_1", sourceKey: playerSource, x: 36, y: 50, width: 26, height: 32 },
+  { key: "player_walk_left_2", sourceKey: playerSource, x: 69, y: 50, width: 26, height: 32 },
 
-  { key: "player_idle_left", sourceKey: playerSource, x: 0, y: 82, width: 32, height: 34 },
-  { key: "player_walk_left_0", sourceKey: playerSource, x: 0, y: 82, width: 32, height: 34 },
-  { key: "player_walk_left_1", sourceKey: playerSource, x: 33, y: 82, width: 32, height: 34 },
-  { key: "player_walk_left_2", sourceKey: playerSource, x: 66, y: 82, width: 32, height: 34 },
+  { key: "player_idle_right", sourceKey: playerSource, x: 3, y: 83, width: 26, height: 32 },
+  { key: "player_walk_right_0", sourceKey: playerSource, x: 3, y: 83, width: 26, height: 32 },
+  { key: "player_walk_right_1", sourceKey: playerSource, x: 36, y: 83, width: 26, height: 32 },
+  { key: "player_walk_right_2", sourceKey: playerSource, x: 69, y: 83, width: 26, height: 32 },
 
-  { key: "player_idle_down", sourceKey: playerSource, x: 0, y: 115, width: 32, height: 34 },
-  { key: "player_walk_down_0", sourceKey: playerSource, x: 0, y: 115, width: 32, height: 34 },
-  { key: "player_walk_down_1", sourceKey: playerSource, x: 33, y: 115, width: 32, height: 34 },
-  { key: "player_walk_down_2", sourceKey: playerSource, x: 66, y: 115, width: 32, height: 34 },
+  { key: "player_idle_down", sourceKey: playerSource, x: 3, y: 116, width: 26, height: 32 },
+  { key: "player_walk_down_0", sourceKey: playerSource, x: 3, y: 116, width: 26, height: 32 },
+  { key: "player_walk_down_1", sourceKey: playerSource, x: 36, y: 116, width: 26, height: 32 },
+  { key: "player_walk_down_2", sourceKey: playerSource, x: 69, y: 116, width: 26, height: 32 },
 
   { key: "obj_cat_0", sourceKey: whitespaceSource, x: 96, y: 8, width: 32, height: 24 },
   { key: "obj_cat_1", sourceKey: whitespaceSource, x: 128, y: 8, width: 32, height: 24 },
   { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 286, y: 124, width: 28, height: 36 },
 
-  // White-on-black charm crops are rendered with difference blending so they become black sketches on the white room.
-  { key: "obj_about_laptop", sourceKey: charmSource, x: 548, y: 305, width: 108, height: 80 },
-  { key: "obj_skills_book", sourceKey: charmSource, x: 0, y: 385, width: 88, height: 86 },
-  { key: "obj_featured_ticket", sourceKey: charmSource, x: 92, y: 195, width: 112, height: 72 },
-  { key: "obj_sim_remote", sourceKey: charmSource, x: 664, y: 4, width: 84, height: 86 },
-  { key: "obj_media_headphones", sourceKey: charmSource, x: 0, y: 670, width: 84, height: 84 },
-  { key: "obj_experience_watch", sourceKey: charmSource, x: 8, y: 8, width: 74, height: 82 },
-  { key: "obj_resume_tag", sourceKey: charmSource, x: 560, y: 386, width: 92, height: 78 },
-  { key: "obj_contact_phone", sourceKey: charmSource, x: 92, y: 388, width: 86, height: 82 },
+  // White-on-black charm crops are manually tightened to whole connected objects.
+  { key: "obj_about_laptop", sourceKey: charmSource, x: 555, y: 342, width: 80, height: 73 },
+  { key: "obj_skills_book", sourceKey: charmSource, x: 22, y: 448, width: 64, height: 72 },
+  { key: "obj_featured_ticket", sourceKey: charmSource, x: 112, y: 238, width: 100, height: 61 },
+  { key: "obj_sim_remote", sourceKey: charmSource, x: 670, y: 16, width: 68, height: 75 },
+  { key: "obj_media_headphones", sourceKey: charmSource, x: 11, y: 676, width: 79, height: 45 },
+  { key: "obj_experience_watch", sourceKey: charmSource, x: 28, y: 15, width: 46, height: 76 },
+  { key: "obj_resume_tag", sourceKey: charmSource, x: 564, y: 449, width: 54, height: 74 },
+  { key: "obj_contact_phone", sourceKey: charmSource, x: 139, y: 449, width: 47, height: 72 },
 
-  { key: "obj_projects_door", sourceKey: blackspaceSource, x: 604, y: 916, width: 64, height: 94 },
-  { key: "obj_media_piano", sourceKey: blackspaceSource, x: 0, y: 824, width: 150, height: 70 },
+  { key: "obj_projects_door", sourceKey: blackspaceSource, x: 610, y: 916, width: 44, height: 52 },
+  { key: "obj_media_piano", sourceKey: blackspaceSource, x: 0, y: 842, width: 126, height: 58 },
   { key: "obj_picture_frame", sourceKey: blackspaceSource, x: 686, y: 1352, width: 86, height: 74 },
 
   { key: "ui_prompt_box", sourceKey: hudSource, x: 18, y: 1186, width: 394, height: 96 },
@@ -133,8 +146,8 @@ export const objectSpriteMap = {
     id: "laptopSprite",
     sourceKey: charmSource,
     frameKey: "obj_about_laptop",
-    displayWidth: 80,
-    displayHeight: 58,
+    displayWidth: 48,
+    displayHeight: 44,
     blendMode: "difference",
     notes: "Uses the laptop charm from /assets/sprites/items_charms.png with difference blend for black-on-white line art.",
   },
@@ -142,8 +155,8 @@ export const objectSpriteMap = {
     id: "bookSprite",
     sourceKey: charmSource,
     frameKey: "obj_skills_book",
-    displayWidth: 54,
-    displayHeight: 58,
+    displayWidth: 34,
+    displayHeight: 38,
     blendMode: "difference",
     notes: "Uses the closed book charm from /assets/sprites/items_charms.png.",
   },
@@ -151,8 +164,8 @@ export const objectSpriteMap = {
     id: "ticketSprite",
     sourceKey: charmSource,
     frameKey: "obj_featured_ticket",
-    displayWidth: 86,
-    displayHeight: 56,
+    displayWidth: 58,
+    displayHeight: 36,
     blendMode: "difference",
     notes: "Uses the ticket/coupon charm as a featured-project memory marker.",
   },
@@ -160,8 +173,8 @@ export const objectSpriteMap = {
     id: "remoteSprite",
     sourceKey: charmSource,
     frameKey: "obj_sim_remote",
-    displayWidth: 42,
-    displayHeight: 72,
+    displayWidth: 30,
+    displayHeight: 50,
     blendMode: "difference",
     notes: "Uses the remote charm as the Simulation Bay launcher.",
   },
@@ -169,8 +182,8 @@ export const objectSpriteMap = {
     id: "headphonesSprite",
     sourceKey: charmSource,
     frameKey: "obj_media_headphones",
-    displayWidth: 62,
-    displayHeight: 62,
+    displayWidth: 46,
+    displayHeight: 28,
     blendMode: "difference",
     notes: "Uses the headphones charm for media/demo content.",
   },
@@ -178,8 +191,8 @@ export const objectSpriteMap = {
     id: "watchSprite",
     sourceKey: charmSource,
     frameKey: "obj_experience_watch",
-    displayWidth: 48,
-    displayHeight: 62,
+    displayWidth: 30,
+    displayHeight: 48,
     blendMode: "difference",
     notes: "Uses the watch charm for the experience timeline.",
   },
@@ -187,8 +200,8 @@ export const objectSpriteMap = {
     id: "tagSprite",
     sourceKey: charmSource,
     frameKey: "obj_resume_tag",
-    displayWidth: 54,
-    displayHeight: 58,
+    displayWidth: 36,
+    displayHeight: 48,
     blendMode: "difference",
     notes: "Uses the tag charm as the resume marker.",
   },
@@ -196,8 +209,8 @@ export const objectSpriteMap = {
     id: "phoneSprite",
     sourceKey: charmSource,
     frameKey: "obj_contact_phone",
-    displayWidth: 48,
-    displayHeight: 62,
+    displayWidth: 30,
+    displayHeight: 46,
     blendMode: "difference",
     notes: "Uses the phone charm for contact.",
   },
@@ -205,16 +218,16 @@ export const objectSpriteMap = {
     id: "doorSprite",
     sourceKey: blackspaceSource,
     frameKey: "obj_projects_door",
-    displayWidth: 58,
-    displayHeight: 86,
+    displayWidth: 36,
+    displayHeight: 44,
     notes: "Uses the monochrome arched door crop from /assets/sprites/tileset_blackspace.png.",
   },
   pianoSprite: {
     id: "pianoSprite",
     sourceKey: blackspaceSource,
     frameKey: "obj_media_piano",
-    displayWidth: 110,
-    displayHeight: 52,
+    displayWidth: 72,
+    displayHeight: 34,
     notes: "Uses the monochrome piano crop from /assets/sprites/tileset_blackspace.png.",
   },
   frameSprite: {
@@ -247,8 +260,8 @@ export const objectSpriteMap = {
     id: "promptBoxSprite",
     sourceKey: hudSource,
     frameKey: "ui_prompt_box",
-    displayWidth: 260,
-    displayHeight: 64,
+    displayWidth: 430,
+    displayHeight: 76,
     notes: "Uses the dialog-box crop from /assets/sprites/HUD_battleUI.png for nearby interaction prompts.",
   },
 } satisfies Record<string, ObjectSpriteConfig>;

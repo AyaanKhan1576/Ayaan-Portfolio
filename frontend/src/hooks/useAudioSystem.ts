@@ -31,16 +31,13 @@ export function useAudioSystem(enabled: boolean) {
   const fallbackMusicRef = useRef<{ oscillators: OscillatorNode[]; gain: GainNode } | null>(null);
   const initialPreferences = audioManager.getPreferences();
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [muted, setMutedState] = useState(() => initialPreferences.muted);
+  const [muted, setMutedState] = useState(true);
   const [volume, setVolumeState] = useState(() => initialPreferences.masterVolume);
   const [musicMode, setMusicModeState] = useState<MusicMode>(() => initialPreferences.musicKey || availableMusicModes[0]?.id || "");
 
   useEffect(() => {
     audioManager.preload();
-    if (enabled && !muted) {
-      setAudioEnabled(true);
-      void audioManager.loopMusic(musicMode);
-    }
+    audioManager.setMuted(true);
   }, []);
 
   const ensureFallbackContext = useCallback(() => {

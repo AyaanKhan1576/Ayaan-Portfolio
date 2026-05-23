@@ -25,6 +25,8 @@ export class RoomScene extends Phaser.Scene {
   private objectFeedback = new Map<string, { target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite; baseX: number; baseY: number; scaleX: number; scaleY: number }>();
   private promptContainer?: Phaser.GameObjects.Container;
   private promptText?: Phaser.GameObjects.Text;
+  private promptFullText = "";
+  private promptTypeEvent?: Phaser.Time.TimerEvent;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private keys?: Record<string, Phaser.Input.Keyboard.Key>;
   private nearbyObject: RoomObject | null = null;
@@ -56,6 +58,7 @@ export class RoomScene extends Phaser.Scene {
     this.cameras.main.roundPixels = true;
     this.registerCroppedFrames();
     this.registerMonochromeFrames();
+    this.registerGeneratedPlayerFrames();
     this.createPlayerAnimations();
     this.drawRoom();
     this.drawObjects();
@@ -160,6 +163,77 @@ export class RoomScene extends Phaser.Scene {
     return `${frameKey}_mono`;
   }
 
+  private registerGeneratedPlayerFrames() {
+    if (!playerSprite.generatedFallback || this.textures.exists(playerSprite.sourceKey)) return;
+
+    const frameWidth = playerSprite.width;
+    const frameHeight = playerSprite.height;
+    const directions: PlayerDirection[] = ["up", "left", "right", "down"];
+    const canvasTexture = this.textures.createCanvas(playerSprite.sourceKey, frameWidth * 3, frameHeight * directions.length);
+    const context = canvasTexture?.getContext();
+    if (!canvasTexture || !context) return;
+
+    context.imageSmoothingEnabled = false;
+    directions.forEach((direction, row) => {
+      for (let frame = 0; frame < 3; frame += 1) {
+        this.drawGeneratedPlayerFrame(context, frame * frameWidth, row * frameHeight, direction, frame);
+      }
+    });
+    canvasTexture.refresh();
+
+    const rowForDirection: Record<PlayerDirection, number> = { up: 0, left: 1, right: 2, down: 3 };
+    for (const [direction, row] of Object.entries(rowForDirection) as [PlayerDirection, number][]) {
+      const capitalized = direction[0].toUpperCase() + direction.slice(1);
+      for (let frame = 0; frame < 3; frame += 1) {
+        canvasTexture.add(`player_walk_${direction}_${frame}`, 0, frame * frameWidth, row * frameHeight, frameWidth, frameHeight);
+      }
+      canvasTexture.add(`player_idle_${direction}`, 0, 0, row * frameHeight, frameWidth, frameHeight);
+      const animationFrames = playerSprite.animations[`walk${capitalized}` as keyof typeof playerSprite.animations];
+      animationFrames.forEach((frameKey, index) => {
+        if (!canvasTexture.has(frameKey)) {
+          canvasTexture.add(frameKey, 0, index * frameWidth, row * frameHeight, frameWidth, frameHeight);
+        }
+      });
+      const idleFrame = playerSprite.animations[`idle${capitalized}` as keyof typeof playerSprite.animations][0];
+      if (!canvasTexture.has(idleFrame)) {
+        canvasTexture.add(idleFrame, 0, 0, row * frameHeight, frameWidth, frameHeight);
+      }
+    }
+  }
+
+  private drawGeneratedPlayerFrame(context: CanvasRenderingContext2D, x: number, y: number, direction: PlayerDirection, frame: number) {
+    const step = frame === 1 ? 1 : frame === 2 ? -1 : 0;
+    context.clearRect(x, y, playerSprite.width, playerSprite.height);
+    context.fillStyle = "#111111";
+
+    if (direction === "down") {
+      context.fillRect(x + 7, y + 4, 12, 6);
+      context.fillRect(x + 5, y + 8, 16, 8);
+      context.fillStyle = "#ffffff";
+      context.fillRect(x + 8, y + 10, 10, 6);
+      context.fillStyle = "#111111";
+      context.fillRect(x + 8, y + 11, 2, 2);
+      context.fillRect(x + 16, y + 11, 2, 2);
+    } else if (direction === "up") {
+      context.fillRect(x + 6, y + 5, 15, 12);
+      context.fillRect(x + 7, y + 3, 12, 5);
+    } else {
+      const facingRight = direction === "right";
+      context.fillRect(x + 6, y + 5, 14, 12);
+      context.fillStyle = "#ffffff";
+      context.fillRect(x + (facingRight ? 14 : 6), y + 10, 5, 5);
+      context.fillStyle = "#111111";
+      context.fillRect(x + (facingRight ? 18 : 6), y + 11, 2, 2);
+    }
+
+    context.fillStyle = "#111111";
+    context.fillRect(x + 9, y + 17, 8, 9);
+    context.fillRect(x + 5, y + 18, 4, 7);
+    context.fillRect(x + 17, y + 18, 4, 7);
+    context.fillRect(x + 8, y + 25, 4, 5 + Math.max(0, step));
+    context.fillRect(x + 15, y + 25, 4, 5 + Math.max(0, -step));
+  }
+
   private axis(negative: keyof MobileInputState, positive: keyof MobileInputState) {
     const keyboardNegative =
       negative === "left" ? this.cursors?.left.isDown || this.keys?.A.isDown : this.cursors?.up.isDown || this.keys?.W.isDown;
@@ -204,11 +278,11 @@ export class RoomScene extends Phaser.Scene {
 
   private wrapPlayer() {
     if (!this.player) return;
-    const margin = mainRoomConfig.wrapMargin;
-    const left = mainRoomConfig.bounds.x - margin;
-    const right = mainRoomConfig.bounds.x + mainRoomConfig.bounds.width + margin;
-    const top = mainRoomConfig.bounds.y - margin;
-    const bottom = mainRoomConfig.bounds.y + mainRoomConfig.bounds.height + margin;
+    const { wrapBounds, wrapPadding } = mainRoomConfig;
+    const left = wrapBounds.x - wrapPadding;
+    const right = wrapBounds.x + wrapBounds.width + wrapPadding;
+    const top = wrapBounds.y - wrapPadding;
+    const bottom = wrapBounds.y + wrapBounds.height + wrapPadding;
 
     if (this.player.x < left) this.player.x = right;
     if (this.player.x > right) this.player.x = left;
@@ -355,29 +429,48 @@ export class RoomScene extends Phaser.Scene {
     const text = this.add
       .text(0, 0, "", {
         fontFamily: '"Courier New", monospace',
-        fontSize: "12px",
+        fontSize: "13px",
         color: "#ffffff",
         align: "center",
-        wordWrap: { width: 210 },
+        wordWrap: { width: 360 },
       })
       .setOrigin(0.5)
       .setDepth(2001);
     this.promptText = text;
-    this.promptContainer = this.add.container(0, 0, [box, text]).setDepth(2000).setVisible(false);
+    this.promptContainer = this.add.container(400, 400, [box, text]).setDepth(2000).setVisible(false);
   }
 
   private updatePrompt(active: RoomObject | null) {
     if (!this.promptContainer || !this.promptText) return;
     if (!active) {
+      this.promptTypeEvent?.remove(false);
+      this.promptFullText = "";
+      this.promptText.setText("");
       this.promptContainer.setVisible(false);
       return;
     }
 
-    const centerX = active.position.x + active.size.width / 2;
-    const promptY = Math.max(mainRoomConfig.bounds.y + 34, active.position.y - 46);
-    this.promptText.setText(active.interactionPrompt ?? `${active.display_name} - press E`);
-    this.promptContainer.setPosition(Phaser.Math.Clamp(centerX, 150, 650), promptY);
+    const nextText = active.interactionPrompt ?? `${active.display_name} - press E`;
+    this.promptContainer.setPosition(400, 400);
     this.promptContainer.setVisible(true);
+    if (nextText === this.promptFullText) return;
+    this.startPromptTypewriter(nextText);
+  }
+
+  private startPromptTypewriter(text: string) {
+    if (!this.promptText) return;
+    this.promptTypeEvent?.remove(false);
+    this.promptFullText = text;
+    this.promptText.setText("");
+    let index = 0;
+    this.promptTypeEvent = this.time.addEvent({
+      delay: 24,
+      repeat: text.length - 1,
+      callback: () => {
+        index += 1;
+        this.promptText?.setText(text.slice(0, index));
+      },
+    });
   }
 
   private spawnSparkle(x: number, y: number) {
