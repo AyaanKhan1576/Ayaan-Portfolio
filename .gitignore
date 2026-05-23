@@ -30,7 +30,7 @@ pnpm-debug.log*
 !backend/.env.example
 
 # Optional local media drop-in assets
-frontend/public/assets/*
+# frontend/public/assets/*
 !frontend/public/assets/README.md
 
 # OS/editor
