@@ -1,0 +1,34 @@
+Ayaan's Room placeholder asset list
+
+Resume source used for content:
+- frontend/public/assets/resume/AyaanKhan_Resume.pdf
+
+Project images/screenshots to add later:
+- Pose2Play VR rehabilitation screenshots
+- Pose2Play demo video URL
+- Pose2Play slide deck or architecture PDF
+- Event Booking Microservices Platform architecture diagram
+- Event Booking deployment/GitOps screenshots
+- Event Booking demo video or live demo URL
+- Financial Sentiment Analysis with RAG pipeline diagram
+- Financial Sentiment model/results screenshot
+- Financial Sentiment demo video or notebook/report link
+- Multi-Agent Weather Chatbot screenshots
+- Multi-Agent Weather Chatbot demo video or live demo URL
+- Medical PDF ETL and NER pipeline diagram
+- Medical PDF ETL QA tooling screenshot
+
+Leadership and honors media to add later:
+- National Mathematics Olympiad Camp image/certificate
+- Dean's List Fall 2025 image/certificate
+- FAST Debating Society event/workshop image or document
+- Potohar MUN event image or sponsorship/budget summary document
+
+Recommended locations:
+- Images: frontend/public/assets/media/
+- PDFs/slides: frontend/public/assets/media/
+- Project screenshots: frontend/public/assets/projects/
+
+After adding assets, wire their URLs in:
+- frontend/src/data/projects.ts
+- frontend/src/data/media.ts

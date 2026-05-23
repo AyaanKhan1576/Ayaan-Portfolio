@@ -1,3 +1,9 @@
+import os
+
+os.environ["SUPABASE_URL"] = ""
+os.environ["SUPABASE_SERVICE_ROLE_KEY"] = ""
+os.environ["DATABASE_URL"] = ""
+
 from fastapi.testclient import TestClient
 from app.main import create_app
 
@@ -9,6 +15,16 @@ def test_health_check():
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+
+def test_readiness_check_shape():
+    response = client.get("/api/health/ready")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] in {"ok", "degraded"}
+    assert "supabase" in body
+    assert "resume" in body
+    assert "contact" in body
 
 
 def test_analytics_accepts_without_supabase():

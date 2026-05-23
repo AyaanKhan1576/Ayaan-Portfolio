@@ -4,14 +4,7 @@ import { trackEvent } from "./analytics";
 
 export async function downloadResume(): Promise<void> {
   await trackEvent({ eventType: "resume_download" });
-
-  if (!config.apiBaseUrl) return;
-
-  try {
-    window.location.assign(`${config.apiBaseUrl}/api/resume/download`);
-  } catch {
-    await trackEvent({ eventType: "resume_download", metadata: { fallback: true } });
-  }
+  window.location.assign(config.resumeAssetUrl);
 }
 
 export async function submitContact(payload: { name: string; email: string; subject: string; message: string }): Promise<boolean> {

@@ -24,6 +24,8 @@ make help            # show available commands
 make setup           # create missing .env files and install dependencies
 make test            # run frontend and backend tests
 make build           # build frontend and run backend tests
+make db-setup        # apply Supabase schema when DATABASE_URL and psql are available
+make backend-check   # check backend env and Supabase table readiness
 make frontend-dev    # run only the frontend
 make backend-dev     # run only the backend
 make clean           # remove generated build/test output
@@ -112,6 +114,8 @@ Frontend:
 | `VITE_API_BASE_URL` | Backend API URL. Leave empty for frontend-only mode. |
 | `VITE_SITE_NAME` | Site display name. |
 | `VITE_ENABLE_AUDIO` | Enables audio controls when `true`. |
+| `VITE_SUPABASE_URL` | Browser-safe Supabase project URL for future public reads/auth. |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key. Never use the service-role key here. |
 
 Backend:
 
@@ -129,7 +133,15 @@ Backend:
 
 ## Supabase Setup
 
-Run [docs/supabase_schema.sql](docs/supabase_schema.sql) in the Supabase SQL Editor. The backend uses service-role credentials server-side. If Supabase is unavailable, analytics and contact persistence fail gracefully.
+Run [docs/supabase_schema.sql](docs/supabase_schema.sql) in the Supabase SQL Editor. Detailed setup notes are in [docs/supabase_setup.md](docs/supabase_setup.md).
+
+This project is React/Vite plus FastAPI, so do not add the Next.js Supabase `page.tsx` or middleware snippets. The frontend may use the publishable key through [frontend/src/services/supabaseClient.ts](frontend/src/services/supabaseClient.ts), but analytics, contact submissions, and resume download tracking go through FastAPI. The backend uses `SUPABASE_SERVICE_ROLE_KEY` server-side only. If Supabase is unavailable, analytics and contact persistence fail gracefully.
+
+If you set `DATABASE_URL` to the Supabase Postgres connection string and have `psql` installed, you can also run:
+
+```powershell
+make db-setup
+```
 
 ## Adding Projects
 

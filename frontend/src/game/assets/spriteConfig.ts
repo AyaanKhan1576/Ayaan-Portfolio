@@ -143,7 +143,7 @@ export const croppedFrames: CroppedFrameConfig[] = [
   { key: "ui_prompt_box", sourceKey: hudSource, x: 18, y: 1186, width: 360, height: 96 },
 ];
 
-export const objectSpriteMap = {
+export const objectSpriteMap: Record<string, ObjectSpriteConfig> = {
   laptopSprite: {
     id: "laptopSprite",
     sourceKey: charmSource,
@@ -261,6 +261,6 @@ export const objectSpriteMap = {
     displayHeight: 76,
     notes: "Uses the dialog-box crop from /assets/sprites/HUD_battleUI.png for nearby interaction prompts.",
   },
-} satisfies Record<string, ObjectSpriteConfig>;
+};
 
 export type ObjectSpriteKey = keyof typeof objectSpriteMap;

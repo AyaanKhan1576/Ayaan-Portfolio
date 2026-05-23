@@ -1,22 +1,22 @@
 export const experience = [
   {
-    period: "2026",
-    title: "AI & Software Engineering Portfolio",
-    detail: "Built applied AI, backend, simulation, and performance projects across multiple domains.",
+    period: "Apr 2026 - Present",
+    title: "Project Associate - Kodifly",
+    detail: "Improved cross-team coordination through Jira workflows, PRDs, UATs, training manuals, technical reports, and structured software/hardware documentation.",
   },
   {
-    period: "Systems",
-    title: "Performance and Parallel Computing",
-    detail: "Worked with OpenCL and SIMD-style image processing pipelines.",
+    period: "Jul 2025 - Aug 2025",
+    title: "Data Analyst Intern - Paradigm Diagnostic Informatics",
+    detail: "Automated preprocessing of 200+ GB of medical PDFs into AI-ready datasets, applied spaCy NER for 90%+ record linkage accuracy, and built Pandas/Excel QA tooling that reduced manual effort by about 70%.",
   },
   {
-    period: "Backend",
-    title: "API and Distributed Platform Design",
-    detail: "Designed service-oriented APIs and analytics-ready backend systems.",
+    period: "Jul 2025 - Aug 2025",
+    title: "Agentic AI Intern - DreamAI Software",
+    detail: "Built a multi-agent weather chatbot with Google ADK, Gemini API, and WeatherAPI, plus evaluation loops with OpenAI Evals and Pydantic AI.",
   },
   {
-    period: "AI",
-    title: "Agentic and Simulation Workflows",
-    detail: "Explored tool-using assistants, driving controllers, and pose-driven interaction systems.",
+    period: "Jul 2023 - Aug 2023",
+    title: "Software Development Intern - Teresol Pvt. Ltd.",
+    detail: "Developed and debugged C/C++ modules for embedded Linux and automated workflows with Bash scripting.",
   },
 ];

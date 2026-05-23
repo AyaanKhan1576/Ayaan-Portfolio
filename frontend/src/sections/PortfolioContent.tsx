@@ -37,9 +37,7 @@ export function PortfolioContent({ section, openSection }: { section: SectionId;
 function Intro({ openSection }: { openSection: (section: SectionId) => void }) {
   return (
     <div className="dialogue-copy">
-      <p>
-        You wake up in a quiet little room. Each object keeps a piece of Ayaan Khan's professional story.
-      </p>
+      <p> You wake up in a quiet little room. Each object keeps a piece of Ayaan Khan's professional story.</p>
       <p>Move with WASD or arrow keys. Stand near something and press E. Tapping objects works too.</p>
       <div className="pixel-actions">
         <button onClick={() => openSection("about")} type="button">Start at the desk</button>
@@ -55,17 +53,17 @@ function About() {
       <h3>About Me</h3>
       <p className="soft-role">AI & Software Engineer</p>
       <p>
-        I build applied AI systems, backend platforms, simulation prototypes, and performance-minded software. I like
-        projects that feel understandable from the outside and resilient on the inside.
+        I build applied AI systems, backend platforms, data pipelines, and cloud-deployed software. My recent work spans
+        agentic AI, computer vision rehabilitation, financial NLP, microservices, and medical document automation.
       </p>
       <div className="two-column">
         <div className="paper-card">
           <b>Education</b>
-          <p>Computer science and software engineering coursework with applied systems projects.</p>
+          <p>BS Computer Science at FAST-NUCES Islamabad, expected June 2026.</p>
         </div>
         <div className="paper-card">
           <b>Interests</b>
-          <p>AI agents, computer vision, backend architecture, simulation, and graphics/performance work.</p>
+          <p>Agentic AI, NLP/RAG, computer vision, backend architecture, cloud deployment, and data engineering.</p>
         </div>
       </div>
     </div>
@@ -171,11 +169,11 @@ function Education() {
       </div>
       <div className="paper-card">
         <b>Relevant Coursework</b>
-        <p>{education.coursework.join(" • ")}</p>
+        <p>{education.coursework.join(" | ")}</p>
       </div>
       <div className="paper-card">
         <b>Academic Highlights</b>
-        <p>{education.highlights.join(" • ")}</p>
+        <p>{education.highlights.join(" | ")}</p>
       </div>
     </div>
   );
@@ -198,7 +196,10 @@ function ExperienceTimeline() {
 function Resume() {
   return (
     <div className="dialogue-copy">
-      <p>The folder is neatly labelled. Opening it asks the backend to log the download and redirect to the configured resume URL.</p>
+      <p>
+        The folder is neatly labelled. Opening it logs the download when the backend is available, then opens the local
+        resume PDF asset.
+      </p>
       <button className="download-button" onClick={downloadResume} type="button">
         <FileDown size={16} /> Download Resume
       </button>

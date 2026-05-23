@@ -2,25 +2,31 @@ import type { MediaItem } from "../types";
 
 export const mediaItems: MediaItem[] = [
   {
-    id: "leadership-photo-1",
-    title: "Student Leadership Night",
+    id: "math-olympiad-memory",
+    title: "National Mathematics Olympiad Camp",
     type: "image",
     url: "",
-    description: "A small frame of a night that mattered more than it looked.",
+    description: "Top 50 in Pakistan at the National Mathematics Olympiad Camp, COMSATS Lahore.",
   },
   {
-    id: "honor-award-1",
-    title: "Honor Roll / Award Note",
+    id: "deans-list-fall-2025",
+    title: "Dean's List - Fall 2025",
     type: "diagram",
     url: "",
-    projectId: "event-booking",
-    description: "Proof that a few quiet semesters still left a mark.",
+    description: "Academic honor from Semester 7.",
   },
   {
-    id: "conference-memory",
-    title: "Conference Memory",
+    id: "fast-debating-society",
+    title: "FAST Debating Society",
     type: "pdf",
     url: "",
-    description: "One of those moments where the room finally stayed still.",
+    description: "Secretary General, 2024-25. Led operations, workshops, and inter-university events.",
+  },
+  {
+    id: "potohar-mun",
+    title: "Potohar MUN",
+    type: "image",
+    url: "",
+    description: "President, 2021-22. Managed 300+ delegates, PKR 1.78M budget, and PKR 400K sponsorships.",
   },
 ];

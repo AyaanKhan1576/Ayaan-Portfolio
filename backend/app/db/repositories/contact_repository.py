@@ -19,3 +19,13 @@ class ContactRepository:
         except Exception:
             logger.exception("Failed to persist contact submission.")
             return False
+
+    def table_available(self) -> bool:
+        if self.client is None:
+            return False
+        try:
+            self.client.table("contact_submissions").select("id").limit(1).execute()
+            return True
+        except Exception as exc:
+            logger.warning("Contact submissions table is not reachable: %s", exc)
+            return False

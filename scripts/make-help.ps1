@@ -5,6 +5,8 @@ Write-Host "make setup          Create missing .env files and install dependenci
 Write-Host "make dev            Setup if needed, then run frontend and backend together"
 Write-Host "make test           Run frontend Vitest and backend pytest"
 Write-Host "make build          Build the frontend and run backend tests"
+Write-Host "make db-setup       Apply Supabase schema when DATABASE_URL and psql are available"
+Write-Host "make backend-check  Check backend env and Supabase table readiness"
 Write-Host "make frontend-dev   Run only the Vite frontend"
 Write-Host "make backend-dev    Run only the FastAPI backend"
 Write-Host "make clean          Remove generated build/test output"

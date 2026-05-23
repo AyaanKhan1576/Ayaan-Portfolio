@@ -1,0 +1,3 @@
+- security measurements for DB abuse and rate limiting
+- security measures for SQL injections
+- interactive projects

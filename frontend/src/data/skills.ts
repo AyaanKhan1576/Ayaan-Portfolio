@@ -1,9 +1,9 @@
 export const skills = [
-  { name: "AI/ML", value: 87, note: "Agents, vision prototypes, model-assisted workflows" },
-  { name: "Backend", value: 90, note: "FastAPI, service boundaries, PostgreSQL" },
-  { name: "Frontend", value: 78, note: "React, TypeScript, interactive interfaces" },
-  { name: "DevOps", value: 72, note: "Vercel, Render, Docker-ready architecture" },
-  { name: "Data Engineering", value: 74, note: "Structured data, analytics pipelines, Supabase" },
-  { name: "Cloud", value: 70, note: "Hosted APIs, managed databases, deployment config" },
-  { name: "Systems Programming", value: 82, note: "OpenCL, SIMD concepts, performance experiments" },
+  { name: "AI/ML", value: 90, note: "PyTorch, Transformers, HuggingFace, RAG, NLP, computer vision, LLM fine-tuning, agentic AI" },
+  { name: "Backend", value: 88, note: "FastAPI, Flask, REST APIs, microservices, MERN" },
+  { name: "Frontend", value: 76, note: "JavaScript, React, TypeScript, interactive portfolio interfaces" },
+  { name: "DevOps", value: 82, note: "Docker, Kubernetes, Terraform, GitHub Actions, Argo CD" },
+  { name: "Data Engineering", value: 84, note: "PostgreSQL, Pandas, ETL, medical PDF preprocessing, QA tooling" },
+  { name: "Cloud", value: 78, note: "AWS, managed databases, deployment pipelines, cloud coursework" },
+  { name: "Systems Programming", value: 75, note: "C++, embedded Linux debugging, Bash automation" },
 ];

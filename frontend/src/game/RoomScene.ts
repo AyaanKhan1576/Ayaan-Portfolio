@@ -135,6 +135,10 @@ export class RoomScene extends Phaser.Scene {
     for (const config of Object.values(objectSpriteMap)) {
       const blendConfig = config as { blendMode?: "normal" | "difference" };
       if (blendConfig.blendMode !== "difference") continue;
+      if (!config.frameKey) {
+        console.warn(`Could not create monochrome crop for ${config.id}: missing frameKey`);
+        continue;
+      }
       const textureKey = this.monochromeTextureKey(config.frameKey);
       if (this.textures.exists(textureKey)) continue;
 
@@ -376,7 +380,7 @@ export class RoomScene extends Phaser.Scene {
     }
 
     const blendConfig = config as { blendMode?: "normal" | "difference"; directImage?: boolean };
-    const textureKey = blendConfig.blendMode === "difference" ? this.monochromeTextureKey(config.frameKey!) : config.sourceKey;
+    const textureKey = blendConfig.blendMode === "difference" && config.frameKey ? this.monochromeTextureKey(config.frameKey) : config.sourceKey;
     const frameKey = blendConfig.blendMode === "difference" || blendConfig.directImage ? undefined : config.frameKey;
     const hasTexture = blendConfig.blendMode === "difference"
       ? this.textures.exists(textureKey)
@@ -387,8 +391,8 @@ export class RoomScene extends Phaser.Scene {
       return this.drawMissingAssetPlaceholder(centerX, centerY, object.size.width, object.size.height);
     }
 
-    const image = object.object_id === "cat"
-      ? this.add.sprite(centerX, centerY, this.catCutoutTextureKey(config.frameKey!))
+    const image = object.object_id === "cat" && config.frameKey
+      ? this.add.sprite(centerX, centerY, this.catCutoutTextureKey(config.frameKey))
       : blendConfig.directImage
         ? this.add.image(centerX, centerY, config.sourceKey)
         : this.add.image(centerX, centerY, textureKey, frameKey);

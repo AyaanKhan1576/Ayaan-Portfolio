@@ -1,4 +1,4 @@
-.PHONY: help setup dev test build frontend-dev backend-dev frontend-test backend-test frontend-build stop stop-backend stop-frontend clean
+.PHONY: help setup dev test build db-setup backend-check frontend-dev backend-dev frontend-test backend-test frontend-build stop stop-backend stop-frontend clean
 
 help:
 	@powershell -NoProfile -ExecutionPolicy Bypass -File scripts/make-help.ps1
@@ -15,20 +15,26 @@ test:
 build:
 	@powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1
 
+db-setup:
+	@powershell -NoProfile -ExecutionPolicy Bypass -File scripts/db-setup.ps1
+
+backend-check:
+	@powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backend-check.ps1
+
 frontend-dev:
-	@powershell -NoProfile -ExecutionPolicy Bypass -Command "$$npm = (Get-Command npm.cmd -CommandType Application -All | Where-Object { $$_.Source -notlike '*\node_modules\*' } | Select-Object -First 1).Source; Set-Location frontend; if (-not (Test-Path .env)) { Copy-Item .env.example .env }; & $$npm install; & $$npm run dev"
+	@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location frontend; if (-not (Test-Path .env)) { Copy-Item .env.example .env }; npm.cmd install; npm.cmd run dev"
 
 backend-dev:
 	@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location backend; if (-not (Test-Path .env)) { Copy-Item .env.example .env }; if (-not (Test-Path .venv)) { python -m venv .venv }; .\.venv\Scripts\python.exe -m pip install -r requirements.txt; .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload"
 
 frontend-test:
-	@powershell -NoProfile -ExecutionPolicy Bypass -Command "$$npm = (Get-Command npm.cmd -CommandType Application -All | Where-Object { $$_.Source -notlike '*\node_modules\*' } | Select-Object -First 1).Source; Set-Location frontend; & $$npm run test"
+	@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location frontend; npm.cmd run test"
 
 backend-test:
 	@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location backend; .\.venv\Scripts\python.exe -m pytest -p no:cacheprovider"
 
 frontend-build:
-	@powershell -NoProfile -ExecutionPolicy Bypass -Command "$$npm = (Get-Command npm.cmd -CommandType Application -All | Where-Object { $$_.Source -notlike '*\node_modules\*' } | Select-Object -First 1).Source; Set-Location frontend; & $$npm run build"
+	@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location frontend; npm.cmd run build"
 
 
 stop:

@@ -40,6 +40,78 @@ export const generatedAssetManifest = {
       "frameCount": 868
     },
     {
+      "key": "sprites_dialogue",
+      "path": "/assets/sprites/dialogue-.png",
+      "filename": "dialogue-.png",
+      "extension": "png",
+      "inferredType": "spriteSheet",
+      "width": 392,
+      "height": 96,
+      "suggestedFrameWidth": 16,
+      "suggestedFrameHeight": 16,
+      "frameCount": 144
+    },
+    {
+      "key": "sprites_dialogue_box",
+      "path": "/assets/sprites/dialogue_box.png",
+      "filename": "dialogue_box.png",
+      "extension": "png",
+      "inferredType": "spriteSheet",
+      "width": 409,
+      "height": 113,
+      "suggestedFrameWidth": 16,
+      "suggestedFrameHeight": 16,
+      "frameCount": 175
+    },
+    {
+      "key": "sprites_dialogue_box_2",
+      "path": "/assets/sprites/dialogue_box_2.jpg",
+      "filename": "dialogue_box_2.jpg",
+      "extension": "jpg",
+      "inferredType": "singleSprite",
+      "width": 0,
+      "height": 0,
+      "suggestedFrameWidth": 32,
+      "suggestedFrameHeight": 32,
+      "frameCount": 0
+    },
+    {
+      "key": "sprites_dialogue_box_2_frame",
+      "path": "/assets/sprites/dialogue_box_2_frame.png",
+      "filename": "dialogue_box_2_frame.png",
+      "extension": "png",
+      "inferredType": "background",
+      "width": 590,
+      "height": 116,
+      "suggestedFrameWidth": 590,
+      "suggestedFrameHeight": 116,
+      "frameCount": 1
+    },
+    {
+      "key": "sprites_education",
+      "path": "/assets/sprites/education.png",
+      "filename": "education.png",
+      "extension": "png",
+      "inferredType": "singleSprite",
+      "width": 30,
+      "height": 32,
+      "suggestedFrameWidth": 16,
+      "suggestedFrameHeight": 16,
+      "frameCount": 2
+    },
+    {
+      "key": "sprites_honors",
+      "path": "/assets/sprites/honors.png",
+      "filename": "honors.png",
+      "extension": "png",
+      "inferredType": "singleSprite",
+      "width": 28,
+      "height": 32,
+      "suggestedFrameWidth": 16,
+      "suggestedFrameHeight": 16,
+      "frameCount": 2
+    },
+    {
       "key": "sprites_hud_battleui",
       "path": "/assets/sprites/HUD_battleUI.png",
       "filename": "HUD_battleUI.png",
@@ -76,6 +148,18 @@ export const generatedAssetManifest = {
       "frameCount": 256
     },
     {
+      "key": "sprites_lightbulb",
+      "path": "/assets/sprites/lightbulb.png",
+      "filename": "lightbulb.png",
+      "extension": "png",
+      "inferredType": "singleSprite",
+      "width": 35,
+      "height": 61,
+      "suggestedFrameWidth": 16,
+      "suggestedFrameHeight": 16,
+      "frameCount": 6
+    },
+    {
       "key": "sprites_tileset_blackspace",
       "path": "/assets/sprites/tileset_blackspace.png",
       "filename": "tileset_blackspace.png",
@@ -86,6 +170,18 @@ export const generatedAssetManifest = {
       "suggestedFrameWidth": 64,
       "suggestedFrameHeight": 64,
       "frameCount": 768
+    },
+    {
+      "key": "sprites_whitespace_lightbulb",
+      "path": "/assets/sprites/whitespace_lightbulb.png",
+      "filename": "whitespace_lightbulb.png",
+      "extension": "png",
+      "inferredType": "spriteSheet",
+      "width": 288,
+      "height": 128,
+      "suggestedFrameWidth": 32,
+      "suggestedFrameHeight": 32,
+      "frameCount": 36
     },
     {
       "key": "sprites_whitespace_misc",
