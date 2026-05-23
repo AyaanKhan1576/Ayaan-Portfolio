@@ -120,7 +120,7 @@ export const croppedFrames: CroppedFrameConfig[] = [
 
   { key: "obj_cat_0", sourceKey: whitespaceSource, x: 96, y: 8, width: 32, height: 24 },
   { key: "obj_cat_1", sourceKey: whitespaceSource, x: 128, y: 8, width: 32, height: 24 },
-  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 290, y: 117, width: 23, height: 39 },
+  { key: "obj_lightbulb", sourceKey: whitespaceSource, x: 134, y: 161, width: 21, height: 30 },
 
   // White-on-black charm crops are manually tightened to whole connected objects.
   { key: "obj_about_laptop", sourceKey: charmSource, x: 555, y: 342, width: 80, height: 73 },
@@ -248,11 +248,11 @@ export const objectSpriteMap = {
     id: "lightbulbSprite",
     sourceKey: whitespaceSource,
     frameKey: "obj_lightbulb",
-    displayWidth: 30,
-    displayHeight: 45,
+    displayWidth: 22,
+    displayHeight: 31,
     originX: 0.5,
-    originY: 0.1,
-    notes: "Uses the hanging bulb crop from /assets/sprites/whitespace_misc.png with the string included.",
+    originY: 0,
+    notes: "Uses the hanging bulb crop from /assets/sprites/whitespace_misc.png as one connected monochrome object.",
   },
   promptBoxSprite: {
     id: "promptBoxSprite",

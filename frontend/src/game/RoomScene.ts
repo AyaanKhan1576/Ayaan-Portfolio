@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { ambientParticles, ambientSprites, bulbMotion } from "./assets/ambientAnimationConfig";
 import { mainRoomConfig } from "./assets/roomConfig";
 import { playerSprite } from "./assets/playerConfig";
 import { croppedFrames, objectSpriteMap, sourceImages } from "./assets/spriteConfig";
@@ -59,8 +60,10 @@ export class RoomScene extends Phaser.Scene {
     this.registerCroppedFrames();
     this.registerMonochromeFrames();
     this.createPlayerAnimations();
+    this.createAmbientAnimationFrames();
     this.drawRoom();
     this.drawObjects();
+    this.drawAmbientElements();
 
     this.playerShadow = this.add.ellipse(mainRoomConfig.playerStart.x, mainRoomConfig.playerStart.y + 5, 25, 7, 0x111111, 0.08);
     this.player = this.createPlayer(mainRoomConfig.playerStart.x, mainRoomConfig.playerStart.y);
@@ -232,15 +235,62 @@ export class RoomScene extends Phaser.Scene {
 
     const bulbConfig = objectSpriteMap.lightbulbSprite;
     const bulb = this.add.container(400, 0);
-    const cord = this.add.rectangle(0, 48, 2, 94, 0x111111, 0.88);
-    const bulbImage = this.createCroppedImage(0, 96, bulbConfig);
+    const cord = this.add.rectangle(0, 44, 2, 88, 0x111111, 0.88);
+    const bulbImage = this.createCroppedImage(0, 88, bulbConfig);
     bulb.add([cord, bulbImage]);
-    this.tweens.add({ targets: bulb, angle: { from: -1.1, to: 1.1 }, duration: 4200, yoyo: true, repeat: -1, ease: "Sine.inOut" });
-    this.tweens.add({ targets: bulbImage, alpha: { from: 0.82, to: 1 }, duration: 2600, yoyo: true, repeat: -1, ease: "Sine.inOut" });
+    this.tweens.add({ targets: bulb, angle: { from: -bulbMotion.swayAmplitude, to: bulbMotion.swayAmplitude }, y: { from: 0, to: bulbMotion.bobAmplitude }, duration: bulbMotion.swayDuration, yoyo: true, repeat: -1, ease: "Sine.inOut" });
+    this.tweens.add({ targets: bulbImage, alpha: { from: 0.86, to: 1 }, duration: 3200, yoyo: true, repeat: -1, ease: "Sine.inOut" });
+  }
 
-    for (let i = 0; i < 7; i += 1) {
-      const dust = this.add.circle(180 + i * 72, 154 + (i % 3) * 38, 1, 0x111111, 0.08);
-      this.tweens.add({ targets: dust, y: dust.y - 6, alpha: { from: 0.03, to: 0.13 }, duration: 6000 + i * 400, repeat: -1, yoyo: true });
+  private createAmbientAnimationFrames() {
+    if (!this.anims.exists("fluff_breathe")) {
+      this.anims.create({
+        key: "fluff_breathe",
+        frames: [
+          { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_0" },
+          { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_1" },
+        ],
+        frameRate: 1,
+        repeat: -1,
+      });
+    }
+  }
+
+  private drawAmbientElements() {
+    for (const particle of ambientParticles) {
+      const dot = this.add.circle(particle.x, particle.y, particle.size, 0x111111, particle.alpha);
+      this.tweens.add({
+        targets: dot,
+        x: dot.x + particle.driftX,
+        y: dot.y + particle.driftY,
+        alpha: { from: particle.alpha, to: particle.alpha * 1.7 },
+        duration: particle.duration,
+        delay: particle.delay,
+        repeat: -1,
+        yoyo: true,
+        ease: "Sine.inOut",
+      });
+    }
+
+    for (const sprite of ambientSprites) {
+      const config = objectSpriteMap[sprite.assetKey];
+      if (!this.textures.getFrame(config.sourceKey, config.frameKey)) continue;
+
+      const ambient = this.add.sprite(sprite.x, sprite.y, config.sourceKey, config.frameKey);
+      ambient.setOrigin(sprite.originX ?? 0.5, sprite.originY ?? 0.5);
+      ambient.setDisplaySize(sprite.displayWidth, sprite.displayHeight);
+      ambient.setDepth(sprite.y);
+      if (sprite.assetKey === "catSprite") {
+        ambient.play("fluff_breathe");
+      }
+      this.tweens.add({
+        targets: ambient,
+        y: ambient.y - sprite.bobAmplitude,
+        duration: sprite.bobDuration,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.inOut",
+      });
     }
   }
 

@@ -25,7 +25,7 @@ export const mainRoomConfig: RoomAssetConfig = {
   tilesetAssetKey: hasTileset ? "rooms_whitespace_tileset" : undefined,
   width: 800,
   height: 450,
-  bounds: { x: 34, y: 72, width: 732, height: 338 },
+  bounds: { x: 248, y: 132, width: 304, height: 190 },
   wrapBounds: { x: 0, y: 0, width: 800, height: 450 },
   wrapPadding: 18,
   playerStart: { x: 404, y: 255 },
@@ -33,7 +33,8 @@ export const mainRoomConfig: RoomAssetConfig = {
   assumptions: [
     "Full-room background is preferred when available.",
     "Tilesets are not required for the MVP room; fallback graphics stay active for readability.",
+    "The decorative room rectangle is intentionally small and symbolic rather than a movement boundary.",
     "The player wraps at the full 800x450 canvas edges instead of the decorative room outline.",
-    "The lightbulb uses a downloaded crop when available; the cord is drawn so the room remains usable without external assets.",
+    "The lightbulb uses a connected crop when available, with the cord still drawn for the hanging silhouette.",
   ],
 };

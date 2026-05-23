@@ -3,9 +3,11 @@ import { AudioControls } from "./components/AudioControls";
 import { GameRoom } from "./components/GameRoom";
 import { MobileControls } from "./components/MobileControls";
 import { QuestLog } from "./components/QuestLog";
+import { RpgDialogue } from "./components/RpgDialogue";
 import { RpgModal } from "./components/RpgModal";
 import { config } from "./config";
 import type { MobileInputState } from "./game/RoomScene";
+import { getObjectDialogue } from "./game/assets/dialogueConfig";
 import { useAudioSystem } from "./hooks/useAudioSystem";
 import { trackEvent } from "./services/analytics";
 import { PortfolioContent } from "./sections/PortfolioContent";
@@ -13,6 +15,7 @@ import type { RoomObject, SectionId } from "./types";
 
 export function App() {
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
+  const [activeDialogue, setActiveDialogue] = useState<{ objectId: string; title: string; text: string; section: SectionId } | null>(null);
   const [nearbyObject, setNearbyObject] = useState<RoomObject | null>(null);
   const [mobileInput, setMobileInput] = useState<MobileInputState>({ up: false, down: false, left: false, right: false });
   const [interactSignal, setInteractSignal] = useState(0);
@@ -41,7 +44,6 @@ export function App() {
   }, [audio]);
 
   const interact = useCallback((object: RoomObject) => {
-    openSection(object.linked_portfolio_section);
     const interactionSounds: Record<string, Parameters<typeof audio.play>[0]> = {
       door: "door",
       piano: "piano",
@@ -53,24 +55,42 @@ export function App() {
       watch: "prompt",
       phone: "prompt",
     };
+
+    if (activeDialogue?.objectId !== object.object_id) {
+      setActiveDialogue({
+        objectId: object.object_id,
+        title: object.display_name,
+        text: getObjectDialogue(object.object_id, object.display_name),
+        section: object.linked_portfolio_section,
+      });
+      audio.play(interactionSounds[object.object_id] ?? "prompt");
+      return;
+    }
+
+    setActiveDialogue(null);
+    openSection(object.linked_portfolio_section);
     audio.play(interactionSounds[object.object_id] ?? "prompt");
     void trackEvent({
       eventType: "object_interaction",
       metadata: { objectId: object.object_id, displayName: object.display_name },
     });
-  }, [audio, openSection]);
+  }, [activeDialogue, audio, openSection]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         audio.play("menuClose");
-        setActiveSection(null);
+        if (activeDialogue) {
+          setActiveDialogue(null);
+        } else {
+          setActiveSection(null);
+        }
       }
-      if (event.key.toLowerCase() === "m") setActiveSection("intro");
+      if (event.key.toLowerCase() === "m" && !activeDialogue) setActiveSection("intro");
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [audio]);
+  }, [activeDialogue, audio]);
 
   const modalContent = activeSection ? <PortfolioContent openSection={openSection} section={activeSection} /> : null;
 
@@ -117,6 +137,20 @@ export function App() {
           <p>Close: Esc</p>
         </aside>
       </section>
+
+      <RpgDialogue
+        onClose={() => {
+          audio.play("menuClose");
+          setActiveDialogue(null);
+        }}
+        onContinue={() => {
+          if (!activeDialogue) return;
+          setActiveDialogue(null);
+          openSection(activeDialogue.section);
+        }}
+        text={activeDialogue?.text ?? ""}
+        title={activeDialogue?.title ?? ""}
+      />
 
       <RpgModal
         onClose={() => {
