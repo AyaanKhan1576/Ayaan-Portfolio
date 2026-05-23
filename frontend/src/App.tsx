@@ -137,7 +137,7 @@ export function App() {
         </aside>
       </section>
 
-      <RpgDialogue prompt={preview?.prompt ?? ""} text={preview?.text ?? ""} title={preview?.title ?? ""} />
+      <RpgDialogue key={`${preview?.objectId ?? "none"}-${activePreviewSource ?? "none"}`} prompt={preview?.prompt ?? ""} text={preview?.text ?? ""} title={preview?.title ?? ""} />
 
       <RpgModal
         onClose={() => {

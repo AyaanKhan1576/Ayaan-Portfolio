@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { ambientParticles, bulbMotion } from "./assets/ambientAnimationConfig";
+import { ambientParticles } from "./assets/ambientAnimationConfig";
 import { mainRoomConfig } from "./assets/roomConfig";
 import { playerSprite } from "./assets/playerConfig";
 import { croppedFrames, objectSpriteMap, sourceImages } from "./assets/spriteConfig";
@@ -45,6 +45,10 @@ export class RoomScene extends Phaser.Scene {
       if (!this.textures.exists(image.key)) {
         this.load.image(image.key, image.path);
       }
+    }
+
+    if (!this.textures.exists("lightbulb")) {
+      this.load.image("lightbulb", "/assets/sprites/lightbulb.png");
     }
 
     this.load.on("loaderror", (file: { key?: string; src?: string }) => {
@@ -157,6 +161,42 @@ export class RoomScene extends Phaser.Scene {
       context.putImageData(imageData, 0, 0);
       canvasTexture.refresh();
     }
+
+    this.registerCatCutoutFrames();
+  }
+
+  private catCutoutTextureKey(frameKey: string) {
+    return `${frameKey}_cutout`;
+  }
+
+  private registerCatCutoutFrames() {
+    const catFrames = croppedFrames.filter((frame) => frame.key === "obj_cat_0" || frame.key === "obj_cat_1");
+    for (const frame of catFrames) {
+      const textureKey = this.catCutoutTextureKey(frame.key);
+      if (this.textures.exists(textureKey)) continue;
+
+      const source = this.textures.get(frame.sourceKey)?.getSourceImage();
+      if (!(source instanceof HTMLImageElement || source instanceof HTMLCanvasElement)) continue;
+
+      const canvasTexture = this.textures.createCanvas(textureKey, frame.width, frame.height);
+      const context = canvasTexture?.getContext();
+      if (!canvasTexture || !context) continue;
+
+      context.clearRect(0, 0, frame.width, frame.height);
+      context.drawImage(source, frame.x, frame.y, frame.width, frame.height, 0, 0, frame.width, frame.height);
+      const imageData = context.getImageData(0, 0, frame.width, frame.height);
+      const pixels = imageData.data;
+
+      for (let index = 0; index < pixels.length; index += 4) {
+        const luminance = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
+        if (luminance > 240) {
+          pixels[index + 3] = 0;
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+      canvasTexture.refresh();
+    }
   }
 
   private monochromeTextureKey(frameKey: string) {
@@ -235,14 +275,12 @@ export class RoomScene extends Phaser.Scene {
       mainRoomConfig.bounds.width - 5,
       mainRoomConfig.bounds.height - 4,
     );
+    graphics.lineStyle(2, 0x111111, 1).lineBetween(398, 0, 398, mainRoomConfig.bounds.y - 50);
 
-    const bulb = this.add.container(400, 0);
-    const cord = this.add.rectangle(0, 44, 2, 88, 0x111111, 0.88);
-    const socket = this.add.rectangle(0, 88, 5, 8, 0x111111, 1);
-    const bulbBody = this.add.circle(0, 100, 8, 0xffffff, 0).setStrokeStyle(2, 0x111111, 1);
-    const bulbBase = this.add.rectangle(0, 108, 6, 4, 0x111111, 1);
-    bulb.add([cord, socket, bulbBody, bulbBase]);
-    this.tweens.add({ targets: bulb, angle: { from: -bulbMotion.swayAmplitude, to: bulbMotion.swayAmplitude }, y: { from: 0, to: bulbMotion.bobAmplitude }, duration: bulbMotion.swayDuration, yoyo: true, repeat: -1, ease: "Sine.inOut" });
+    const bulb = this.add.image(400, mainRoomConfig.bounds.y - 8, "lightbulb");
+    bulb.setOrigin(0.5, 1.3);
+    bulb.setScale(1.4);
+    bulb.setDepth(2);
   }
 
   private createAmbientAnimationFrames() {
@@ -250,8 +288,8 @@ export class RoomScene extends Phaser.Scene {
       this.anims.create({
         key: "fluff_breathe",
         frames: [
-          { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_0" },
-          { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_1" },
+          { key: this.catCutoutTextureKey("obj_cat_0") },
+          { key: this.catCutoutTextureKey("obj_cat_1") },
         ],
         frameRate: 1,
         repeat: -1,
@@ -303,8 +341,8 @@ export class RoomScene extends Phaser.Scene {
           this.anims.create({
             key: "cat_idle",
             frames: [
-              { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_0" },
-              { key: objectSpriteMap.catSprite.sourceKey, frame: "obj_cat_1" },
+              { key: this.catCutoutTextureKey("obj_cat_0") },
+              { key: this.catCutoutTextureKey("obj_cat_1") },
             ],
             frameRate: 1,
             repeat: -1,
@@ -333,7 +371,9 @@ export class RoomScene extends Phaser.Scene {
       return this.drawMissingAssetPlaceholder(centerX, centerY, object.size.width, object.size.height);
     }
 
-    const image = object.object_id === "cat" ? this.add.sprite(centerX, centerY, textureKey, frameKey) : this.add.image(centerX, centerY, textureKey, frameKey);
+    const image = object.object_id === "cat"
+      ? this.add.sprite(centerX, centerY, this.catCutoutTextureKey(config.frameKey))
+      : this.add.image(centerX, centerY, textureKey, frameKey);
 
     const originConfig = config as { originX?: number; originY?: number };
     image.setOrigin(originConfig.originX ?? 0.5, originConfig.originY ?? 0.5);

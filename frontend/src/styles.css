@@ -292,8 +292,8 @@ a {
 .rpg-window {
   position: relative;
   z-index: 1001;
-  width: min(680px, 80vw);
-  max-height: 180px;
+  width: min(1000px, 88vw);
+  max-height: 82vh;
   border: 2px solid #111111;
   border-radius: 0;
   background: #ffffff;
@@ -318,44 +318,137 @@ a {
 }
 
 .rpg-window-body {
-  max-height: 120px;
+  max-height: calc(82vh - 86px);
   overflow: auto;
-  padding: 12px 14px 14px;
+  padding: 32px 34px 34px;
   line-height: 1.55;
 }
 
 .rpg-preview {
   position: fixed;
-  left: 50%;
-  bottom: 40px;
-  z-index: 1000;
-  width: min(680px, 80vw);
+  left: 42%;
+  bottom: 28px;
+  z-index: 9999;
+  width: min(540px, 68vw);
   transform: translateX(-50%);
   pointer-events: none;
 }
 
 .rpg-preview .rpg-window {
+  position: relative;
   width: 100%;
-  max-height: 180px;
+  height: min(102px, 14vw);
+  border: 0;
+  background: transparent;
+  background-image: url("/assets/sprites/dialogue_box.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  color: #ffffff;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.rpg-preview .rpg-window-content {
+  position: absolute;
+  left: 14px;
+  right: 16px;
+  top: 12px;
+  bottom: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 0;
 }
 
 .rpg-preview .rpg-window-header {
-  padding: 10px 14px;
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  padding: 0;
+  border-bottom: 0;
+  background: transparent;
 }
 
 .rpg-preview .rpg-window-body {
-  padding: 12px 14px 14px;
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  padding: 0;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.rpg-preview .rpg-window-body > p:first-child {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.15vw, 1.03rem);
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.rpg-preview .rpg-window-body > p.pixel-label {
+  margin-top: 0;
+}
+
+.rpg-preview .rpg-window-header h2,
+.rpg-preview .pixel-label,
+.rpg-preview .rpg-window-body p {
+  color: #ffffff;
+}
+
+.rpg-preview .pixel-label {
+  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.08em;
+}
+
+.rpg-preview .rpg-window-header h2 {
+  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  margin: 1px 0 0;
+  font-size: 0.64rem;
+  line-height: 1.05;
+}
+
+.rpg-preview .rpg-window-body p {
+  font-family: "AyaanRoomPixel", "AyaanRoomPixelAlt", "Courier New", monospace;
+  margin: 0;
+  font-size: 0.6rem;
+  line-height: 1.12;
+}
+
+.rpg-preview .rpg-window-body .pixel-label {
+  margin-top: 4px;
+  font-size: 0.46rem;
 }
 
 @media (max-width: 720px) {
   .rpg-preview {
-    bottom: 32px;
-    width: min(92vw, 680px);
+    bottom: 28px;
+    left: 50%;
+    width: min(88vw, 560px);
   }
 
   .rpg-window {
-    max-height: 190px;
+    max-height: 86vh;
   }
+}
+
+.rpg-modal .rpg-window {
+  width: min(1000px, 88vw);
+  max-height: 82vh;
+}
+
+.rpg-modal .rpg-window-body {
+  max-height: calc(82vh - 86px);
+  padding: 32px 34px 34px;
 }
 
 .dialogue-copy {

@@ -5,15 +5,15 @@ import type { SectionId } from "../types";
 
 const titles: Record<SectionId, string> = {
   intro: "A small room between projects",
-  about: "Desk Notes",
-  skills: "Bookshelf Stats",
-  featured: "Poster Memories",
-  projects: "Quest Files",
+  about: "About Me",
+  skills: "Skills",
+  featured: "Featured Projects",
+  projects: "All Projects",
   simulations: "Simulation Console",
   media: "Media Gallery",
-  experience: "Calendar Path",
-  resume: "Resume Folder",
-  contact: "Mailbox",
+  experience: "Experience",
+  resume: "Resume",
+  contact: "Contact",
 };
 
 export function RpgModal({
@@ -28,7 +28,7 @@ export function RpgModal({
   return (
     <AnimatePresence>
       {section ? (
-        <motion.div className="rpg-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="rpg-overlay rpg-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div
             className="rpg-window"
             initial={{ y: 18, scale: 0.96 }}

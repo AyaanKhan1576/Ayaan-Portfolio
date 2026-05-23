@@ -52,7 +52,7 @@ function Intro({ openSection }: { openSection: (section: SectionId) => void }) {
 function About() {
   return (
     <div className="dialogue-copy">
-      <h3>Ayaan Khan</h3>
+      <h3>About Me</h3>
       <p className="soft-role">AI & Software Engineer</p>
       <p>
         I build applied AI systems, backend platforms, simulation prototypes, and performance-minded software. I like

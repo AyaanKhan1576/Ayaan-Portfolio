@@ -42,15 +42,17 @@ export function RpgDialogue({
           animate={{ scale: 1 }}
           exit={{ scale: 0.98 }}
         >
-          <div className="rpg-window-header">
-            <div>
-              <p className="pixel-label">Ayaan's Room</p>
-              <h2>{title}</h2>
+          <div className="rpg-window-content">
+            <div className="rpg-window-header">
+              <div>
+                <p className="pixel-label">Ayaan's Room</p>
+                <h2>{title}</h2>
+              </div>
             </div>
-          </div>
-          <div className="rpg-window-body">
-            <p style={{ marginBottom: "0.35rem" }}>{visibleText}</p>
-            <p className="pixel-label" style={{ margin: 0, opacity: 0.78 }}>{prompt}</p>
+            <div className="rpg-window-body">
+              <p>{visibleText}</p>
+              <p className="pixel-label" style={{ opacity: 0.78 }}>{prompt}</p>
+            </div>
           </div>
         </motion.div>
       </motion.div>

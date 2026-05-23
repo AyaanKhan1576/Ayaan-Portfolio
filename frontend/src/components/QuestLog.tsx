@@ -2,12 +2,12 @@ import type { SectionId } from "../types";
 
 const labels: Record<SectionId, string> = {
   intro: "Intro",
-  about: "About",
+  about: "About Me",
   skills: "Skills",
-  featured: "Featured",
-  projects: "Projects",
+  featured: "Featured Projects",
+  projects: "All Projects",
   simulations: "Simulations",
-  media: "Media",
+  media: "Media Gallery",
   experience: "Experience",
   resume: "Resume",
   contact: "Contact",

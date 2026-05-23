@@ -27,7 +27,7 @@ export const interactableObjects: InteractableObjectConfig[] = [
     assetKey: "laptopSprite",
     ...roomObjectLayout.find((item) => item.id === "laptop")!,
     interactionPrompt: "About Me - press E.",
-    actionType: "dialogue",
+    actionType: "menu",
     targetSection: "about",
     color: 0xffffff,
     accent: 0x111111,
