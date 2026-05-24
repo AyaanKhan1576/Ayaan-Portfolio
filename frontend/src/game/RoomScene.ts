@@ -31,6 +31,7 @@ export class RoomScene extends Phaser.Scene {
   private hoveredObject: RoomObject | null = null;
   private mobileInput: MobileInputState = { up: false, down: false, left: false, right: false };
   private mobileSelectedObjectId: string | null = null;
+  private objectPointerDownAt = 0;
   private lastInteractAt = 0;
   private lastDirection: PlayerDirection = "down";
   private interactionLocked = false;
@@ -77,11 +78,12 @@ export class RoomScene extends Phaser.Scene {
     this.drawObjects();
     this.drawAmbientElements();
 
-    this.playerShadow = this.add.ellipse(mainRoomConfig.playerStart.x, mainRoomConfig.playerStart.y + 5, 25, 7, 0x111111, 0.08);
-    this.player = this.createPlayer(mainRoomConfig.playerStart.x, mainRoomConfig.playerStart.y);
+    this.playerShadow = this.add.ellipse(mainRoomConfig.playerStart.x, this.sceneY(mainRoomConfig.playerStart.y) + 5, 25, 7, 0x111111, 0.08);
+    this.player = this.createPlayer(mainRoomConfig.playerStart.x, this.sceneY(mainRoomConfig.playerStart.y));
 
     this.cursors = this.input.keyboard?.createCursorKeys();
     this.keys = this.input.keyboard?.addKeys("W,A,S,D,E,SPACE") as Record<string, Phaser.Input.Keyboard.Key>;
+    this.registerMobileBackgroundDismissal();
   }
 
   update(time: number, delta: number) {
@@ -243,11 +245,7 @@ export class RoomScene extends Phaser.Scene {
 
   private updateNearbyObject() {
     if (this.interactionLocked) {
-      if (this.nearbyObject) {
-        this.nearbyObject = null;
-        this.callbacks.onNearbyChange(null);
-        this.updateObjectFeedback(null);
-      }
+      this.clearSelection();
       return;
     }
 
@@ -275,6 +273,15 @@ export class RoomScene extends Phaser.Scene {
     this.callbacks.onInteract(object);
   }
 
+  private clearSelection() {
+    this.nearbyObject = null;
+    this.hoveredObject = null;
+    this.mobileSelectedObjectId = null;
+    this.callbacks.onNearbyChange(null);
+    this.callbacks.onHoverChange(null);
+    this.updateObjectFeedback(null);
+  }
+
   private findNearbyObject(): RoomObject | null {
     if (!this.player) return null;
     let closest: RoomObject | null = null;
@@ -282,7 +289,7 @@ export class RoomScene extends Phaser.Scene {
 
     for (const object of this.objects) {
       const centerX = object.position.x + object.size.width / 2;
-      const centerY = object.position.y + object.size.height / 2;
+      const centerY = this.sceneY(object.position.y + object.size.height / 2);
       const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, centerX, centerY);
       const interactionRadius = this.effectiveInteractionRadius(object);
       if (distance <= interactionRadius && distance < closestDistance) {
@@ -308,6 +315,25 @@ export class RoomScene extends Phaser.Scene {
     return Math.max(object.interaction_radius * 1.45, 76);
   }
 
+  private mobileWorldOffsetY() {
+    return this.isMobileViewport() ? -48 : 0;
+  }
+
+  private sceneY(y: number) {
+    return y + this.mobileWorldOffsetY();
+  }
+
+  private registerMobileBackgroundDismissal() {
+    this.input.on("pointerdown", () => {
+      if (!this.isMobileViewport() || this.interactionLocked) return;
+      this.time.delayedCall(0, () => {
+        if (this.time.now - this.objectPointerDownAt > 60) {
+          this.clearSelection();
+        }
+      });
+    });
+  }
+
   private wrapPlayer() {
     if (!this.player) return;
     const { wrapBounds, wrapPadding } = mainRoomConfig;
@@ -323,19 +349,20 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private drawRoom() {
+    const offsetY = this.mobileWorldOffsetY();
     const graphics = this.add.graphics();
     graphics.fillStyle(0xffffff, 1).fillRect(0, 0, 800, 450);
-    graphics.fillStyle(0xffffff, 1).fillRect(mainRoomConfig.bounds.x, mainRoomConfig.bounds.y, mainRoomConfig.bounds.width, mainRoomConfig.bounds.height);
-    graphics.lineStyle(2, 0x111111, 0.72).strokeRect(mainRoomConfig.bounds.x, mainRoomConfig.bounds.y, mainRoomConfig.bounds.width, mainRoomConfig.bounds.height);
+    graphics.fillStyle(0xffffff, 1).fillRect(mainRoomConfig.bounds.x, mainRoomConfig.bounds.y + offsetY, mainRoomConfig.bounds.width, mainRoomConfig.bounds.height);
+    graphics.lineStyle(2, 0x111111, 0.72).strokeRect(mainRoomConfig.bounds.x, mainRoomConfig.bounds.y + offsetY, mainRoomConfig.bounds.width, mainRoomConfig.bounds.height);
     graphics.lineStyle(1, 0x111111, 0.18).strokeRect(
       mainRoomConfig.bounds.x + 3,
-      mainRoomConfig.bounds.y + 2,
+      mainRoomConfig.bounds.y + 2 + offsetY,
       mainRoomConfig.bounds.width - 5,
       mainRoomConfig.bounds.height - 4,
     );
-    graphics.lineStyle(2, 0x111111, 1).lineBetween(398, 0, 398, mainRoomConfig.bounds.y - 50);
+    graphics.lineStyle(2, 0x111111, 1).lineBetween(398, 0, 398, mainRoomConfig.bounds.y - 50 + offsetY);
 
-    const bulb = this.add.image(400, mainRoomConfig.bounds.y - 8, "lightbulb");
+    const bulb = this.add.image(400, mainRoomConfig.bounds.y - 8 + offsetY, "lightbulb");
     bulb.setOrigin(0.5, 1.3);
     bulb.setScale(1.4);
     bulb.setDepth(2);
@@ -357,7 +384,7 @@ export class RoomScene extends Phaser.Scene {
 
   private drawAmbientElements() {
     for (const particle of ambientParticles) {
-      const dot = this.add.circle(particle.x, particle.y, particle.size, 0x111111, particle.alpha);
+      const dot = this.add.circle(particle.x, this.sceneY(particle.y), particle.size, 0x111111, particle.alpha);
       this.tweens.add({
         targets: dot,
         x: dot.x + particle.driftX,
@@ -376,6 +403,7 @@ export class RoomScene extends Phaser.Scene {
     for (const object of this.objects) {
       const { x, y } = object.position;
       const { width, height } = object.size;
+      const renderY = this.sceneY(y);
       const assetKey = object.assetKey as ObjectSpriteKey | undefined;
       const config = assetKey ? objectSpriteMap[assetKey] : undefined;
       const mobile = this.isMobileViewport();
@@ -387,7 +415,7 @@ export class RoomScene extends Phaser.Scene {
       const baseHitboxHeight = config?.hitboxHeight ?? visibleHeight + hitboxPadding;
       const hitboxWidth = Math.max(baseHitboxWidth * (mobile ? 1.3 : 1), mobile ? 58 : 0);
       const hitboxHeight = Math.max(baseHitboxHeight * (mobile ? 1.3 : 1), mobile ? 58 : 0);
-      const zone = this.add.zone(x + width / 2, y + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
+      const zone = this.add.zone(x + width / 2, renderY + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
       zone.on("pointerover", () => {
         if (this.isMobileViewport()) return;
         if (!this.interactionLocked) this.setHoveredObject(object);
@@ -397,6 +425,7 @@ export class RoomScene extends Phaser.Scene {
         if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
       });
       zone.on("pointerdown", () => {
+        this.objectPointerDownAt = this.time.now;
         if (this.interactionLocked) return;
         if (this.isMobileViewport()) {
           const alreadySelected = this.mobileSelectedObjectId === object.object_id;
@@ -413,7 +442,7 @@ export class RoomScene extends Phaser.Scene {
         this.tryInteract(object, this.time.now);
       });
 
-      this.add.ellipse(x + width / 2 + 3, y + height + 4, width * 0.68, 8, 0x111111, 0.055);
+      this.add.ellipse(x + width / 2 + 3, renderY + height + 4, width * 0.68, 8, 0x111111, 0.055);
       const sprite = this.drawAssetObject(object);
       if (sprite instanceof Phaser.GameObjects.Image || sprite instanceof Phaser.GameObjects.Sprite) {
         this.objectFeedback.set(object.object_id, {
@@ -445,7 +474,7 @@ export class RoomScene extends Phaser.Scene {
     const assetKey = object.assetKey as ObjectSpriteKey | undefined;
     const config = assetKey ? objectSpriteMap[assetKey] : undefined;
     const centerX = object.position.x + object.size.width / 2;
-    const centerY = object.position.y + object.size.height / 2;
+    const centerY = this.sceneY(object.position.y + object.size.height / 2);
 
     if (!config) {
       return this.drawMissingAssetPlaceholder(centerX, centerY, object.size.width, object.size.height);
