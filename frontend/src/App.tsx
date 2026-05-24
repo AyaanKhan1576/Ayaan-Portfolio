@@ -44,6 +44,12 @@ export function App() {
     void trackEvent({ eventType: "section_open", metadata: { section } });
   }, [audio]);
 
+  const closeSection = useCallback(() => {
+    if (activeSection === "resume") audio.stopSfx();
+    audio.play("menuClose");
+    setActiveSection(null);
+  }, [activeSection, audio]);
+
   const interact = useCallback((object: RoomObject) => {
     const interactionSounds: Record<string, Parameters<typeof audio.play>[0]> = {
       door: "door",
@@ -51,7 +57,7 @@ export function App() {
       laptop: "laptop",
       book: "page",
       ticket: "reward",
-      tag: "page",
+      tag: "click",
       watch: "prompt",
       phone: "prompt",
       cat: "cat",
@@ -81,14 +87,13 @@ export function App() {
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        audio.play("menuClose");
-        setActiveSection(null);
+        closeSection();
       }
       if (!activeSection && event.key.toLowerCase() === "m") setActiveSection("intro");
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [activeSection, audio]);
+  }, [activeSection, closeSection]);
 
   const modalContent = activeSection ? <PortfolioContent openSection={openSection} section={activeSection} /> : null;
 
@@ -142,10 +147,7 @@ export function App() {
       <RpgDialogue key={`${preview?.objectId ?? "none"}-${activePreviewSource ?? "none"}`} prompt={preview?.prompt ?? ""} text={preview?.text ?? ""} title={preview?.title ?? ""} />
 
       <RpgModal
-        onClose={() => {
-          audio.play("menuClose");
-          setActiveSection(null);
-        }}
+        onClose={closeSection}
         section={activeSection}
       >
         {modalContent}

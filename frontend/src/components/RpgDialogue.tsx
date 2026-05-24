@@ -35,7 +35,7 @@ export function RpgDialogue({
 
   return (
     <AnimatePresence>
-      <motion.div className="rpg-preview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}>
+      <motion.div className="rpg-preview" initial={{ opacity: 0, x: "-50%", y: 8 }} animate={{ opacity: 1, x: "-50%", y: 0 }} exit={{ opacity: 0, x: "-50%", y: 8 }}>
         <motion.div
           className="rpg-window"
           initial={{ scale: 0.98 }}

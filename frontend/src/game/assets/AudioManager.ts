@@ -111,6 +111,10 @@ export class AudioManager {
     this.currentMusic = null;
   }
 
+  stopSfx() {
+    this.silenceActiveSounds();
+  }
+
   async playSfx(key?: string) {
     if (!key || this.preferences.muted) return false;
     const source = this.elements.get(key);

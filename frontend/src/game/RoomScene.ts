@@ -30,6 +30,7 @@ export class RoomScene extends Phaser.Scene {
   private nearbyObject: RoomObject | null = null;
   private hoveredObject: RoomObject | null = null;
   private mobileInput: MobileInputState = { up: false, down: false, left: false, right: false };
+  private mobileSelectedObjectId: string | null = null;
   private lastInteractAt = 0;
   private lastDirection: PlayerDirection = "down";
   private interactionLocked = false;
@@ -124,6 +125,7 @@ export class RoomScene extends Phaser.Scene {
     if (locked) {
       this.nearbyObject = null;
       this.hoveredObject = null;
+      this.mobileSelectedObjectId = null;
       this.callbacks.onNearbyChange(null);
       this.callbacks.onHoverChange(null);
       this.updateObjectFeedback(null);
@@ -132,7 +134,10 @@ export class RoomScene extends Phaser.Scene {
 
   interactWithNearby() {
     if (this.interactionLocked) return;
-    this.tryInteract(this.nearbyObject, this.time.now);
+    const mobileSelection = this.mobileSelectedObjectId
+      ? this.objects.find((object) => object.object_id === this.mobileSelectedObjectId) ?? null
+      : null;
+    this.tryInteract(mobileSelection ?? this.nearbyObject, this.time.now);
   }
 
   private registerCroppedFrames() {
@@ -279,13 +284,28 @@ export class RoomScene extends Phaser.Scene {
       const centerX = object.position.x + object.size.width / 2;
       const centerY = object.position.y + object.size.height / 2;
       const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, centerX, centerY);
-      if (distance <= object.interaction_radius && distance < closestDistance) {
+      const interactionRadius = this.effectiveInteractionRadius(object);
+      if (distance <= interactionRadius && distance < closestDistance) {
         closest = object;
         closestDistance = distance;
       }
     }
 
     return closest;
+  }
+
+  private isMobileViewport() {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 680px), (pointer: coarse)").matches;
+  }
+
+  private mobileObjectScale() {
+    return this.isMobileViewport() ? 1.35 : 1;
+  }
+
+  private effectiveInteractionRadius(object: RoomObject) {
+    if (!this.isMobileViewport()) return object.interaction_radius;
+    return Math.max(object.interaction_radius * 1.45, 76);
   }
 
   private wrapPlayer() {
@@ -358,17 +378,39 @@ export class RoomScene extends Phaser.Scene {
       const { width, height } = object.size;
       const assetKey = object.assetKey as ObjectSpriteKey | undefined;
       const config = assetKey ? objectSpriteMap[assetKey] : undefined;
-      const hitboxWidth = config?.hitboxWidth ?? width + 18;
-      const hitboxHeight = config?.hitboxHeight ?? height + 18;
+      const mobile = this.isMobileViewport();
+      const mobileScale = this.mobileObjectScale();
+      const visibleWidth = (config?.displayWidth ?? width) * mobileScale;
+      const visibleHeight = (config?.displayHeight ?? height) * mobileScale;
+      const hitboxPadding = mobile ? 42 : 18;
+      const baseHitboxWidth = config?.hitboxWidth ?? visibleWidth + hitboxPadding;
+      const baseHitboxHeight = config?.hitboxHeight ?? visibleHeight + hitboxPadding;
+      const hitboxWidth = Math.max(baseHitboxWidth * (mobile ? 1.3 : 1), mobile ? 58 : 0);
+      const hitboxHeight = Math.max(baseHitboxHeight * (mobile ? 1.3 : 1), mobile ? 58 : 0);
       const zone = this.add.zone(x + width / 2, y + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
       zone.on("pointerover", () => {
+        if (this.isMobileViewport()) return;
         if (!this.interactionLocked) this.setHoveredObject(object);
       });
       zone.on("pointerout", () => {
+        if (this.isMobileViewport()) return;
         if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
       });
       zone.on("pointerdown", () => {
-        if (!this.interactionLocked) this.callbacks.onInteract(object);
+        if (this.interactionLocked) return;
+        if (this.isMobileViewport()) {
+          const alreadySelected = this.mobileSelectedObjectId === object.object_id;
+          if (!alreadySelected) {
+            this.mobileSelectedObjectId = object.object_id;
+            this.nearbyObject = object;
+            this.hoveredObject = object;
+            this.callbacks.onNearbyChange(object);
+            this.callbacks.onHoverChange(object);
+            this.updateObjectFeedback(object);
+            return;
+          }
+        }
+        this.tryInteract(object, this.time.now);
       });
 
       this.add.ellipse(x + width / 2 + 3, y + height + 4, width * 0.68, 8, 0x111111, 0.055);
@@ -432,7 +474,8 @@ export class RoomScene extends Phaser.Scene {
     if (blendConfig.directImage && config.sourceCrop) {
       image.setCrop(config.sourceCrop.x, config.sourceCrop.y, config.sourceCrop.width, config.sourceCrop.height);
     }
-    image.setDisplaySize(config.displayWidth, config.displayHeight);
+    const mobileScale = this.mobileObjectScale();
+    image.setDisplaySize(config.displayWidth * mobileScale, config.displayHeight * mobileScale);
     image.setDepth(centerY);
     return image;
   }

@@ -232,6 +232,11 @@ export function useAudioSystem(enabled: boolean) {
     [playGeneratedClick],
   );
 
+  const stopSfx = useCallback(() => {
+    stopGeneratedSounds();
+    audioManager.stopSfx();
+  }, [stopGeneratedSounds]);
+
   return useMemo(
     () => ({
       audioEnabled,
@@ -243,7 +248,8 @@ export function useAudioSystem(enabled: boolean) {
       setVolume,
       setMusicMode,
       play,
+      stopSfx,
     }),
-    [audioEnabled, enableAudio, musicMode, muted, play, setMuted, setMusicMode, setVolume, volume],
+    [audioEnabled, enableAudio, musicMode, muted, play, setMuted, setMusicMode, setVolume, stopSfx, volume],
   );
 }
