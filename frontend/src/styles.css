@@ -880,12 +880,13 @@ a {
     width: calc(100% - 76px);
     min-width: 0;
     margin-left: 76px;
+    margin-bottom: 8px;
     gap: 7px;
-    padding: 8px;
+    padding: 6px 8px;
   }
 
   .audio-row {
-    gap: 8px;
+    gap: 6px;
   }
 
   .audio-card input {
@@ -899,8 +900,8 @@ a {
   }
 
   .music-switcher button {
-    padding: 7px 4px;
-    font-size: 0.62rem;
+    padding: 5px 3px;
+    font-size: 0.58rem;
     overflow-wrap: anywhere;
   }
 
@@ -910,22 +911,37 @@ a {
     min-height: 360px;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
+  }
+
+  .game-panel {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 28px;
+    margin-top: 0;
   }
 
   .game-shell {
-    place-items: start center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
   }
 
   .game-shell canvas {
+    width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
+    object-fit: contain;
+    transform-origin: top center;
+    margin-top: 0 !important;
   }
 
   .quest-log {
     position: fixed;
     left: 10px;
-    top: 82px;
+    top: 128px;
     width: auto;
     max-width: calc(100vw - 20px);
     padding: 0;
@@ -939,7 +955,7 @@ a {
   .quest-log-backdrop {
     display: block;
     position: fixed;
-    inset: 184px 0 0;
+    inset: 118px 0 0;
     z-index: 19;
     border: 0;
     padding: 0;
@@ -964,7 +980,7 @@ a {
   }
 
   .quest-log.mobile-open {
-    top: 184px;
+    top: 128px;
     width: min(270px, calc(100vw - 20px));
     padding: 10px;
     border: 2px solid #111111;
@@ -1176,11 +1192,11 @@ a {
   }
 
   .quest-log {
-    top: 82px;
+    top: 128px;
   }
 
   .quest-log.mobile-open {
-    top: 184px;
+    top: 128px;
   }
 
   .resume-frame {
