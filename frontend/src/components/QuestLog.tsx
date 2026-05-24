@@ -4,15 +4,18 @@ import type { SectionId } from "../types";
 const labels: Record<SectionId, string> = {
   intro: "Intro",
   about: "About Me",
-  skills: "Skills",
-  featured: "Featured Projects",
-  projects: "All Projects",
-  media: "Leadership and Honors",
+  contact: "Contact",
+  resume: "Resume",
   education: "Education",
   experience: "Experience",
-  resume: "Resume",
-  contact: "Contact",
+  featured: "Featured Projects",
+  skills: "Skills",
+  projects: "All Projects",
+  media: "Leadership and Honors",
+  fluff: "Fluff",
 };
+
+const logOrder: SectionId[] = ["about", "contact", "resume", "education", "experience", "featured", "skills", "projects", "media"];
 
 export function QuestLog({
   onMobileOpenChange,
@@ -43,21 +46,19 @@ export function QuestLog({
       </button>
       <p className="pixel-label">Memory Log</p>
       <div className="quest-log-items">
-        {Object.entries(labels)
-          .filter(([key]) => key !== "intro")
-          .map(([key, label]) => {
-            const section = key as SectionId;
+        {logOrder
+          .map((section) => {
             return (
               <button
                 className="found"
-                key={key}
+                key={section}
                 onClick={() => {
                   onOpenSection(section);
                   setMobileDrawerOpen(false);
                 }}
                 type="button"
               >
-                {label}
+                {labels[section]}
               </button>
             );
           })}

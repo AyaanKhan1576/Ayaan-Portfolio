@@ -32,6 +32,8 @@ export function PortfolioContent({ section, openSection }: { section: SectionId;
       return <Resume />;
     case "contact":
       return <Contact />;
+    case "fluff":
+      return <Fluff />;
   }
 }
 
@@ -245,6 +247,26 @@ function Contact() {
           Mail
         </a>
       </div>
+    </div>
+  );
+}
+
+function Fluff() {
+  return (
+    <div className="dialogue-copy">
+      <img
+        alt="Fluff"
+        src="/assets/fluff.jpeg"
+        style={{
+          display: "block",
+          height: "auto",
+          margin: "0 auto",
+          maxHeight: "min(68vh, 640px)",
+          maxWidth: "100%",
+          objectFit: "contain",
+          width: "auto",
+        }}
+      />
     </div>
   );
 }

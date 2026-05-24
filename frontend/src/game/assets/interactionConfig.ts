@@ -12,15 +12,15 @@ export interface InteractionPreview {
 }
 
 const dialogueLines: Record<string, string> = {
-  laptop: "it hums quietly.",
-  book: "practice left its fingerprints here.",
-  ticket: "it feels half-remembered.",
-  door: "you're not ready yet.",
-  education: "old notes still remember the answers.",
-  piano: "a familiar melody lingers.",
-  watch: "time has stopped here.",
-  tag: "someone forgot to pick this up.",
-  phone: "there's only static.",
+  laptop: "some parts are harder to explain than others.",
+  book: "your hands remember before your mind does.",
+  ticket: "there’s a story behind each one.",
+  door: "you kept everything anyway.",
+  education: "the pages still smell like sleepless nights.",
+  piano: "old memories still linger here.",
+  watch: "time passed differently here.",
+  tag: "there’s more between the lines than on them.",
+  phone: "the line is still open.",
   cat: "waiting for something to happen?",
 };
 
@@ -36,5 +36,5 @@ export function getInteractionPreview(object: RoomObject, source: InteractionSou
 }
 
 export function opensPortfolio(object: RoomObject) {
-  return object.object_id !== "cat" && object.interaction_type !== "dialogue";
+  return object.object_id === "cat" || object.interaction_type !== "dialogue";
 }

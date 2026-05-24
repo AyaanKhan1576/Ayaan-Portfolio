@@ -8,7 +8,8 @@ export type SectionId =
   | "education"
   | "experience"
   | "resume"
-  | "contact";
+  | "contact"
+  | "fluff";
 
 export type ProjectStatus = "deployed" | "prototype" | "research" | "archived";
 

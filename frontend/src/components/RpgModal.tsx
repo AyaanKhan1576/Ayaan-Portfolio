@@ -14,6 +14,7 @@ const titles: Record<SectionId, string> = {
   experience: "Experience",
   resume: "Resume",
   contact: "Contact",
+  fluff: "Fluff",
 };
 
 export function RpgModal({
