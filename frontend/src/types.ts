@@ -44,6 +44,7 @@ export interface AnalyticsEvent {
     | "object_interaction"
     | "section_open"
     | "project_view"
+    | "simulation_launch"
     | "resume_download";
   metadata?: Record<string, unknown>;
 }

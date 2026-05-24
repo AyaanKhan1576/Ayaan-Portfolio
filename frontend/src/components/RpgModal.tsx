@@ -30,7 +30,7 @@ export function RpgModal({
       {section ? (
         <motion.div className="rpg-overlay rpg-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div
-            className="rpg-window"
+            className={`rpg-window ${section === "resume" ? "rpg-window-resume" : ""}`}
             initial={{ y: 18, scale: 0.96 }}
             animate={{ y: 0, scale: 1 }}
             exit={{ y: 12, scale: 0.98 }}

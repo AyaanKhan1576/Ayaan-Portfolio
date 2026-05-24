@@ -84,11 +84,11 @@ export function App() {
         audio.play("menuClose");
         setActiveSection(null);
       }
-      if (event.key.toLowerCase() === "m") setActiveSection("intro");
+      if (!activeSection && event.key.toLowerCase() === "m") setActiveSection("intro");
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [audio]);
+  }, [activeSection, audio]);
 
   const modalContent = activeSection ? <PortfolioContent openSection={openSection} section={activeSection} /> : null;
 
@@ -118,6 +118,7 @@ export function App() {
         <div className="game-panel">
           <GameRoom
             interactSignal={interactSignal}
+            interactionLocked={Boolean(activeSection)}
             onHoverChange={setHoveredObject}
             mobileInput={mobileInput}
             onInteract={interact}

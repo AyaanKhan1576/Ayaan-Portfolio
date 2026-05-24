@@ -3,4 +3,4 @@
 - interactive projects
 - when click on resume. have it open completely there and pressing download resume should automatically download the resume. it shouldnt open resume in the same tab via google pdf reader.
 - LLM RAG Chatbot
-- yay
+- add pictures and videos

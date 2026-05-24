@@ -196,36 +196,57 @@ function ExperienceTimeline() {
 
 function Resume() {
   return (
-    <div className="dialogue-copy">
-      <p>
-        The folder is neatly labelled. Opening it logs the download when the backend is available, then opens the local
-        resume PDF asset.
-      </p>
-      <button className="download-button" onClick={downloadResume} type="button">
-        <FileDown size={16} /> Download Resume
-      </button>
+    <div className="dialogue-copy resume-viewer">
+      <div className="resume-actions">
+        <p>View the full resume here, or download a copy without leaving the room.</p>
+        <button className="download-button" onClick={downloadResume} type="button">
+          <FileDown size={16} /> Download Resume
+        </button>
+      </div>
+      <embed className="resume-frame" src={config.resumeFallbackUrl} title="Ayaan Khan resume" type="application/pdf" />
     </div>
   );
 }
 
 function Contact() {
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const links = [
     { label: "GitHub", href: config.githubUrl, icon: Github },
     { label: "LinkedIn", href: config.linkedinUrl, icon: Linkedin },
-    { label: "Email", href: `mailto:${config.emailAddress}`, icon: Mail },
   ];
+
+  async function copyEmail() {
+    try {
+      if (!navigator.clipboard) throw new Error("Clipboard API is unavailable.");
+      await navigator.clipboard.writeText(config.emailAddress);
+      setCopyStatus("copied");
+      window.setTimeout(() => setCopyStatus("idle"), 1800);
+    } catch {
+      setCopyStatus("failed");
+    }
+  }
 
   return (
     <div className="dialogue-copy">
       <h3>Contact</h3>
       <p>Choose a signal.</p>
+      <div className="email-copy-card">
+        <span>Email</span>
+        <button onClick={copyEmail} type="button">{config.emailAddress}</button>
+        {copyStatus === "copied" ? <small>copied.</small> : null}
+        {copyStatus === "failed" ? <small>copy unavailable; use Mail.</small> : null}
+      </div>
       <div className="contact-links">
         {links.map(({ label, href, icon: Icon }) => (
-          <a href={href} key={label} rel="noreferrer" target={label === "Email" ? undefined : "_blank"}>
+          <a href={href} key={label} rel="noreferrer" target="_blank">
             <Icon size={18} />
             {label}
           </a>
         ))}
+        <a href={`mailto:${config.emailAddress}`}>
+          <Mail size={18} />
+          Mail
+        </a>
       </div>
     </div>
   );

@@ -32,6 +32,7 @@ export class RoomScene extends Phaser.Scene {
   private mobileInput: MobileInputState = { up: false, down: false, left: false, right: false };
   private lastInteractAt = 0;
   private lastDirection: PlayerDirection = "down";
+  private interactionLocked = false;
 
   constructor(
     private readonly objects: RoomObject[],
@@ -118,7 +119,19 @@ export class RoomScene extends Phaser.Scene {
     this.mobileInput = input;
   }
 
+  setInteractionLocked(locked: boolean) {
+    this.interactionLocked = locked;
+    if (locked) {
+      this.nearbyObject = null;
+      this.hoveredObject = null;
+      this.callbacks.onNearbyChange(null);
+      this.callbacks.onHoverChange(null);
+      this.updateObjectFeedback(null);
+    }
+  }
+
   interactWithNearby() {
+    if (this.interactionLocked) return;
     this.tryInteract(this.nearbyObject, this.time.now);
   }
 
@@ -224,6 +237,15 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private updateNearbyObject() {
+    if (this.interactionLocked) {
+      if (this.nearbyObject) {
+        this.nearbyObject = null;
+        this.callbacks.onNearbyChange(null);
+        this.updateObjectFeedback(null);
+      }
+      return;
+    }
+
     const nextNearby = this.findNearbyObject();
     if (nextNearby?.object_id === this.nearbyObject?.object_id) return;
     this.nearbyObject = nextNearby;
@@ -232,12 +254,16 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private setHoveredObject(object: RoomObject | null) {
+    if (this.interactionLocked) {
+      object = null;
+    }
     if (object?.object_id === this.hoveredObject?.object_id) return;
     this.hoveredObject = object;
     this.callbacks.onHoverChange(object);
   }
 
   private tryInteract(object: RoomObject | null, time: number) {
+    if (this.interactionLocked) return;
     if (!object) return;
     if (time - this.lastInteractAt < 420) return;
     this.lastInteractAt = time;
@@ -335,11 +361,15 @@ export class RoomScene extends Phaser.Scene {
       const hitboxWidth = config?.hitboxWidth ?? width + 18;
       const hitboxHeight = config?.hitboxHeight ?? height + 18;
       const zone = this.add.zone(x + width / 2, y + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
-      zone.on("pointerover", () => this.setHoveredObject(object));
+      zone.on("pointerover", () => {
+        if (!this.interactionLocked) this.setHoveredObject(object);
+      });
       zone.on("pointerout", () => {
         if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
       });
-      zone.on("pointerdown", () => this.callbacks.onInteract(object));
+      zone.on("pointerdown", () => {
+        if (!this.interactionLocked) this.callbacks.onInteract(object);
+      });
 
       this.add.ellipse(x + width / 2 + 3, y + height + 4, width * 0.68, 8, 0x111111, 0.055);
       const sprite = this.drawAssetObject(object);

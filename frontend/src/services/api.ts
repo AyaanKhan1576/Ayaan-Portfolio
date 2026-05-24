@@ -1,6 +1,6 @@
 import { apiUrl, config } from "../config";
 
-export async function downloadResume(): Promise<void> {
+export async function getTrackedResumeUrl(): Promise<string> {
   let resumeUrl = config.resumeFallbackUrl;
   try {
     const response = await fetch(apiUrl("/api/resume"));
@@ -12,5 +12,17 @@ export async function downloadResume(): Promise<void> {
     // Resume access must keep working even when the tracking API is unavailable.
   }
 
-  window.open(resumeUrl, "_blank", "noopener,noreferrer");
+  return resumeUrl;
+}
+
+export async function downloadResume(): Promise<void> {
+  const resumeUrl = await getTrackedResumeUrl();
+  const anchor = document.createElement("a");
+  anchor.href = resumeUrl;
+  anchor.download = "AyaanKhan_Resume.pdf";
+  anchor.rel = "noopener noreferrer";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
 }

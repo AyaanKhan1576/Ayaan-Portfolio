@@ -10,12 +10,14 @@ export function GameRoom({
   onInteract,
   mobileInput,
   interactSignal,
+  interactionLocked,
 }: {
   onNearbyChange: (object: RoomObject | null) => void;
   onHoverChange: (object: RoomObject | null) => void;
   onInteract: (object: RoomObject) => void;
   mobileInput: MobileInputState;
   interactSignal: number;
+  interactionLocked: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<RoomScene | null>(null);
@@ -60,10 +62,14 @@ export function GameRoom({
   }, [mobileInput]);
 
   useEffect(() => {
-    if (interactSignal > 0) {
+    sceneRef.current?.setInteractionLocked(interactionLocked);
+  }, [interactionLocked]);
+
+  useEffect(() => {
+    if (interactSignal > 0 && !interactionLocked) {
       sceneRef.current?.interactWithNearby();
     }
-  }, [interactSignal]);
+  }, [interactSignal, interactionLocked]);
 
   return <div className="game-shell" ref={containerRef} />;
 }
