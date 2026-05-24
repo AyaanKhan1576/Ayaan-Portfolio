@@ -1,11 +1,9 @@
-import { config } from "../config";
+import { apiUrl } from "../config";
 import type { AnalyticsEvent } from "../types";
 
 export async function trackEvent(event: AnalyticsEvent): Promise<void> {
-  if (!config.apiBaseUrl) return;
-
   try {
-    await fetch(`${config.apiBaseUrl}/api/analytics/events`, {
+    await fetch(apiUrl("/api/analytics"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(event),

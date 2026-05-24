@@ -26,7 +26,7 @@ export function App() {
   const audio = useAudioSystem(config.enableAudio);
 
   useEffect(() => {
-    void trackEvent({ eventType: "visit", metadata: { site: config.siteName } });
+    void trackEvent({ eventType: "site_visit", metadata: { site: config.siteName } });
   }, []);
 
   useEffect(() => {
@@ -41,6 +41,7 @@ export function App() {
     setActiveSection(section);
     setDiscovered((current) => (current.includes(section) ? current : [...current, section]));
     audio.play("menuOpen");
+    void trackEvent({ eventType: "section_open", metadata: { section } });
   }, [audio]);
 
   const interact = useCallback((object: RoomObject) => {

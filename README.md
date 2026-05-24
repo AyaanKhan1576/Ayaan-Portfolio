@@ -1,5 +1,7 @@
 # Ayaan's Room
 
+ayaan-portfolio-blush.vercel.app
+
 Ayaan's Room is a playable 2D RPG portfolio for Ayaan Khan. Visitors move a small pixel character around a cozy, surreal room and interact with objects to open portfolio memories: about, skills, projects, media, simulations, resume, experience, and contact.
 
 The visual direction is a clean white-room retro RPG portfolio using local replacement assets from `frontend/public/assets`. It is inspired by dreamy room exploration and emotional RPG menus, without copying copyrighted game assets, fonts, music, maps, characters, or UI.
@@ -60,8 +62,8 @@ flowchart LR
   Visitor["Visitor"] --> Game["React + Phaser Room"]
   Game --> Modals["RPG Menus / Portfolio Sections"]
   Game --> Data["Projects / Objects / Media Config"]
-  Game --> API["FastAPI Backend"]
-  API --> Services["Analytics / Resume / Contact Services"]
+  Game --> API["Vercel API Routes"]
+  API --> Services["Analytics / Resume Services"]
   Services --> Supabase["Supabase Postgres"]
 ```
 
@@ -70,9 +72,9 @@ Frontend state and portfolio content are data-driven. The playable room is imple
 ## Tech Stack
 
 - Frontend: React, Vite, TypeScript, Tailwind CSS, Phaser 3, Framer Motion
-- Backend: Python, FastAPI, Pydantic, Supabase client
+- Backend: Vercel API routes, Supabase server client
 - Database: Supabase Postgres
-- Hosting: Vercel frontend, Render backend, Supabase database
+- Hosting: Vercel frontend/API, Supabase database
 - Tests: Vitest and pytest
 
 ## Windows Local Setup
@@ -111,31 +113,29 @@ Frontend:
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_API_BASE_URL` | Backend API URL. Leave empty for frontend-only mode. |
+| `VITE_API_BASE_URL` | Optional API origin. Leave empty on Vercel to use same-origin `/api` routes. |
 | `VITE_SITE_NAME` | Site display name. |
 | `VITE_ENABLE_AUDIO` | Enables audio controls when `true`. |
+| `VITE_GITHUB_URL` | Public GitHub profile URL used by the Contact section. |
+| `VITE_LINKEDIN_URL` | Public LinkedIn profile URL used by the Contact section. |
+| `VITE_EMAIL_ADDRESS` | Public contact email address used for the `mailto:` link. |
+| `VITE_RESUME_FALLBACK_URL` | Public resume URL used if `/api/resume` is unavailable. |
 | `VITE_SUPABASE_URL` | Browser-safe Supabase project URL for future public reads/auth. |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key. Never use the service-role key here. |
 
-Backend:
+Server-only Vercel API routes:
 
 | Variable | Purpose |
 | --- | --- |
-| `APP_ENV` | `local`, `staging`, or `production`. |
-| `API_HOST` | API host binding. |
-| `API_PORT` | API port. |
-| `CORS_ORIGINS` | Comma-separated allowed frontend origins. |
 | `SUPABASE_URL` | Supabase project URL. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-side Supabase service key. |
-| `DATABASE_URL` | Optional Postgres connection string. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side Supabase service key. Never expose this as `VITE_*`. |
 | `RESUME_FILE_URL` | External resume PDF URL. |
-| `CONTACT_EMAIL_TO` | Optional contact recipient for future email sending. |
 
 ## Supabase Setup
 
 Run [docs/supabase_schema.sql](docs/supabase_schema.sql) in the Supabase SQL Editor. Detailed setup notes are in [docs/supabase_setup.md](docs/supabase_setup.md).
 
-This project is React/Vite plus FastAPI, so do not add the Next.js Supabase `page.tsx` or middleware snippets. The frontend may use the publishable key through [frontend/src/services/supabaseClient.ts](frontend/src/services/supabaseClient.ts), but analytics, contact submissions, and resume download tracking go through FastAPI. The backend uses `SUPABASE_SERVICE_ROLE_KEY` server-side only. If Supabase is unavailable, analytics and contact persistence fail gracefully.
+This project is React/Vite with Vercel API routes. Do not add the Next.js Supabase `page.tsx` or middleware snippets. The frontend may use the publishable key through [frontend/src/services/supabaseClient.ts](frontend/src/services/supabaseClient.ts), but analytics and resume download tracking go through Vercel API routes. The API routes use `SUPABASE_SERVICE_ROLE_KEY` server-side only. If Supabase is unavailable, analytics fail gracefully.
 
 If you set `DATABASE_URL` to the Supabase Postgres connection string and have `psql` installed, you can also run:
 
@@ -366,12 +366,12 @@ Tracked events:
 
 - site visits
 - object interactions
+- section opens
 - project views
 - resume downloads
 - simulation launches
-- contact submissions
 
-Frontend analytics are best-effort through [frontend/src/services/analytics.ts](frontend/src/services/analytics.ts). Failed analytics calls are ignored. Backend persistence is isolated in repository classes and logs failures without crashing user-facing routes.
+Frontend analytics are best-effort through [frontend/src/services/analytics.ts](frontend/src/services/analytics.ts). Failed analytics calls are ignored. Vercel API persistence logs server-side failures without crashing user-facing routes.
 
 ## Movement And Audio
 
@@ -410,21 +410,15 @@ Then wire them in [frontend/src/game/assets/spriteConfig.ts](frontend/src/game/a
 1. Root directory: `frontend`
 2. Build command: `npm run build`
 3. Output directory: `dist`
-4. Set `VITE_API_BASE_URL` to the Render backend URL.
-
-### Render
-
-1. Root directory: `backend`
-2. Build command: `pip install -r requirements.txt`
-3. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Add Supabase, CORS, and resume environment variables.
+4. Leave `VITE_API_BASE_URL` blank for same-origin Vercel API routes.
+5. Add server-only Vercel env vars: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `RESUME_FILE_URL`.
+6. Add public contact vars: `VITE_GITHUB_URL`, `VITE_LINKEDIN_URL`, `VITE_EMAIL_ADDRESS`, and `VITE_RESUME_FALLBACK_URL`.
 
 ## Troubleshooting
 
 - `make` not found: run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1`.
-- Frontend runs but backend calls fail: verify `VITE_API_BASE_URL` or continue in frontend-only mode.
-- Resume returns 503: set `RESUME_FILE_URL`.
-- Contact says backend unavailable: start FastAPI and check `CORS_ORIGINS`.
+- Frontend runs but API calls fail: leave `VITE_API_BASE_URL` blank on Vercel or point it at a compatible API origin.
+- Resume returns 503: set server-only `RESUME_FILE_URL` in Vercel.
 - Supabase data missing: run the schema and verify service-role credentials.
 - Audio does not play: click the sound control; browsers block autoplay by design.
 

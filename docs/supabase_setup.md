@@ -1,6 +1,6 @@
 # Supabase Setup
 
-This repo is React/Vite plus FastAPI, not Next.js. Do not add the Next.js `page.tsx` or middleware snippets from the Supabase quickstart.
+This repo is React/Vite plus Vercel API routes, not Next.js. Do not add the Next.js `page.tsx` or middleware snippets from the Supabase quickstart.
 
 ## 1. Frontend Package Install
 
@@ -18,27 +18,23 @@ npm install @supabase/supabase-js @supabase/ssr
 Frontend `.env`:
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
+VITE_API_BASE_URL=
 VITE_SITE_NAME=Ayaan's Room
 VITE_ENABLE_AUDIO=true
+VITE_GITHUB_URL=https://github.com/AyaanKhan1576
+VITE_LINKEDIN_URL=https://www.linkedin.com/in/ayaan-khan-b7ba11325
+VITE_EMAIL_ADDRESS=khanayaan.2003@gmail.com
+VITE_RESUME_FALLBACK_URL=/assets/resume/AyaanKhan_Resume.pdf
 VITE_SUPABASE_URL=https://kwcnenbmhykonjlggtow.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_upHuj_TL8YHKuX3z-AfgSQ_J4gEonOm
 ```
 
-Backend `.env`:
+Server-only Vercel environment variables:
 
 ```env
-APP_ENV=local
-API_HOST=127.0.0.1
-API_PORT=8000
-CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-
 SUPABASE_URL=https://kwcnenbmhykonjlggtow.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-DATABASE_URL=
-
-RESUME_FILE_URL=
-CONTACT_EMAIL_TO=
+RESUME_FILE_URL=https://your-domain.vercel.app/assets/resume/AyaanKhan_Resume.pdf
 ```
 
 Never put `SUPABASE_SERVICE_ROLE_KEY` in the frontend.
@@ -50,9 +46,8 @@ Open the Supabase dashboard for the project, go to **SQL Editor**, paste `docs/s
 The schema creates:
 
 - `analytics_events`
-- `contact_submissions`
 
-RLS is enabled and no anon policies are added. This is intentional: browser traffic goes to FastAPI, and FastAPI writes using the service-role key.
+RLS is enabled and no anon policies are added. This is intentional: browser traffic goes to Vercel API routes, and the API routes write using the service-role key.
 
 ## 4. Verify Locally
 
@@ -62,13 +57,13 @@ Start the app:
 make dev
 ```
 
-Check the backend:
+Check the Vercel API routes after deployment:
 
 ```powershell
-curl http://127.0.0.1:8000/api/health
+curl https://your-domain.vercel.app/api/resume
 ```
 
-Trigger a frontend interaction or submit the contact form, then confirm rows appear in the Supabase table editor.
+Trigger a frontend interaction, then confirm rows appear in the Supabase `analytics_events` table.
 
 ## 5. Applying SQL From The CLI
 

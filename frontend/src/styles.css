@@ -586,7 +586,7 @@ a {
 .pixel-actions button,
 .pixel-actions a,
 .download-button,
-.contact-form button,
+.contact-links a,
 .quest-card a {
   display: inline-flex;
   align-items: center;
@@ -611,7 +611,7 @@ a {
 
 .stats-list,
 .timeline-path,
-.contact-form {
+.contact-links {
   display: grid;
   gap: 12px;
 }
@@ -641,21 +641,6 @@ a {
   margin-top: 12px;
   border: 2px solid #30283e;
   border-radius: 4px;
-}
-
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  border: 2px solid #d8cfe3;
-  border-radius: 4px;
-  background: #fff;
-  padding: 11px 12px;
-  color: #30283e;
-}
-
-.contact-form textarea {
-  min-height: 130px;
-  resize: vertical;
 }
 
 .success {

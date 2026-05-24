@@ -35,10 +35,10 @@ alter table analytics_events enable row level security;
 alter table contact_submissions enable row level security;
 
 comment on table analytics_events is
-  'Best-effort portfolio analytics written by the FastAPI backend with a service-role key.';
+  'Best-effort portfolio analytics written by server-side API routes with a service-role key.';
 
 comment on table contact_submissions is
-  'Portfolio contact messages written by the FastAPI backend with a service-role key.';
+  'Legacy contact message storage. The current portfolio contact section uses external social/email links.';
 
 -- No anon/public policies are intentionally created here.
 -- The frontend calls FastAPI, and FastAPI writes with the service-role key.

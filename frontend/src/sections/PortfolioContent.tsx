@@ -1,11 +1,12 @@
-import { ExternalLink, FileDown, Send } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { ExternalLink, FileDown, Github, Linkedin, Mail } from "lucide-react";
+import { useState } from "react";
+import { config } from "../config";
 import { education } from "../data/education";
 import { experience } from "../data/experience";
 import { mediaItems } from "../data/media";
 import { projects } from "../data/projects";
 import { skills } from "../data/skills";
-import { downloadResume, submitContact } from "../services/api";
+import { downloadResume } from "../services/api";
 import { trackEvent } from "../services/analytics";
 import type { Project, SectionId } from "../types";
 
@@ -208,32 +209,24 @@ function Resume() {
 }
 
 function Contact() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "offline">("idle");
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatus("sending");
-    const form = new FormData(event.currentTarget);
-    const ok = await submitContact({
-      name: String(form.get("name") ?? ""),
-      email: String(form.get("email") ?? ""),
-      subject: String(form.get("subject") ?? ""),
-      message: String(form.get("message") ?? ""),
-    });
-    setStatus(ok ? "sent" : "offline");
-  }
+  const links = [
+    { label: "GitHub", href: config.githubUrl, icon: Github },
+    { label: "LinkedIn", href: config.linkedinUrl, icon: Linkedin },
+    { label: "Email", href: `mailto:${config.emailAddress}`, icon: Mail },
+  ];
 
   return (
-    <form className="contact-form" onSubmit={handleSubmit}>
-      <input name="name" placeholder="Name" required />
-      <input name="email" placeholder="Email" required type="email" />
-      <input name="subject" placeholder="Subject" required />
-      <textarea name="message" placeholder="Message" required />
-      <button disabled={status === "sending"} type="submit">
-        <Send size={15} /> {status === "sending" ? "Sending..." : "Send letter"}
-      </button>
-      {status === "sent" ? <p className="success">Letter stored.</p> : null}
-      {status === "offline" ? <p className="warning">The mailbox could not reach the backend. Try again later.</p> : null}
-    </form>
+    <div className="dialogue-copy">
+      <h3>Contact</h3>
+      <p>Choose a signal.</p>
+      <div className="contact-links">
+        {links.map(({ label, href, icon: Icon }) => (
+          <a href={href} key={label} rel="noreferrer" target={label === "Email" ? undefined : "_blank"}>
+            <Icon size={18} />
+            {label}
+          </a>
+        ))}
+      </div>
+    </div>
   );
 }

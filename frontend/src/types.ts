@@ -40,11 +40,11 @@ export interface MediaItem {
 
 export interface AnalyticsEvent {
   eventType:
-    | "visit"
+    | "site_visit"
     | "object_interaction"
+    | "section_open"
     | "project_view"
-    | "resume_download"
-    | "contact_submit";
+    | "resume_download";
   metadata?: Record<string, unknown>;
 }
 
