@@ -19,6 +19,7 @@ export function App() {
   const [hoveredObject, setHoveredObject] = useState<RoomObject | null>(null);
   const [mobileInput, setMobileInput] = useState<MobileInputState>({ up: false, down: false, left: false, right: false });
   const [interactSignal, setInteractSignal] = useState(0);
+  const [mobileLogOpen, setMobileLogOpen] = useState(false);
   const [discovered, setDiscovered] = useState<SectionId[]>(() => {
     const stored = localStorage.getItem("ayaans-room-discovered");
     return stored ? (JSON.parse(stored) as SectionId[]) : ["intro"];
@@ -45,7 +46,7 @@ export function App() {
   }, [audio]);
 
   const closeSection = useCallback(() => {
-    if (activeSection === "resume") audio.stopSfx();
+    if (activeSection === "resume" || activeSection === "about") audio.stopSfx();
     audio.play("menuClose");
     setActiveSection(null);
   }, [activeSection, audio]);
@@ -53,9 +54,9 @@ export function App() {
   const interact = useCallback((object: RoomObject) => {
     const interactionSounds: Record<string, Parameters<typeof audio.play>[0]> = {
       door: "door",
-      piano: "piano",
-      laptop: "laptop",
-      book: "page",
+      piano: "click",
+      laptop: "click",
+      book: "click",
       ticket: "reward",
       tag: "click",
       watch: "prompt",
@@ -80,7 +81,7 @@ export function App() {
     });
   }, [audio, openSection]);
 
-  const activePreview = activeSection ? null : nearbyObject ?? hoveredObject;
+  const activePreview = activeSection || mobileLogOpen ? null : nearbyObject ?? hoveredObject;
   const activePreviewSource: InteractionSource | null = nearbyObject ? "nearby" : hoveredObject ? "hover" : null;
   const preview = activePreview && activePreviewSource ? getInteractionPreview(activePreview, activePreviewSource) : null;
 
@@ -96,6 +97,7 @@ export function App() {
   }, [activeSection, closeSection]);
 
   const modalContent = activeSection ? <PortfolioContent openSection={openSection} section={activeSection} /> : null;
+  const interactionLocked = Boolean(activeSection) || mobileLogOpen;
 
   return (
     <main className="room-page">
@@ -119,18 +121,18 @@ export function App() {
       </header>
 
       <section className="room-layout">
-        <QuestLog discovered={discovered} onOpenSection={openSection} />
+        <QuestLog discovered={discovered} onMobileOpenChange={setMobileLogOpen} onOpenSection={openSection} />
         <div className="game-panel">
           <GameRoom
             interactSignal={interactSignal}
-            interactionLocked={Boolean(activeSection)}
+            interactionLocked={interactionLocked}
             onHoverChange={setHoveredObject}
             mobileInput={mobileInput}
             onInteract={interact}
             onNearbyChange={setNearbyObject}
           />
           <MobileControls
-            hidden={Boolean(activeSection)}
+            hidden={interactionLocked}
             onInteract={() => setInteractSignal((value) => value + 1)}
             setInput={setMobileInput}
           />

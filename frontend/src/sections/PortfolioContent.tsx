@@ -51,7 +51,6 @@ function Intro({ openSection }: { openSection: (section: SectionId) => void }) {
 function About() {
   return (
     <div className="dialogue-copy">
-      <h3>About Me</h3>
       <p className="soft-role">AI & Software Engineer</p>
       <p>
         I build applied AI systems, backend platforms, data pipelines, and cloud-deployed software. My recent work spans
@@ -155,7 +154,6 @@ function LeadershipAndHonors() {
 function Education() {
   return (
     <div className="dialogue-copy">
-      <h3>Education</h3>
       <p className="soft-role">{education.degree}</p>
       <p>{education.summary}</p>
       <div className="two-column">
@@ -228,7 +226,6 @@ function Contact() {
 
   return (
     <div className="dialogue-copy">
-      <h3>Contact</h3>
       <p>Choose a signal.</p>
       <div className="email-copy-card">
         <span>Email</span>

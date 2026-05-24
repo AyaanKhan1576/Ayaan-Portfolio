@@ -13,7 +13,7 @@ export interface InteractionPreview {
 
 const dialogueLines: Record<string, string> = {
   laptop: "it hums quietly.",
-  book: "there's nothing written inside.",
+  book: "practice left its fingerprints here.",
   ticket: "it feels half-remembered.",
   door: "you're not ready yet.",
   education: "old notes still remember the answers.",

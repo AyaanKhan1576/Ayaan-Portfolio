@@ -16,20 +16,29 @@ const labels: Record<SectionId, string> = {
 
 export function QuestLog({
   discovered,
+  onMobileOpenChange,
   onOpenSection,
 }: {
   discovered: SectionId[];
+  onMobileOpenChange?: (open: boolean) => void;
   onOpenSection: (section: SectionId) => void;
 }) {
   const unlocked = discovered.length > 1;
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  function setMobileDrawerOpen(open: boolean) {
+    setMobileOpen(open);
+    onMobileOpenChange?.(open);
+  }
+
   return (
-    <aside className={`${unlocked ? "quest-log unlocked" : "quest-log"} ${mobileOpen ? "mobile-open" : ""}`}>
+    <>
+      {mobileOpen ? <button aria-label="Close Memory Log" className="quest-log-backdrop" onClick={() => setMobileDrawerOpen(false)} type="button" /> : null}
+      <aside className={`${unlocked ? "quest-log unlocked" : "quest-log"} ${mobileOpen ? "mobile-open" : ""}`}>
       <button
         aria-expanded={mobileOpen}
         className="quest-log-toggle"
-        onClick={() => setMobileOpen((value) => !value)}
+        onClick={() => setMobileDrawerOpen(!mobileOpen)}
         type="button"
       >
         Log
@@ -48,7 +57,7 @@ export function QuestLog({
                 key={key}
                 onClick={() => {
                   onOpenSection(section);
-                  setMobileOpen(false);
+                  setMobileDrawerOpen(false);
                 }}
                 type="button"
               >
@@ -57,6 +66,7 @@ export function QuestLog({
             );
           })}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

@@ -192,6 +192,10 @@ a {
   display: none;
 }
 
+.quest-log-backdrop {
+  display: none;
+}
+
 .quest-log button {
   border: 1px solid #bbbbbb;
   border-radius: 0;
@@ -330,7 +334,7 @@ a {
 
 .rpg-preview {
   position: fixed;
-  left: 37%;
+  left: 50%;
   bottom: 34px;
   z-index: 9999;
   width: min(560px, 70vw);
@@ -835,6 +839,8 @@ a {
   }
 
   .audio-card {
+    position: relative;
+    z-index: 21;
     width: 100%;
     min-width: 0;
     gap: 7px;
@@ -887,6 +893,17 @@ a {
     border: 0;
     box-shadow: none;
     z-index: 20;
+  }
+
+  .quest-log-backdrop {
+    display: block;
+    position: fixed;
+    inset: 184px 0 0;
+    z-index: 19;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: default;
   }
 
   .quest-log-toggle {
@@ -956,7 +973,7 @@ a {
   }
 
   .rpg-preview {
-    bottom: 116px;
+    bottom: 170px;
     left: 50%;
     width: calc(100vw - 24px);
     max-width: 92vw;
@@ -1088,7 +1105,7 @@ a {
   }
 
   .rpg-preview {
-    bottom: 105px;
+    bottom: 164px;
   }
 
   .quest-log {
