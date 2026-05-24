@@ -1,10 +1,12 @@
 - security measurements for DB abuse and rate limiting
 - security measures for SQL injections
 - interactive projects
-- when click on resume. have it open completely there and pressing download resume should automatically download the resume. it shouldnt open resume in the same tab via google pdf reader.
 - LLM RAG Chatbot
 - add pictures and videos
 - change objects dialogue
 - add home screen or something animated to make this look more impressive. have it alsso mention to view on pc/laptop for best experience
 - when click E on fluff open picture of fluff.
-- keep memory log unlocked and make controls obvious
+- reorder memory log
+
+
+- shadcn components to be used. make effective use of tailwind css for mobile formatting. 

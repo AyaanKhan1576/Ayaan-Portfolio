@@ -318,7 +318,7 @@ export class RoomScene extends Phaser.Scene {
 
   private isMobileViewport() {
     if (typeof window === "undefined") return false;
-    return window.matchMedia("(max-width: 680px), (pointer: coarse)").matches;
+    return window.matchMedia("(max-width: 680px)").matches;
   }
 
   private mobileObjectScale() {
@@ -332,8 +332,8 @@ export class RoomScene extends Phaser.Scene {
 
   private mobileWorldOffsetY() {
     if (!this.isMobileViewport()) return 0;
-    const viewportShift = typeof window === "undefined" ? -160 : window.innerHeight * -0.18;
-    return Phaser.Math.Clamp(viewportShift, -220, -140);
+    const viewportShift = typeof window === "undefined" ? -96 : window.innerWidth * -0.24;
+    return Phaser.Math.Clamp(viewportShift, -110, -84);
   }
 
   private sceneY(y: number) {
