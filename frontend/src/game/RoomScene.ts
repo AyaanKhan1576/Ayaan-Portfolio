@@ -31,7 +31,7 @@ export class RoomScene extends Phaser.Scene {
   private hoveredObject: RoomObject | null = null;
   private mobileInput: MobileInputState = { up: false, down: false, left: false, right: false };
   private mobileSelectedObjectId: string | null = null;
-  private objectPointerDownAt = 0;
+  private objectHitboxes: Array<{ object: RoomObject; bounds: Phaser.Geom.Rectangle }> = [];
   private lastInteractAt = 0;
   private lastDirection: PlayerDirection = "down";
   private interactionLocked = false;
@@ -96,6 +96,9 @@ export class RoomScene extends Phaser.Scene {
     const speed = 0.072 * delta;
 
     if (isMoving) {
+      if (this.isMobileViewport() && this.mobileSelectedObjectId) {
+        this.clearSelection();
+      }
       this.player.x += (dx / length) * speed;
       this.player.y += (dy / length) * speed;
       this.wrapPlayer();
@@ -119,18 +122,16 @@ export class RoomScene extends Phaser.Scene {
   }
 
   setMobileInput(input: MobileInputState) {
+    if (this.isMobileViewport() && this.mobileSelectedObjectId && Object.values(input).some(Boolean)) {
+      this.clearSelection();
+    }
     this.mobileInput = input;
   }
 
   setInteractionLocked(locked: boolean) {
     this.interactionLocked = locked;
     if (locked) {
-      this.nearbyObject = null;
-      this.hoveredObject = null;
-      this.mobileSelectedObjectId = null;
-      this.callbacks.onNearbyChange(null);
-      this.callbacks.onHoverChange(null);
-      this.updateObjectFeedback(null);
+      this.clearSelection();
     }
   }
 
@@ -249,6 +250,10 @@ export class RoomScene extends Phaser.Scene {
       return;
     }
 
+    if (this.isMobileViewport() && this.mobileSelectedObjectId) {
+      return;
+    }
+
     const nextNearby = this.findNearbyObject();
     if (nextNearby?.object_id === this.nearbyObject?.object_id) return;
     this.nearbyObject = nextNearby;
@@ -274,12 +279,22 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private clearSelection() {
+    if (!this.nearbyObject && !this.hoveredObject && !this.mobileSelectedObjectId) return;
     this.nearbyObject = null;
     this.hoveredObject = null;
     this.mobileSelectedObjectId = null;
     this.callbacks.onNearbyChange(null);
     this.callbacks.onHoverChange(null);
     this.updateObjectFeedback(null);
+  }
+
+  private selectMobileObject(object: RoomObject) {
+    this.mobileSelectedObjectId = object.object_id;
+    this.nearbyObject = object;
+    this.hoveredObject = object;
+    this.callbacks.onNearbyChange(object);
+    this.callbacks.onHoverChange(object);
+    this.updateObjectFeedback(object);
   }
 
   private findNearbyObject(): RoomObject | null {
@@ -316,7 +331,9 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private mobileWorldOffsetY() {
-    return this.isMobileViewport() ? -48 : 0;
+    if (!this.isMobileViewport()) return 0;
+    const viewportShift = typeof window === "undefined" ? -160 : window.innerHeight * -0.18;
+    return Phaser.Math.Clamp(viewportShift, -220, -140);
   }
 
   private sceneY(y: number) {
@@ -324,14 +341,16 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private registerMobileBackgroundDismissal() {
-    this.input.on("pointerdown", () => {
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       if (!this.isMobileViewport() || this.interactionLocked) return;
-      this.time.delayedCall(0, () => {
-        if (this.time.now - this.objectPointerDownAt > 60) {
-          this.clearSelection();
-        }
-      });
+      if (!this.findInteractableAt(pointer.worldX, pointer.worldY)) {
+        this.clearSelection();
+      }
     });
+  }
+
+  private findInteractableAt(x: number, y: number) {
+    return this.objectHitboxes.find((entry) => Phaser.Geom.Rectangle.Contains(entry.bounds, x, y))?.object ?? null;
   }
 
   private wrapPlayer() {
@@ -400,6 +419,7 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private drawObjects() {
+    this.objectHitboxes = [];
     for (const object of this.objects) {
       const { x, y } = object.position;
       const { width, height } = object.size;
@@ -415,7 +435,13 @@ export class RoomScene extends Phaser.Scene {
       const baseHitboxHeight = config?.hitboxHeight ?? visibleHeight + hitboxPadding;
       const hitboxWidth = Math.max(baseHitboxWidth * (mobile ? 1.3 : 1), mobile ? 58 : 0);
       const hitboxHeight = Math.max(baseHitboxHeight * (mobile ? 1.3 : 1), mobile ? 58 : 0);
-      const zone = this.add.zone(x + width / 2, renderY + height / 2, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
+      const hitboxCenterX = x + width / 2;
+      const hitboxCenterY = renderY + height / 2;
+      this.objectHitboxes.push({
+        object,
+        bounds: new Phaser.Geom.Rectangle(hitboxCenterX - hitboxWidth / 2, hitboxCenterY - hitboxHeight / 2, hitboxWidth, hitboxHeight),
+      });
+      const zone = this.add.zone(hitboxCenterX, hitboxCenterY, hitboxWidth, hitboxHeight).setInteractive({ useHandCursor: true });
       zone.on("pointerover", () => {
         if (this.isMobileViewport()) return;
         if (!this.interactionLocked) this.setHoveredObject(object);
@@ -425,17 +451,11 @@ export class RoomScene extends Phaser.Scene {
         if (this.hoveredObject?.object_id === object.object_id) this.setHoveredObject(null);
       });
       zone.on("pointerdown", () => {
-        this.objectPointerDownAt = this.time.now;
         if (this.interactionLocked) return;
         if (this.isMobileViewport()) {
           const alreadySelected = this.mobileSelectedObjectId === object.object_id;
           if (!alreadySelected) {
-            this.mobileSelectedObjectId = object.object_id;
-            this.nearbyObject = object;
-            this.hoveredObject = object;
-            this.callbacks.onNearbyChange(object);
-            this.callbacks.onHoverChange(object);
-            this.updateObjectFeedback(object);
+            this.selectMobileObject(object);
             return;
           }
         }
