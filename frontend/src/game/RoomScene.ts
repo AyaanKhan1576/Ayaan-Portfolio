@@ -332,8 +332,8 @@ export class RoomScene extends Phaser.Scene {
 
   private mobileWorldOffsetY() {
     if (!this.isMobileViewport()) return 0;
-    const viewportShift = typeof window === "undefined" ? -96 : window.innerWidth * -0.24;
-    return Phaser.Math.Clamp(viewportShift, -110, -84);
+    const viewportShift = typeof window === "undefined" ? -48 : window.innerWidth * -0.12;
+    return Phaser.Math.Clamp(viewportShift, -56, -36);
   }
 
   private sceneY(y: number) {

@@ -151,6 +151,9 @@ export function useAudioSystem(enabled: boolean) {
 
   const setVolume = useCallback((value: number) => {
     setVolumeState(value);
+    if (fallbackMusicRef.current) {
+      fallbackMusicRef.current.gain.gain.value = value * 0.12;
+    }
     audioManager.setMasterVolume(value);
   }, []);
 

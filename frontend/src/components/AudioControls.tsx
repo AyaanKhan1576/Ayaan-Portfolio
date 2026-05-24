@@ -24,6 +24,20 @@ export function AudioControls({
 }) {
   if (!enabled) return null;
 
+  const activateAudio = () => {
+    if (!audioEnabled) {
+      enableAudio();
+    }
+    if (muted) {
+      setMuted(false);
+    }
+  };
+
+  const changeVolume = (value: number) => {
+    activateAudio();
+    setVolume(value);
+  };
+
   return (
     <div className="audio-card">
       <div className="audio-row">
@@ -37,10 +51,11 @@ export function AudioControls({
         </button>
         <input
           aria-label="Volume"
-          disabled={!audioEnabled}
           max="0.45"
           min="0"
-          onChange={(event) => setVolume(Number(event.target.value))}
+          onChange={(event) => changeVolume(Number(event.target.value))}
+          onPointerDown={activateAudio}
+          onTouchStart={activateAudio}
           step="0.01"
           type="range"
           value={volume}
