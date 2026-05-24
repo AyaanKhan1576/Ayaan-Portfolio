@@ -125,6 +125,7 @@ export function App() {
             onNearbyChange={setNearbyObject}
           />
           <MobileControls
+            hidden={Boolean(activeSection)}
             onInteract={() => setInteractSignal((value) => value + 1)}
             setInput={setMobileInput}
           />

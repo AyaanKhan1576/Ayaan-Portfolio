@@ -188,6 +188,10 @@ a {
   margin-top: 14px;
 }
 
+.quest-log-toggle {
+  display: none;
+}
+
 .quest-log button {
   border: 1px solid #bbbbbb;
   border-radius: 0;
@@ -716,10 +720,22 @@ a {
 .mobile-controls {
   display: none;
   position: absolute;
+  left: 14px;
   right: 14px;
-  bottom: 82px;
+  bottom: 78px;
+  justify-content: space-between;
   align-items: end;
   gap: 16px;
+  z-index: 7;
+  pointer-events: none;
+  touch-action: none;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.mobile-controls.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
 }
 
 .dpad {
@@ -732,10 +748,14 @@ a {
 .pad,
 .interact-pad {
   border: 2px solid #30283e;
-  border-radius: 4px;
+  border-radius: 0;
   background: rgba(255, 250, 255, 0.88);
   color: #30283e;
   font-weight: 800;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .up {
@@ -765,11 +785,12 @@ a {
 @media (max-width: 980px) {
   .room-page {
     padding: 14px;
+    min-height: 100dvh;
   }
 
   .room-header,
   .room-layout {
-    max-width: 760px;
+    max-width: min(760px, 100%);
   }
 
   .room-layout {
@@ -783,27 +804,228 @@ a {
   .mobile-controls {
     display: flex;
   }
+
+  .rpg-preview {
+    bottom: 138px;
+    left: 50%;
+    width: min(92vw, 560px);
+  }
 }
 
 @media (max-width: 680px) {
+  body {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .room-page {
+    padding: 10px;
+    overflow-x: hidden;
+  }
+
   .room-header {
     align-items: stretch;
     flex-direction: column;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .room-header h1 {
+    font-size: clamp(2rem, 14vw, 3rem);
   }
 
   .audio-card {
     width: 100%;
     min-width: 0;
+    gap: 7px;
+    padding: 8px;
+  }
+
+  .audio-row {
+    gap: 8px;
+  }
+
+  .audio-card input {
+    min-width: 0;
+    flex: 1;
+    width: auto;
   }
 
   .music-switcher {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .music-switcher button {
+    padding: 7px 4px;
+    font-size: 0.62rem;
+    overflow-wrap: anywhere;
   }
 
   .game-panel,
   .game-shell {
-    height: 430px;
-    min-height: 430px;
+    height: min(62vh, 430px);
+    min-height: 360px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .game-shell canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .quest-log {
+    position: fixed;
+    left: 10px;
+    top: 112px;
+    width: auto;
+    max-width: calc(100vw - 20px);
+    padding: 0;
+    opacity: 1;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    z-index: 20;
+  }
+
+  .quest-log-toggle {
+    display: inline-grid;
+    place-items: center;
+    min-width: 54px;
+    min-height: 42px;
+    border: 2px solid #111111;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+    font-weight: 800;
+  }
+
+  .quest-log > .pixel-label,
+  .quest-log .quest-log-items {
+    display: none;
+  }
+
+  .quest-log.mobile-open {
+    width: min(270px, calc(100vw - 20px));
+    padding: 10px;
+    border: 2px solid #111111;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+  }
+
+  .quest-log.mobile-open > .pixel-label,
+  .quest-log.mobile-open .quest-log-items {
+    display: grid;
+  }
+
+  .quest-log.mobile-open .quest-log-toggle {
+    margin-bottom: 10px;
+  }
+
+  .quest-log div {
+    max-height: min(52vh, 360px);
+    overflow-y: auto;
+  }
+
+  .quest-log button {
+    min-height: 40px;
+    font-size: 0.8rem;
+  }
+
+  .mobile-controls {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .dpad {
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+    gap: 5px;
+  }
+
+  .pad {
+    font-size: 1.3rem;
+  }
+
+  .interact-pad {
+    width: 66px;
+    height: 66px;
+    font-size: 1.1rem;
+  }
+
+  .rpg-preview {
+    bottom: 116px;
+    left: 50%;
+    width: 92vw;
+  }
+
+  .rpg-preview .rpg-window {
+    height: 118px;
+  }
+
+  .rpg-preview .rpg-window-content {
+    left: 19px;
+    right: 18px;
+    top: 15px;
+    bottom: 12px;
+    gap: 5px;
+  }
+
+  .rpg-preview .rpg-window-header h2 {
+    font-size: 12px;
+  }
+
+  .rpg-preview .rpg-window-body > p:first-child,
+  .rpg-preview .rpg-window-body p {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  .rpg-preview .rpg-window-body .pixel-label {
+    font-size: 9px;
+    padding-right: 12px;
+  }
+
+  .rpg-overlay {
+    padding: 8px;
+    place-items: start center;
+    overflow: hidden;
+  }
+
+  .rpg-window,
+  .rpg-modal .rpg-window,
+  .rpg-modal .rpg-window-resume {
+    width: 94vw;
+    max-width: 94vw;
+    max-height: 85dvh;
+    margin-top: 7dvh;
+  }
+
+  .rpg-window-header {
+    padding: 9px 10px;
+  }
+
+  .pixel-icon-button {
+    min-width: 42px;
+    min-height: 42px;
+  }
+
+  .rpg-window-body,
+  .rpg-modal .rpg-window-body,
+  .rpg-modal .rpg-window-resume .rpg-window-body {
+    max-height: calc(85dvh - 70px);
+    padding: 16px;
+  }
+
+  .dialogue-copy {
+    gap: 11px;
+    line-height: 1.55;
+  }
+
+  .dialogue-copy h3 {
+    font-size: 1.3rem;
   }
 
   .two-column,
@@ -812,8 +1034,61 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .interaction-prompt {
-    bottom: 14px;
-    font-size: 0.75rem;
+  .quest-card {
+    min-height: auto;
+  }
+
+  .resume-actions {
+    display: grid;
+    align-items: stretch;
+  }
+
+  .download-button,
+  .contact-links a {
+    min-height: 46px;
+  }
+
+  .resume-frame {
+    height: 62dvh;
+    min-height: 360px;
+  }
+
+  .email-copy-card button {
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 420px) {
+  .room-page {
+    padding: 8px;
+  }
+
+  .audio-card span {
+    display: none;
+  }
+
+  .game-panel,
+  .game-shell {
+    height: 56vh;
+    min-height: 330px;
+  }
+
+  .dpad {
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+  }
+
+  .interact-pad {
+    width: 60px;
+    height: 60px;
+  }
+
+  .rpg-preview {
+    bottom: 105px;
+  }
+
+  .resume-frame {
+    min-height: 320px;
   }
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { SectionId } from "../types";
 
 const labels: Record<SectionId, string> = {
@@ -21,11 +22,20 @@ export function QuestLog({
   onOpenSection: (section: SectionId) => void;
 }) {
   const unlocked = discovered.length > 1;
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <aside className={unlocked ? "quest-log unlocked" : "quest-log"}>
+    <aside className={`${unlocked ? "quest-log unlocked" : "quest-log"} ${mobileOpen ? "mobile-open" : ""}`}>
+      <button
+        aria-expanded={mobileOpen}
+        className="quest-log-toggle"
+        onClick={() => setMobileOpen((value) => !value)}
+        type="button"
+      >
+        Log
+      </button>
       <p className="pixel-label">Memory Log {unlocked ? "Unlocked" : "Locked"}</p>
-      <div>
+      <div className="quest-log-items">
         {Object.entries(labels)
           .filter(([key]) => key !== "intro")
           .map(([key, label]) => {
@@ -36,7 +46,10 @@ export function QuestLog({
                 className={found ? "found" : ""}
                 disabled={!unlocked || !found}
                 key={key}
-                onClick={() => onOpenSection(section)}
+                onClick={() => {
+                  onOpenSection(section);
+                  setMobileOpen(false);
+                }}
                 type="button"
               >
                 {label}
