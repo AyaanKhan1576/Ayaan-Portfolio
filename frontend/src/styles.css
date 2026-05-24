@@ -154,6 +154,7 @@ a {
 }
 
 .quest-log,
+.onboarding-hint,
 .controls-card,
 .audio-card {
   border: 2px solid #111111;
@@ -180,6 +181,41 @@ a {
 
 .controls-card {
   display: none;
+}
+
+.onboarding-hint {
+  position: absolute;
+  z-index: 5;
+  left: 1068px;
+  top: 380px;
+  width: 190px;
+  padding: 10px 11px;
+  opacity: 0.58;
+  pointer-events: none;
+  animation: hintFade 8s ease forwards;
+}
+
+.onboarding-hint p {
+  margin: 0;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: #30283e;
+}
+
+.mobile-hint {
+  display: none;
+}
+
+@keyframes hintFade {
+  0%,
+  55% {
+    opacity: 0.62;
+  }
+
+  100% {
+    opacity: 0.38;
+  }
 }
 
 .quest-log div {
@@ -379,7 +415,7 @@ a {
 
 .rpg-preview .rpg-window-content {
   position: absolute;
-  left: 24px;
+  left: 28px;
   right: 22px;
   top: 16px;
   bottom: 14px;
@@ -841,8 +877,9 @@ a {
   .audio-card {
     position: relative;
     z-index: 21;
-    width: 100%;
+    width: calc(100% - 76px);
     min-width: 0;
+    margin-left: 76px;
     gap: 7px;
     padding: 8px;
   }
@@ -876,6 +913,10 @@ a {
     overflow: hidden;
   }
 
+  .game-shell {
+    place-items: start center;
+  }
+
   .game-shell canvas {
     max-width: 100% !important;
     height: auto !important;
@@ -884,7 +925,7 @@ a {
   .quest-log {
     position: fixed;
     left: 10px;
-    top: 178px;
+    top: 82px;
     width: auto;
     max-width: calc(100vw - 20px);
     padding: 0;
@@ -923,6 +964,7 @@ a {
   }
 
   .quest-log.mobile-open {
+    top: 184px;
     width: min(270px, calc(100vw - 20px));
     padding: 10px;
     border: 2px solid #111111;
@@ -942,6 +984,30 @@ a {
   .quest-log div {
     max-height: min(52vh, 360px);
     overflow-y: auto;
+  }
+
+  .onboarding-hint {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: 186px;
+    width: auto;
+    padding: 8px 10px;
+    opacity: 0.72;
+    z-index: 5;
+  }
+
+  .onboarding-hint p {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .desktop-hint {
+    display: none;
+  }
+
+  .mobile-hint {
+    display: block;
   }
 
   .quest-log button {
@@ -1110,7 +1176,11 @@ a {
   }
 
   .quest-log {
-    top: 194px;
+    top: 82px;
+  }
+
+  .quest-log.mobile-open {
+    top: 184px;
   }
 
   .resume-frame {

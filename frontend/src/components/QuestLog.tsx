@@ -15,7 +15,6 @@ const labels: Record<SectionId, string> = {
 };
 
 export function QuestLog({
-  discovered,
   onMobileOpenChange,
   onOpenSection,
 }: {
@@ -23,7 +22,6 @@ export function QuestLog({
   onMobileOpenChange?: (open: boolean) => void;
   onOpenSection: (section: SectionId) => void;
 }) {
-  const unlocked = discovered.length > 1;
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function setMobileDrawerOpen(open: boolean) {
@@ -34,7 +32,7 @@ export function QuestLog({
   return (
     <>
       {mobileOpen ? <button aria-label="Close Memory Log" className="quest-log-backdrop" onClick={() => setMobileDrawerOpen(false)} type="button" /> : null}
-      <aside className={`${unlocked ? "quest-log unlocked" : "quest-log"} ${mobileOpen ? "mobile-open" : ""}`}>
+      <aside className={`quest-log unlocked ${mobileOpen ? "mobile-open" : ""}`}>
       <button
         aria-expanded={mobileOpen}
         className="quest-log-toggle"
@@ -43,17 +41,15 @@ export function QuestLog({
       >
         Log
       </button>
-      <p className="pixel-label">Memory Log {unlocked ? "Unlocked" : "Locked"}</p>
+      <p className="pixel-label">Memory Log</p>
       <div className="quest-log-items">
         {Object.entries(labels)
           .filter(([key]) => key !== "intro")
           .map(([key, label]) => {
             const section = key as SectionId;
-            const found = discovered.includes(section);
             return (
               <button
-                className={found ? "found" : ""}
-                disabled={!unlocked || !found}
+                className="found"
                 key={key}
                 onClick={() => {
                   onOpenSection(section);

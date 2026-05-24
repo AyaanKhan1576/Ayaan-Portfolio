@@ -122,6 +122,15 @@ export function App() {
 
       <section className="room-layout">
         <QuestLog discovered={discovered} onMobileOpenChange={setMobileLogOpen} onOpenSection={openSection} />
+        <aside className="onboarding-hint" aria-label="How to explore">
+          <p className="desktop-hint">WASD / arrows &rarr; Move</p>
+          <p className="desktop-hint">E &rarr; Interact</p>
+          <p className="desktop-hint">Memory Log &rarr; Explore sections</p>
+          <p className="desktop-hint">Objects can also be clicked</p>
+          <p className="mobile-hint">Tap entries to explore</p>
+          <p className="mobile-hint">Use controls to move</p>
+          <p className="mobile-hint">Room objects are also interactive</p>
+        </aside>
         <div className="game-panel">
           <GameRoom
             interactSignal={interactSignal}
