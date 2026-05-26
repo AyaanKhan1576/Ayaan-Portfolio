@@ -1,7 +1,9 @@
-import type { CSSProperties } from "react";
-import { useEffect, useState } from "react";
+import type { CSSProperties, PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
+  Award,
+  BookOpen,
   BriefcaseBusiness,
   CheckCircle2,
   Code2,
@@ -12,14 +14,18 @@ import {
   FileText,
   Github,
   GraduationCap,
+  Layers3,
   Linkedin,
   Mail,
+  Network,
+  Play,
   Server,
   Sparkles,
 } from "lucide-react";
 import { config } from "../config";
 import { education } from "../data/education";
 import { experience } from "../data/experience";
+import { mediaItems } from "../data/media";
 import { projects } from "../data/projects";
 import { skills } from "../data/skills";
 import { downloadResume } from "../services/api";
@@ -33,22 +39,23 @@ export const projectFilters: ProjectFilter[] = ["All", "AI/ML", "Computer Vision
 
 const heroTags = ["LLMs", "RAG", "Computer Vision", "AI Agents", "FastAPI", "Python", "Backend Systems"];
 const featuredIds = ["pose2play", "financial-sentiment-rag", "event-booking-microservices"];
+const previewIds = ["synthetic-music-detector", "multimodal-pdf-rag", "semantic-product-search", "online-catalogue-devops", "real-time-crime-analytics", "english-urdu-mbart"];
 
 const featuredBriefs: Record<string, { problem: string; built: string; outcome: string }> = {
   pose2play: {
-    problem: "Rehabilitation feedback is difficult to personalize without real-time movement understanding.",
-    built: "Built webcam pose tracking, temporal form assessment, adaptive feedback, and a web/VR therapy loop.",
-    outcome: "A product-like AI rehabilitation prototype spanning model inference, backend APIs, and Unity VR.",
+    problem: "Rehabilitation needs real-time feedback that can understand body movement, not just count repetitions.",
+    built: "A webcam-to-feedback loop with MediaPipe, temporal LSTM assessment, adaptive targets, backend inference, and VR integration.",
+    outcome: "A product-shaped AI rehab system that connects perception, backend APIs, adaptation, and frontend/VR experience.",
   },
   "financial-sentiment-rag": {
-    problem: "Financial sentiment needs domain language and retrieval context, not generic classification alone.",
-    built: "Combined FinBERT, Flan-T5, FAISS retrieval, RAG classification, and metric-driven comparison.",
-    outcome: "Reported 96.29% sentiment accuracy in the resume-backed selected project summary.",
+    problem: "Financial sentiment depends on domain language, retrieval context, and measurable model behavior.",
+    built: "A hybrid pipeline using FinBERT, Flan-T5, FAISS retrieval, RAG classification, and precision/recall/F1 evaluation.",
+    outcome: "Reported 96.29% sentiment accuracy in the selected project summary with a clear retrieval and evaluation story.",
   },
   "event-booking-microservices": {
-    problem: "Event platforms need clear service boundaries, async communication, delivery automation, and observability.",
-    built: "Designed FastAPI, Flask, and Node.js microservices with RabbitMQ, databases, Kubernetes, GitOps, and monitoring.",
-    outcome: "A cloud-native backend platform demonstrating practical production and DevOps workflows.",
+    problem: "Production platforms need boundaries, messaging, observability, infrastructure, and delivery discipline.",
+    built: "FastAPI, Flask, and Node services with RabbitMQ, PostgreSQL, MongoDB, Docker, Kubernetes, GitOps, and monitoring.",
+    outcome: "A cloud-native backend system showing how services move from code to deployed infrastructure.",
   },
 };
 
@@ -77,7 +84,7 @@ export function useScrollReveal() {
           }
         });
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.14 },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
     );
 
     elements.forEach((element) => observer.observe(element));
@@ -86,7 +93,7 @@ export function useScrollReveal() {
 }
 
 export function displayText(value: string) {
-  return value.replace("sÃ¯Paradigm", "sïParadigm").replace("sÃƒÂ¯Paradigm", "sïParadigm");
+  return value.replace("sÃ¯Paradigm", "sïParadigm").replace("sÃƒÂ¯Paradigm", "sïParadigm").replace("sÃƒÆ’Ã‚Â¯Paradigm", "sïParadigm");
 }
 
 export function projectMatches(project: Project, filter: ProjectFilter) {
@@ -96,9 +103,20 @@ export function projectMatches(project: Project, filter: ProjectFilter) {
 }
 
 export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: PortfolioRoute) => void }) {
+  const pageRef = useRef<HTMLElement | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const featuredProjects = projects.filter((project) => featuredIds.includes(project.id));
+  const previewProjects = projects.filter((project) => previewIds.includes(project.id));
   useScrollReveal();
+
+  function handlePointerMove(event: PointerEvent<HTMLElement>) {
+    if (!pageRef.current || window.matchMedia("(pointer: coarse)").matches) return;
+    const rect = pageRef.current.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / Math.max(rect.height, window.innerHeight) - 0.5) * 2;
+    pageRef.current.style.setProperty("--mx", x.toFixed(3));
+    pageRef.current.style.setProperty("--my", y.toFixed(3));
+  }
 
   async function copyEmail() {
     try {
@@ -112,121 +130,135 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
   }
 
   return (
-    <main className="pro-page">
+    <main className="pro-page professional-home" onPointerMove={handlePointerMove} ref={pageRef}>
       <AtmosphericDust />
       <ProfessionalNav onNavigate={onNavigate} />
 
-      <section className="pro-hero cinematic-hero" id="top">
-        <div className="pro-hero-copy reveal is-visible">
+      <section className="story-hero" id="top">
+        <div className="story-hero-copy reveal is-visible">
           <p className="pro-eyebrow">Ayaan Khan / AI & Software Engineer</p>
-          <h1>Production AI systems, built with software discipline.</h1>
-          <p className="pro-hero-line">
-            LLMs, Computer Vision, RAG & AI Agents | Fullstack, Cloud & DevOps | CS @ FAST NUCES'26
+          <h1>Building intelligent systems from model behavior to production infrastructure.</h1>
+          <p className="story-hero-lede">
+            I work across LLMs, RAG, Computer Vision, AI Agents, backend systems, cloud workflows, and data pipelines to
+            turn intelligent prototypes into practical software.
           </p>
-          <p className="pro-hero-summary">
-            I build practical intelligent systems where model behavior, backend architecture, data pipelines, and
-            deployment all meet in one production-ready surface.
-          </p>
+          <div className="pro-tag-row hero-tags" aria-label="Core technologies">
+            {heroTags.map((tag, index) => (
+              <span key={tag} style={{ "--stagger": `${index * 42}ms` } as CSSProperties}>{tag}</span>
+            ))}
+          </div>
           <div className="pro-actions">
-            <a className="pro-button pro-button-primary magnetic-link" href="#featured">
-              View Featured Work
+            <a className="pro-button pro-button-primary magnetic-link" href="#about">
+              Start with About
               <ArrowRight size={17} />
             </a>
             <button className="pro-button pro-button-secondary magnetic-link" onClick={() => onNavigate("/projects")} type="button">
-              Explore Project Archive
+              View Project Archive
             </button>
             <button className="pro-button pro-button-tertiary magnetic-link" onClick={() => onNavigate("/room")} type="button">
               Enter Ayaan's Room
             </button>
           </div>
+          <SocialContactRow copyEmail={copyEmail} copyStatus={copyStatus} surface="hero" />
+        </div>
+        <ProductionSystemVisual />
+      </section>
 
-          <div className="hero-action-dock" aria-label="Recruiter actions">
-            <a href={config.resumeFallbackUrl} rel="noreferrer" target="_blank">
-              <FileText size={17} />
-              View Resume
-            </a>
-            <button
-              onClick={() => {
-                void trackEvent({ eventType: "resume_download", metadata: { surface: "professional_hero" } });
-                void downloadResume();
-              }}
-              type="button"
-            >
-              <Download size={17} />
-              Download
-            </button>
-            <a href={config.githubUrl} rel="noreferrer" target="_blank">
-              <Github size={17} />
-              GitHub
-            </a>
-            <a href={config.linkedinUrl} rel="noreferrer" target="_blank">
-              <Linkedin size={17} />
-              LinkedIn
-            </a>
-            <button onClick={copyEmail} type="button">
-              <Mail size={17} />
-              Email
-              {copyStatus === "copied" ? <small>copied.</small> : null}
-              {copyStatus === "failed" ? <small>copy unavailable.</small> : null}
-            </button>
+      <section className="story-section about-story" id="about">
+        <SectionHeader eyebrow="01 / About Me" title="What this portfolio is about: practical AI systems, not isolated demos." summary="A personal starting point before the technical archive." />
+        <div className="about-story-grid">
+          <div className="about-narrative pro-panel reveal">
+            {[
+              "I'm an AI & Software Engineer interested in building intelligent systems that are practical, scalable, and production ready.",
+              "Currently pursuing a BS in Computer Science at FAST NUCES, Class of 2026, I've worked on projects involving LLMs, RAG pipelines, AI agents, fullstack applications, cloud infrastructure, and real-time ML systems.",
+              "I primarily work with Python, FastAPI, and modern AI frameworks, with a strong foundation in C/C++. My experience also includes Docker, Kubernetes, CI/CD workflows, data pipelines, and backend system design.",
+            ].map((paragraph, index) => (
+              <p className="word-reveal" key={paragraph} style={{ "--stagger": `${index * 120}ms` } as CSSProperties}>{paragraph}</p>
+            ))}
           </div>
-
-          <div className="pro-tag-row hero-tags" aria-label="Core technologies">
-            {heroTags.map((tag) => (
-              <span key={tag}>{tag}</span>
+          <div className="principle-stack reveal">
+            {["Model behavior", "Backend contracts", "Data movement", "Deployment reality"].map((item, index) => (
+              <div className="principle-card" key={item} style={{ "--stagger": `${index * 80}ms` } as CSSProperties}>
+                <span>0{index + 1}</span>
+                <b>{item}</b>
+              </div>
             ))}
           </div>
         </div>
-        <HeroCinematicPanel />
       </section>
 
-      <section className="pro-section" id="featured">
-        <SectionHeader
-          eyebrow="Featured systems"
-          title="Three projects that define the engineering story."
-          summary="A tighter homepage: applied computer vision, retrieval-heavy NLP, and cloud-native backend systems."
-        />
-        <div className="featured-grid curated-grid">
-          {featuredProjects.map((project, index) => (
-            <FeaturedProjectCard index={index} key={project.id} project={project} />
-          ))}
-        </div>
-        <div className="archive-strip reveal">
-          <span>20 curated projects across AI, backend, cloud, data, and systems.</span>
-          <button className="pro-button pro-button-secondary" onClick={() => onNavigate("/projects")} type="button">
-            Open Project Archive
-            <ArrowRight size={16} />
-          </button>
+      <section className="story-section contact-story" id="contact">
+        <SectionHeader eyebrow="02 / Contact" title="Direct paths for recruiters and collaborators." summary="Resume, code, profile, and email are intentionally close to the top." />
+        <div className="contact-command pro-panel reveal">
+          <SocialContactRow copyEmail={copyEmail} copyStatus={copyStatus} surface="contact" />
         </div>
       </section>
 
-      <section className="pro-section split-section" id="about">
-        <SectionHeader eyebrow="About" title="AI engineering with backend instincts." />
-        <div className="about-copy pro-panel reveal">
-          <p>
-            I'm an AI & Software Engineer interested in building intelligent systems that are practical, scalable, and
-            production ready.
-          </p>
-          <p>
-            Currently pursuing a BS in Computer Science at FAST NUCES, Class of 2026, I've worked on projects involving
-            LLMs, RAG pipelines, AI agents, fullstack applications, cloud infrastructure, and real-time ML systems.
-          </p>
-          <p>
-            I primarily work with Python, FastAPI, and modern AI frameworks, with a strong foundation in C/C++. My
-            experience also includes Docker, Kubernetes, CI/CD workflows, data pipelines, and backend system design.
-          </p>
+      <section className="story-section resume-story" id="resume">
+        <SectionHeader eyebrow="03 / Resume" title="The concise document view, with the same tracked download behavior." summary="Use the document preview frame when you want the short version before opening project details." />
+        <div className="resume-cinema pro-panel reveal">
+          <div className="resume-preview-frame" aria-hidden="true">
+            <div className="paper-sheet">
+              <span />
+              <b>Ayaan Khan</b>
+              <i />
+              <i />
+              <i />
+            </div>
+          </div>
+          <div className="resume-copy">
+            <p>Current resume with education, experience, selected projects, skills, leadership, and contact details.</p>
+            <div className="pro-actions">
+              <a className="pro-button pro-button-secondary" href={config.resumeFallbackUrl} rel="noreferrer" target="_blank">
+                <FileText size={17} />
+                View Resume
+              </a>
+              <button
+                className="pro-button pro-button-primary"
+                onClick={() => {
+                  void trackEvent({ eventType: "resume_download", metadata: { surface: "professional_resume" } });
+                  void downloadResume();
+                }}
+                type="button"
+              >
+                <Download size={17} />
+                Download Resume
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="pro-section" id="experience">
-        <SectionHeader eyebrow="Experience" title="Recent work across data automation, agents, coordination, and systems." />
-        <div className="timeline cinematic-timeline">
+      <section className="story-section education-story" id="education">
+        <SectionHeader eyebrow="04 / Education" title="Computer Science foundation for AI, systems, and cloud work." summary="The coursework is the base layer under the production-oriented projects." />
+        <article className="education-cinematic pro-panel reveal">
+          <div className="education-node">
+            <GraduationCap size={22} />
+          </div>
+          <div>
+            <h3>{education.university}</h3>
+            <p>{education.degree} / {education.location}</p>
+            <span>{education.period}</span>
+            <p>{education.summary}</p>
+            <div className="pro-tag-row course-tags">
+              {education.coursework.map((course, index) => (
+                <span key={course} style={{ "--stagger": `${index * 32}ms` } as CSSProperties}>{course}</span>
+              ))}
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section className="story-section experience-story" id="experience">
+        <SectionHeader eyebrow="05 / Experience" title="Professional experience: coordination, data automation, agentic AI, and systems work." summary="A timeline of applied work that connects technical delivery with production constraints." />
+        <div className="experience-flow">
           {experience.map((item, index) => {
             const [title, company] = displayText(item.title).split(" - ");
             return (
-              <article className="timeline-card reveal" key={`${item.period}-${item.title}`} style={{ "--stagger": `${index * 70}ms` } as CSSProperties}>
+              <article className="experience-entry reveal" key={`${item.period}-${item.title}`} style={{ "--stagger": `${index * 95}ms` } as CSSProperties}>
+                <div className="experience-marker" />
                 <span>{item.period}</span>
-                <div>
+                <div className="experience-card pro-panel">
                   <h3>{company ?? item.title}</h3>
                   <p className="timeline-role">{title}</p>
                   <p>{displayText(item.detail)}</p>
@@ -237,16 +269,25 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </section>
 
-      <section className="pro-section" id="skills">
-        <SectionHeader eyebrow="Skills" title="A stack organized by production responsibility." />
-        <div className="skill-card-grid">
+      <section className="story-section featured-story" id="featured">
+        <SectionHeader eyebrow="06 / Featured Projects" title="Featured case studies: the clearest evidence of production AI engineering." summary="Each project card is built like a small launch surface with problem, implementation, outcome, and technical media placeholders." />
+        <div className="featured-case-grid">
+          {featuredProjects.map((project, index) => (
+            <FeaturedProjectCard index={index} key={project.id} project={project} />
+          ))}
+        </div>
+      </section>
+
+      <section className="story-section skills-story" id="skills">
+        <SectionHeader eyebrow="07 / Skills" title="Skill clusters organized by how intelligent systems are shipped." summary="No bars, no fake percentages. Just grouped capabilities with motion and hierarchy." />
+        <div className="skill-orbit-grid">
           {skills.map((group, index) => (
-            <article className="pro-panel skill-group reveal" key={group.category} style={{ "--stagger": `${index * 55}ms` } as CSSProperties}>
+            <article className="skill-orbit pro-panel reveal" key={group.category} style={{ "--stagger": `${index * 70}ms` } as CSSProperties}>
               <div className="skill-icon">{skillIcon(group.category)}</div>
               <h3>{group.category}</h3>
-              <div className="pro-tag-row">
-                {group.items.map((item) => (
-                  <span key={item}>{item}</span>
+              <div className="pro-tag-row floating-tags">
+                {group.items.map((item, itemIndex) => (
+                  <span key={item} style={{ "--stagger": `${itemIndex * 28}ms` } as CSSProperties}>{item}</span>
                 ))}
               </div>
             </article>
@@ -254,41 +295,37 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </section>
 
-      <section className="pro-section" id="education">
-        <SectionHeader eyebrow="Education" title="Computer Science foundation with AI, systems, and cloud coursework." />
-        <article className="education-card pro-panel reveal">
-          <div>
-            <GraduationCap size={22} />
-            <h3>{education.university}</h3>
-            <p>{education.degree} / {education.location}</p>
-          </div>
-          <span>{education.period}</span>
-          <p>{education.summary}</p>
-          <div className="pro-tag-row">
-            {education.coursework.map((course) => (
-              <span key={course}>{course}</span>
+      <section className="story-section all-projects-preview" id="projects-preview">
+        <SectionHeader eyebrow="08 / All Projects Preview" title="A quick scan before the full project archive." summary="The homepage stays curated, while the archive gives the complete technical map." />
+        <div className="project-marquee reveal">
+          <div className="project-marquee-track">
+            {[...previewProjects, ...previewProjects].map((project, index) => (
+              <PreviewProjectCard key={`${project.id}-${index}`} project={project} />
             ))}
           </div>
-        </article>
+        </div>
+        <div className="archive-strip reveal">
+          <span>{projects.length} total projects across AI, backend, cloud, data, and systems.</span>
+          <button className="pro-button pro-button-primary" onClick={() => onNavigate("/projects")} type="button">
+            View All Projects
+            <ArrowRight size={16} />
+          </button>
+        </div>
       </section>
 
-      <section className="pro-section cta-section" id="contact">
-        <div className="cta-panel reveal">
-          <div>
-            <p className="pro-eyebrow">Contact</p>
-            <h2>Open to AI engineering, ML systems, backend, and platform-heavy work.</h2>
-            <p>Use the quick actions at the top, or jump into the project archive for a deeper technical read.</p>
-          </div>
-          <div className="pro-actions">
-            <button className="pro-button pro-button-primary" onClick={() => onNavigate("/projects")} type="button">
-              Explore Projects
-              <ArrowRight size={17} />
-            </button>
-            <a className="pro-button pro-button-secondary" href={`mailto:${config.emailAddress}`}>
-              <Mail size={17} />
-              Email
-            </a>
-          </div>
+      <section className="story-section honors-story" id="honors">
+        <SectionHeader eyebrow="09 / Leadership and Honors" title="Leadership, academic recognition, and community work." summary="A final gallery for signals that do not fit neatly into code repositories." />
+        <div className="honors-gallery">
+          {mediaItems.map((item, index) => (
+            <article className="honor-frame pro-panel reveal" key={item.id} style={{ "--stagger": `${index * 90}ms` } as CSSProperties}>
+              <div className="honor-media" aria-hidden="true">
+                {item.type === "video" ? <Play size={22} /> : item.type === "pdf" ? <FileText size={22} /> : <Award size={22} />}
+              </div>
+              <span>{item.type}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
         </div>
       </section>
     </main>
@@ -310,10 +347,10 @@ export function ProfessionalNav({ onNavigate }: { onNavigate: (path: PortfolioRo
         Ayaan Khan
       </button>
       <nav className="pro-nav-links" aria-label="Sections">
-        <button onClick={() => onNavigate("/professional")} type="button">Home</button>
-        <button onClick={() => onNavigate("/projects")} type="button">Projects</button>
-        <button onClick={() => navigateToSection("experience")} type="button">Experience</button>
+        <button onClick={() => navigateToSection("about")} type="button">About</button>
         <button onClick={() => navigateToSection("contact")} type="button">Contact</button>
+        <button onClick={() => navigateToSection("experience")} type="button">Experience</button>
+        <button onClick={() => onNavigate("/projects")} type="button">Projects</button>
       </nav>
       <button className="pro-button pro-button-secondary pro-room-switch" onClick={() => onNavigate("/room")} type="button">
         Enter Ayaan's Room
@@ -325,16 +362,16 @@ export function ProfessionalNav({ onNavigate }: { onNavigate: (path: PortfolioRo
 export function AtmosphericDust() {
   return (
     <div className="atmosphere" aria-hidden="true">
-      {Array.from({ length: 34 }).map((_, index) => (
+      {Array.from({ length: 42 }).map((_, index) => (
         <span
           key={index}
           style={{
             "--x": `${(index * 37) % 100}%`,
             "--y": `${(index * 53) % 100}%`,
-            "--s": `${1 + (index % 5) * 0.42}px`,
-            "--d": `${18 + (index % 8) * 3}s`,
-            "--delay": `${index * -0.72}s`,
-            "--alpha": `${0.14 + (index % 6) * 0.045}`,
+            "--s": `${1 + (index % 6) * 0.38}px`,
+            "--d": `${20 + (index % 9) * 3}s`,
+            "--delay": `${index * -0.66}s`,
+            "--alpha": `${0.12 + (index % 6) * 0.038}`,
           } as CSSProperties}
         />
       ))}
@@ -344,7 +381,7 @@ export function AtmosphericDust() {
 
 export function SectionHeader({ eyebrow, title, summary }: { eyebrow: string; title: string; summary?: string }) {
   return (
-    <div className="section-heading reveal">
+    <div className="section-heading story-heading reveal">
       <p className="pro-eyebrow">{eyebrow}</p>
       <h2>{title}</h2>
       {summary ? <p>{summary}</p> : null}
@@ -352,48 +389,85 @@ export function SectionHeader({ eyebrow, title, summary }: { eyebrow: string; ti
   );
 }
 
-function HeroCinematicPanel() {
-  const rows = [
-    ["rag.context", "FAISS + FinBERT", "96.29%"],
-    ["vision.feedback", "MediaPipe + LSTM", "realtime"],
-    ["agent.eval", "Pydantic AI", "tested"],
-    ["deploy.flow", "K8s + GitOps", "synced"],
+function SocialContactRow({
+  copyEmail,
+  copyStatus,
+  surface,
+}: {
+  copyEmail: () => void;
+  copyStatus: "idle" | "copied" | "failed";
+  surface: string;
+}) {
+  return (
+    <div className="social-contact-row" aria-label={`${surface} contact actions`}>
+      <a data-tip="Open GitHub" href={config.githubUrl} rel="noreferrer" target="_blank">
+        <Github size={18} />
+        GitHub
+      </a>
+      <a data-tip="Open LinkedIn" href={config.linkedinUrl} rel="noreferrer" target="_blank">
+        <Linkedin size={18} />
+        LinkedIn
+      </a>
+      <button data-tip="Copy email" onClick={copyEmail} type="button">
+        <Mail size={18} />
+        {config.emailAddress}
+        {copyStatus === "copied" ? <small>copied.</small> : null}
+        {copyStatus === "failed" ? <small>copy unavailable.</small> : null}
+      </button>
+      <a data-tip="View resume" href={config.resumeFallbackUrl} rel="noreferrer" target="_blank">
+        <FileText size={18} />
+        Resume
+      </a>
+    </div>
+  );
+}
+
+function ProductionSystemVisual() {
+  const nodes = [
+    { id: "agents", label: "AI Agents", meta: "planning / tools", className: "node-agents" },
+    { id: "rag", label: "RAG", meta: "retrieval / grounding", className: "node-rag" },
+    { id: "apis", label: "APIs", meta: "FastAPI / REST", className: "node-apis" },
+    { id: "vision", label: "Computer Vision", meta: "pose / media", className: "node-vision" },
+    { id: "backend", label: "Backend Systems", meta: "services / queues", className: "node-backend" },
+    { id: "cloud", label: "Cloud + Infra", meta: "Docker / K8s / CI", className: "node-cloud" },
+    { id: "data", label: "Data Pipelines", meta: "ETL / streaming", className: "node-data" },
+    { id: "frontend", label: "Frontend Experiences", meta: "web / VR / dashboards", className: "node-frontend" },
   ];
 
   return (
-    <aside className="hero-cinema pro-panel reveal is-visible" aria-label="Technical system composition">
-      <div className="cinema-scanline" />
-      <div className="cinema-header">
-        <span>live_system_map</span>
+    <aside className="production-system pro-panel reveal is-visible" aria-label="Production AI architecture visual">
+      <div className="system-legend">
+        <span>production_ai_architecture</span>
         <CheckCircle2 size={17} />
       </div>
-      <div className="architecture-stage">
-        <div className="arch-node node-source">
-          <span>input</span>
-          webcam / docs / APIs
-        </div>
-        <div className="arch-node node-model">
-          <span>models</span>
-          LLMs / CV / retrieval
-        </div>
-        <div className="arch-node node-ship">
-          <span>ship</span>
-          FastAPI / cloud / CI
-        </div>
-        <svg className="arch-lines" viewBox="0 0 420 250" role="img" aria-label="Architecture connection lines">
-          <path d="M76 76 C158 32 218 32 326 74" />
-          <path d="M78 176 C166 220 240 218 330 174" />
-          <path d="M92 88 C142 128 202 146 305 156" />
+      <div className="system-canvas">
+        <svg className="system-connections" viewBox="0 0 560 520" role="img" aria-label="Connected AI system flow">
+          <path d="M92 160 C170 86 254 74 356 116" />
+          <path d="M356 116 C432 156 470 230 452 312" />
+          <path d="M452 312 C386 396 286 420 190 374" />
+          <path d="M190 374 C122 318 80 242 92 160" />
+          <path d="M140 112 C220 210 308 240 442 210" />
+          <path d="M132 306 C242 286 352 306 470 398" />
+          <path d="M280 258 C230 188 202 154 140 112" />
+          <path d="M280 258 C352 220 396 174 442 210" />
+          <path d="M280 258 C302 336 356 386 470 398" />
+          <path d="M280 258 C226 300 190 338 132 306" />
         </svg>
-      </div>
-      <div className="system-grid cinematic-grid">
-        {rows.map(([name, tool, status]) => (
-          <div className="system-row" key={name}>
-            <span>{name}</span>
-            <b>{tool}</b>
-            <small>{status}</small>
+        <div className="system-core">
+          <Network size={20} />
+          <b>Production AI</b>
+          <span>models + software + infra</span>
+        </div>
+        {nodes.map((node) => (
+          <div className={`system-node ${node.className}`} key={node.id}>
+            <b>{node.label}</b>
+            <span>{node.meta}</span>
           </div>
         ))}
+      </div>
+      <div className="system-caption">
+        <Layers3 size={16} />
+        Intelligent systems are strongest when retrieval, perception, APIs, data, frontend, and infrastructure are designed together.
       </div>
     </aside>
   );
@@ -403,7 +477,7 @@ export function FeaturedProjectCard({ project, index }: { project: Project; inde
   const brief = featuredBriefs[project.id];
 
   return (
-    <article className="featured-card reveal" style={{ "--stagger": `${index * 90}ms` } as CSSProperties}>
+    <article className="featured-card launch-card reveal" style={{ "--stagger": `${index * 110}ms` } as CSSProperties}>
       <ProjectVisual project={project} />
       <div className="featured-meta">
         <span>{project.status}</span>
@@ -422,15 +496,26 @@ export function FeaturedProjectCard({ project, index }: { project: Project; inde
         </div>
         <div>
           <b>Outcome</b>
-          <p>{brief?.outcome ?? "Documented as a polished technical project with repository-level implementation details."}</p>
+          <p>{brief?.outcome ?? "A documented technical project with repository-level implementation details."}</p>
         </div>
       </div>
-      <div className="pro-tag-row">
-        {project.technologies.slice(0, 8).map((tech) => (
-          <span key={tech}>{tech}</span>
+      <div className="pro-tag-row moving-stack">
+        {project.technologies.slice(0, 8).map((tech, techIndex) => (
+          <span key={tech} style={{ "--stagger": `${techIndex * 34}ms` } as CSSProperties}>{tech}</span>
         ))}
       </div>
       <ProjectLinks project={project} />
+    </article>
+  );
+}
+
+function PreviewProjectCard({ project }: { project: Project }) {
+  return (
+    <article className="preview-project-card">
+      <ProjectVisual project={project} />
+      <span>{project.tags.slice(0, 2).join(" / ")}</span>
+      <h3>{project.title}</h3>
+      <p>{project.short_description}</p>
     </article>
   );
 }
@@ -442,6 +527,10 @@ export function ProjectVisual({ project }: { project: Project }) {
         <span />
         <span />
         <span />
+      </div>
+      <div className="visual-playback">
+        <Play size={15} />
+        <span>preview</span>
       </div>
       <div className="visual-stack">
         <span>{project.tags[0] ?? "system"}</span>
@@ -484,5 +573,6 @@ function skillIcon(category: string) {
   if (category.includes("Backend")) return <Server size={18} />;
   if (category.includes("DevOps")) return <BriefcaseBusiness size={18} />;
   if (category.includes("Databases")) return <Database size={18} />;
-  return <Code2 size={18} />;
+  if (category.includes("Languages")) return <Code2 size={18} />;
+  return <BookOpen size={18} />;
 }
