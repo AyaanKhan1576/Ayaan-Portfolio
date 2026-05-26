@@ -1,6 +1,7 @@
 import type { CSSProperties, PointerEvent } from "react";
 import { useRef, useState } from "react";
-import { ArrowRight, BriefcaseBusiness, DoorOpen } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, DoorOpen, Moon, Sun } from "lucide-react";
+import { useProfessionalTheme } from "../hooks/useProfessionalTheme";
 
 type PortfolioRoute = "/" | "/professional" | "/room";
 type PortfolioMode = "professional" | "room";
@@ -16,8 +17,8 @@ export function IntroScreen({
   const pageRef = useRef<HTMLElement | null>(null);
   const [hoveredMode, setHoveredMode] = useState<PortfolioMode | null>(null);
   const [transitionMode, setTransitionMode] = useState<TransitionMode>(null);
-  const continuePath = lastMode === "room" ? "/room" : "/professional";
-  const continueLabel = lastMode === "room" ? "Continue in Ayaan's Room" : "Continue Professional Portfolio";
+  const { theme, toggleTheme } = useProfessionalTheme();
+  const continueLabel = lastMode === "room" ? "Continue Interactive Portfolio" : "Continue Professional Portfolio";
 
   function handlePointerMove(event: PointerEvent<HTMLElement>) {
     if (!pageRef.current || window.matchMedia("(pointer: coarse)").matches) return;
@@ -35,7 +36,8 @@ export function IntroScreen({
 
   return (
     <main
-      className={`intro-page dream-gateway ${hoveredMode ? `hover-${hoveredMode}` : ""} ${transitionMode ? `intro-transitioning transition-${transitionMode}` : ""}`}
+      className={`intro-page dream-gateway editorial-intro ${hoveredMode ? `hover-${hoveredMode}` : ""} ${transitionMode ? `intro-transitioning transition-${transitionMode}` : ""}`}
+      data-theme={theme}
       onPointerMove={handlePointerMove}
       ref={pageRef}
     >
@@ -61,6 +63,11 @@ export function IntroScreen({
           />
         ))}
       </div>
+
+      <button className="intro-theme-toggle" onClick={toggleTheme} type="button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+        {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+        <span>{theme === "dark" ? "Light" : "Dark"}</span>
+      </button>
 
       <section className="gateway-shell" aria-labelledby="intro-title">
         <div className="gateway-heading">
@@ -107,8 +114,8 @@ export function IntroScreen({
             <span className="option-index">02</span>
             <span className="option-icon"><DoorOpen size={18} /></span>
             <span className="option-copy">
-              <b>Ayaan's Room</b>
-              <small>Interactive, exploratory, personal.</small>
+              <b>Interactive Portfolio</b>
+              <small>Enter Ayaan&apos;s Room, the playable portfolio.</small>
             </span>
             <ArrowRight className="option-arrow" size={17} />
           </button>

@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import { projects } from "../data/projects";
+import { useProfessionalTheme } from "../hooks/useProfessionalTheme";
 import type { Project } from "../types";
 import {
   AtmosphericDust,
@@ -19,6 +20,7 @@ import {
 export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute) => void }) {
   const [projectFilter, setProjectFilter] = useState<ProjectFilter>("All");
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const { theme, toggleTheme } = useProfessionalTheme();
   const filteredProjects = useMemo(
     () => projects.filter((project) => projectMatches(project, projectFilter)),
     [projectFilter],
@@ -26,9 +28,9 @@ export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute
   useScrollReveal();
 
   return (
-    <main className="pro-page projects-page">
+    <main className="pro-page projects-page" data-theme={theme}>
       <AtmosphericDust />
-      <ProfessionalNav onNavigate={onNavigate} />
+      <ProfessionalNav activeSection="projects" onNavigate={onNavigate} onToggleTheme={toggleTheme} theme={theme} />
 
       <section className="projects-hero">
         <button className="archive-back" onClick={() => onNavigate("/professional")} type="button">
