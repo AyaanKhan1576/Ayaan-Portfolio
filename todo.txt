@@ -4,9 +4,7 @@
 - LLM RAG Chatbot
 - add pictures and videos
 - verify information and text in each object
-- change objects dialogue
 - add home screen or something animated to make this look more impressive. have it alsso mention to view on pc/laptop for best experience
-- when click E on fluff open picture of fluff.
-- reorder memory log
+- add github link to projects
 
 

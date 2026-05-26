@@ -53,19 +53,20 @@ function Intro({ openSection }: { openSection: (section: SectionId) => void }) {
 function About() {
   return (
     <div className="dialogue-copy">
-      <p className="soft-role">AI & Software Engineer</p>
+      <p className="soft-role">AI & Software Engineer building production-ready intelligent systems</p>
       <p>
-        I build applied AI systems, backend platforms, data pipelines, and cloud-deployed software. My recent work spans
-        agentic AI, computer vision rehabilitation, financial NLP, microservices, and medical document automation.
+        I focus on practical AI systems across LLMs, RAG, AI agents, computer vision, backend-focused fullstack
+        engineering, and cloud/DevOps workflows. I am pursuing a BS in Computer Science at FAST-NUCES, Class of 2026,
+        and primarily work with Python, modern AI frameworks, and have a strong C/C++ foundation.
       </p>
       <div className="two-column">
         <div className="paper-card">
-          <b>Education</b>
-          <p>BS Computer Science at FAST-NUCES Islamabad, expected June 2026.</p>
+          <b>Engineering Focus</b>
+          <p>Production-ready LLM, RAG, agentic AI, computer vision, and backend systems.</p>
         </div>
         <div className="paper-card">
-          <b>Interests</b>
-          <p>Agentic AI, NLP/RAG, computer vision, backend architecture, cloud deployment, and data engineering.</p>
+          <b>Tooling</b>
+          <p>Docker, Kubernetes, AWS, CI/CD, data pipelines, system design, PostgreSQL, and MongoDB.</p>
         </div>
       </div>
     </div>
@@ -74,24 +75,23 @@ function About() {
 
 function Skills() {
   return (
-    <div className="stats-list">
-      {skills.map((skill) => (
-        <div className="stat-row" key={skill.name}>
-          <div>
-            <b>{skill.name}</b>
-            <p>{skill.note}</p>
+    <div className="skills-grid">
+      {skills.map((group) => (
+        <article className="skill-card" key={group.category}>
+          <b>{group.category}</b>
+          <div className="tag-row">
+            {group.items.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
           </div>
-          <div className="stat-meter" aria-label={`${skill.name} ${skill.value}`}>
-            <span style={{ width: `${skill.value}%` }} />
-          </div>
-        </div>
+        </article>
       ))}
     </div>
   );
 }
 
 function Projects({ onlyFeatured = false }: { onlyFeatured?: boolean }) {
-  const shown = onlyFeatured ? projects.filter((project) => project.featured).slice(0, 3) : projects;
+  const shown = onlyFeatured ? projects.filter((project) => project.featured).slice(0, 4) : projects;
   const [selected, setSelected] = useState<Project | null>(null);
 
   if (selected) {
@@ -114,19 +114,26 @@ function Projects({ onlyFeatured = false }: { onlyFeatured?: boolean }) {
   return (
     <div className="quest-grid">
       {shown.map((project) => (
-        <button
-          className="quest-card"
-          key={project.id}
-          onClick={() => {
-            setSelected(project);
-            void trackEvent({ eventType: "project_view", metadata: { projectId: project.id } });
-          }}
-          type="button"
-        >
-          <span>{project.status}</span>
-          <b>{project.title}</b>
-          <p>{project.short_description}</p>
-        </button>
+        <article className="quest-card project-card" key={project.id}>
+          <button
+            className="project-card-main"
+            onClick={() => {
+              setSelected(project);
+              void trackEvent({ eventType: "project_view", metadata: { projectId: project.id } });
+            }}
+            type="button"
+          >
+            <span>{project.status}</span>
+            <b>{project.title}</b>
+            <p>{project.short_description}</p>
+          </button>
+          {project.github_url ? (
+            <a className="project-card-link" href={project.github_url} rel="noreferrer" target="_blank">
+              <Github size={15} />
+              GitHub
+            </a>
+          ) : null}
+        </article>
       ))}
     </div>
   );
@@ -162,10 +169,11 @@ function Education() {
         <div className="paper-card">
           <b>University</b>
           <p>{education.university}</p>
+          <p>{education.location}</p>
         </div>
         <div className="paper-card">
-          <b>Expected Graduation</b>
-          <p>{education.expectedGraduation}</p>
+          <b>Degree Period</b>
+          <p>{education.period}</p>
         </div>
       </div>
       <div className="paper-card">

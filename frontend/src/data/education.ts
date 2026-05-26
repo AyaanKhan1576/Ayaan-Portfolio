@@ -1,7 +1,8 @@
 export const education = {
-  degree: "B.S. in Computer Science",
-  university: "National University of Computer and Emerging Sciences (FAST-NUCES), Islamabad",
-  expectedGraduation: "June 2026",
+  degree: "BS Computer Science",
+  university: "National University of Computer and Emerging Sciences (FAST-NUCES)",
+  location: "Islamabad",
+  period: "August 2022 - June 2026",
   coursework: [
     "Deep Learning",
     "Generative AI",
@@ -19,5 +20,5 @@ export const education = {
     "Dean's List - Fall 2025",
     "Top 50 in Pakistan - National Mathematics Olympiad Camp",
   ],
-  summary: "Computer Science student at FAST-NUCES Islamabad focused on AI, backend systems, cloud, and applied software engineering.",
+  summary: "Computer Science student focused on AI engineering, backend systems, cloud workflows, and production-ready software.",
 } as const;

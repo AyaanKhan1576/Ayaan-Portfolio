@@ -2,11 +2,11 @@ export const experience = [
   {
     period: "Apr 2026 - Present",
     title: "Project Associate - Kodifly",
-    detail: "Improved cross-team coordination through Jira workflows, PRDs, UATs, training manuals, technical reports, and structured software/hardware documentation.",
+    detail: "Improved cross-team coordination through Jira workflow management, project documentation, PRDs, UATs, training manuals, technical reports, and structured software/hardware requirements.",
   },
   {
     period: "Jul 2025 - Aug 2025",
-    title: "Data Analyst Intern - Paradigm Diagnostic Informatics",
+    title: "Data Analyst Intern - sïParadigm Diagnostic Informatics",
     detail: "Automated preprocessing of 200+ GB of medical PDFs into AI-ready datasets, applied spaCy NER for 90%+ record linkage accuracy, and built Pandas/Excel QA tooling that reduced manual effort by about 70%.",
   },
   {
