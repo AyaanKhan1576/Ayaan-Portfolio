@@ -49,8 +49,8 @@ export type ProjectFilter = "All" | "AI/ML" | "Computer Vision" | "RAG" | "AI Ag
 
 export const projectFilters: ProjectFilter[] = ["All", "AI/ML", "Computer Vision", "RAG", "AI Agents", "Backend", "DevOps", "Data Science"];
 
-const featuredIds = ["pose2play", "financial-sentiment-rag", "event-booking-microservices"];
-const previewIds = ["synthetic-music-detector", "multimodal-pdf-rag", "semantic-product-search", "online-catalogue-devops", "real-time-crime-analytics", "english-urdu-mbart"];
+const featuredIds = ["pose2play", "financial-sentiment-rag", "event-booking-microservices", "synthetic-music-detector"];
+const previewIds = ["pose2play", "financial-sentiment-rag", "event-booking-microservices", "synthetic-music-detector"];
 
 const categoryMatchers: Record<ProjectFilter, string[]> = {
   All: [],
@@ -913,8 +913,17 @@ export function ProjectVisual({ project }: { project: Project }) {
   const techPreview = project.id === "event-booking-microservices"
     ? ["Kubernetes", "Docker", "GitOps"]
     : project.technologies.slice(0, 3);
+  const mediaSrc = project.demo_video_url || project.screenshots[0];
+  const isVideo = Boolean(project.demo_video_url);
   return (
     <div className="project-visual editorial-photo" aria-hidden="true">
+      {mediaSrc ? (
+        isVideo ? (
+          <video autoPlay className="project-visual-media" loop muted playsInline preload="metadata" src={mediaSrc} />
+        ) : (
+          <img alt="" className="project-visual-media" loading="lazy" src={mediaSrc} />
+        )
+      ) : null}
       <div className="visual-playback"><Play size={14} /><span>preview</span></div>
       <b>{project.title.split(" ").slice(0, 3).join(" ")}</b>
       <span>{techPreview.join(" / ")}</span>

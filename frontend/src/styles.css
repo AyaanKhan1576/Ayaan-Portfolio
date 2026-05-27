@@ -3437,6 +3437,22 @@ a {
   overflow: hidden;
 }
 
+.project-visual-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.84;
+}
+
+.project-visual-media + .visual-playback,
+.project-visual-media ~ b,
+.project-visual-media ~ span {
+  position: relative;
+  z-index: 1;
+}
+
 .editorial-photo::after {
   content: "";
   position: absolute;
