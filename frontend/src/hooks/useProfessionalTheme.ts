@@ -8,7 +8,7 @@ export function useProfessionalTheme() {
   const [theme, setTheme] = useState<ProfessionalTheme>(() => {
     if (typeof window === "undefined") return "light";
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored === "dark" ? "dark" : "light";
+    return stored === "light" ? "light" : "dark";
   });
 
   useEffect(() => {

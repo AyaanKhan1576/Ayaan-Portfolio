@@ -66,6 +66,11 @@ const categoryMatchers: Record<ProjectFilter, string[]> = {
   "Data Science": ["Data", "Analytics", "Streaming", "Kafka", "Spark", "MapReduce", "Big Data"],
 };
 
+const projectFilterExclusions: Partial<Record<ProjectFilter, string[]>> = {
+  "AI/ML": ["hotel-booking-microservices"],
+  "Computer Vision": ["real-time-crime-analytics", "nyc-taxi-kafka", "multimodal-pdf-rag"],
+};
+
 const sectionOrder = [
   ["about", "About Me"],
   ["contact", "Contact"],
@@ -384,6 +389,7 @@ export function displayText(value: string) {
 
 export function projectMatches(project: Project, filter: ProjectFilter) {
   if (filter === "All") return true;
+  if (projectFilterExclusions[filter]?.includes(project.id)) return false;
   const haystack = [...project.tags, ...project.technologies, project.title, project.short_description].join(" ").toLowerCase();
   return categoryMatchers[filter].some((keyword) => haystack.includes(keyword.toLowerCase()));
 }
@@ -415,17 +421,37 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
     const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const current = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (current?.target.id) setActiveSection(current.target.id);
-      },
-      { rootMargin: "-26% 0px -56% 0px", threshold: [0.16, 0.32, 0.48] },
-    );
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    if (!sections.length) return;
+
+    let animationFrame = 0;
+
+    const updateActiveSection = () => {
+      animationFrame = 0;
+      const marker = window.scrollY + window.innerHeight * 0.34;
+      let currentId = sections[0].id;
+
+      for (const section of sections) {
+        const top = section.getBoundingClientRect().top + window.scrollY;
+        if (top <= marker) currentId = section.id;
+      }
+
+      setActiveSection((current) => (current === currentId ? current : currentId));
+    };
+
+    const requestUpdate = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
   }, []);
 
   function scrollToSection(id: string) {
@@ -918,10 +944,10 @@ export function FeaturedProjectCard({
 }) {
   const isDevOpsCaseStudy = project.id === "event-booking-microservices";
   const description = isDevOpsCaseStudy
-    ? "DevOps-focused event platform covering service containerization, Kubernetes delivery, GitOps automation, infrastructure provisioning, and observability."
+    ? "DevOps-focused AWS event platform covering service containerization, cloud deployment, Kubernetes delivery, GitOps automation, infrastructure provisioning, and observability."
     : project.short_description;
   const technologies = isDevOpsCaseStudy
-    ? ["Docker", "Kubernetes", "Terraform", "Argo CD", "GitHub Actions", "Prometheus"]
+    ? ["AWS", "Docker", "Kubernetes", "Terraform", "Argo CD", "GitHub Actions"]
     : project.technologies.slice(0, 6);
 
   return (
@@ -949,7 +975,7 @@ function PreviewProjectCard({ onOpenPreview, project }: { onOpenPreview: () => v
 
 export function ProjectVisual({ onOpenPreview, project }: { onOpenPreview?: () => void; project: Project }) {
   const techPreview = project.id === "event-booking-microservices"
-    ? ["Kubernetes", "Docker", "GitOps"]
+    ? ["AWS", "Kubernetes", "Docker", "GitOps"]
     : project.technologies.slice(0, 3);
   const mediaSrc = project.demo_video_url || project.screenshots[0];
   const isVideo = Boolean(project.demo_video_url);
