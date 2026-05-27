@@ -7425,6 +7425,55 @@ a {
   }
 }
 
+/* Experience timeline alignment fixes. Keep these last so older timeline variants cannot compress alternating cards. */
+@media (min-width: 961px) {
+  .experience-editorial .station-right .station-card {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 960px) {
+  .experience-editorial .experience-station,
+  .experience-editorial .experience-station.station-left,
+  .experience-editorial .experience-station.station-right,
+  .experience-editorial .experience-station:nth-child(3),
+  .experience-editorial .experience-station:nth-child(5) {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .experience-editorial .station-date,
+  .experience-editorial .station-right .station-date,
+  .experience-editorial .experience-station:nth-child(3) .station-date,
+  .experience-editorial .experience-station:nth-child(5) .station-date,
+  .experience-editorial .station-card,
+  .experience-editorial .station-left .station-card,
+  .experience-editorial .station-right .station-card,
+  .experience-editorial .experience-station:nth-child(3) .station-card,
+  .experience-editorial .experience-station:nth-child(5) .station-card {
+    grid-column: 2;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+  }
+
+  .experience-editorial .station-node,
+  .experience-editorial .station-right .station-node,
+  .experience-editorial .experience-station:nth-child(3) .station-node,
+  .experience-editorial .experience-station:nth-child(5) .station-node {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 620px) {
+  .experience-editorial .experience-station,
+  .experience-editorial .experience-station.station-left,
+  .experience-editorial .experience-station.station-right,
+  .experience-editorial .experience-station:nth-child(3),
+  .experience-editorial .experience-station:nth-child(5) {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+}
+
 .resume-preview-frame {
   position: relative;
   min-height: 340px;
