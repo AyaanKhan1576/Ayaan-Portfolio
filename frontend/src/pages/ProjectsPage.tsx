@@ -12,6 +12,7 @@ import {
   ProfessionalNav,
   ProjectFilter,
   ProjectLinks,
+  ProjectPreviewOverlay,
   ProjectVisual,
   SectionHeader,
   projectFilters,
@@ -23,6 +24,7 @@ export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute
   const [projectFilter, setProjectFilter] = useState<ProjectFilter>("All");
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
   const { theme, toggleTheme } = useProfessionalTheme();
   const filteredProjects = useMemo(
     () => projects.filter((project) => projectMatches(project, projectFilter)),
@@ -96,12 +98,14 @@ export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute
               index={index}
               key={project.id}
               onToggle={() => setExpandedProject((current) => (current === project.id ? null : project.id))}
+              onOpenPreview={() => setPreviewProject(project)}
               project={project}
             />
           ))}
         </div>
       </section>
       <ProfessionalFooter copyEmail={copyEmail} copyStatus={copyStatus} onNavigate={onNavigate} />
+      <ProjectPreviewOverlay onClose={() => setPreviewProject(null)} project={previewProject} />
     </main>
   );
 }
@@ -109,17 +113,19 @@ export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute
 function ArchiveProjectCard({
   expanded,
   index,
+  onOpenPreview,
   onToggle,
   project,
 }: {
   expanded: boolean;
   index: number;
+  onOpenPreview: () => void;
   onToggle: () => void;
   project: Project;
 }) {
   return (
     <article className={`archive-card reveal ${expanded ? "expanded" : ""}`} style={{ "--stagger": `${Math.min(index, 12) * 45}ms` } as CSSProperties}>
-      <ProjectVisual project={project} />
+      <ProjectVisual onOpenPreview={onOpenPreview} project={project} />
       <div className="archive-card-main">
         <div className="featured-meta">
           <span>{project.status}</span>

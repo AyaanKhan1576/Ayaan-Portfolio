@@ -26,6 +26,7 @@ import {
   Play,
   Plus,
   Minus,
+  X,
   Server,
   Sparkles,
   Sun,
@@ -370,6 +371,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const [activeSection, setActiveSection] = useState<string>("about");
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(() => new Set());
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
   const sound = useProfessionalSound();
   const { theme, toggleTheme } = useProfessionalTheme();
   const featuredProjects = projects.filter((project) => featuredIds.includes(project.id));
@@ -636,7 +638,9 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
 
       <Scene collapsed={collapsedSections.has("featured")} id="featured" number="06" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Featured Projects" kicker="Three production-facing case studies">
         <div className="featured-editorial">
-          {featuredProjects.map((project, index) => <FeaturedProjectCard index={index} key={project.id} project={project} />)}
+          {featuredProjects.map((project, index) => (
+            <FeaturedProjectCard index={index} key={project.id} onOpenPreview={() => setPreviewProject(project)} project={project} />
+          ))}
         </div>
       </Scene>
 
@@ -654,7 +658,9 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
 
       <Scene collapsed={collapsedSections.has("projects-preview")} id="projects-preview" number="08" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="All Projects Preview" kicker="A moving catalog before the archive">
         <div className="product-rail">
-          {[...previewProjects, ...previewProjects].map((project, index) => <PreviewProjectCard key={`${project.id}-${index}`} project={project} />)}
+          {[...previewProjects, ...previewProjects].map((project, index) => (
+            <PreviewProjectCard key={`${project.id}-${index}`} onOpenPreview={() => setPreviewProject(project)} project={project} />
+          ))}
         </div>
         <button className="pill-primary" onClick={() => onNavigate("/projects")} type="button">View All Projects <ArrowRight size={17} /></button>
       </Scene>
@@ -672,6 +678,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </Scene>
       <ProfessionalFooter copyEmail={copyEmail} copyStatus={copyStatus} onNavigate={onNavigate} scrollToSection={scrollToSection} />
+      <ProjectPreviewOverlay onClose={() => setPreviewProject(null)} project={previewProject} />
     </main>
   );
 }
@@ -877,7 +884,15 @@ function ProductionSystemVisual() {
   );
 }
 
-export function FeaturedProjectCard({ project, index }: { project: Project; index: number }) {
+export function FeaturedProjectCard({
+  index,
+  onOpenPreview,
+  project,
+}: {
+  index: number;
+  onOpenPreview: () => void;
+  project: Project;
+}) {
   const isDevOpsCaseStudy = project.id === "event-booking-microservices";
   const description = isDevOpsCaseStudy
     ? "DevOps-focused event platform covering service containerization, Kubernetes delivery, GitOps automation, infrastructure provisioning, and observability."
@@ -888,7 +903,7 @@ export function FeaturedProjectCard({ project, index }: { project: Project; inde
 
   return (
     <article className="featured-editorial-card" style={{ "--stagger": `${index * 80}ms` } as CSSProperties}>
-      <ProjectVisual project={project} />
+      <ProjectVisual onOpenPreview={onOpenPreview} project={project} />
       <span>{project.tags.slice(0, 2).join(" / ")}</span>
       <h3>{project.title}</h3>
       <p>{description}</p>
@@ -899,46 +914,85 @@ export function FeaturedProjectCard({ project, index }: { project: Project; inde
   );
 }
 
-function PreviewProjectCard({ project }: { project: Project }) {
+function PreviewProjectCard({ onOpenPreview, project }: { onOpenPreview: () => void; project: Project }) {
   return (
     <article className="preview-product">
-      <ProjectVisual project={project} />
+      <ProjectVisual onOpenPreview={onOpenPreview} project={project} />
       <h3>{project.title}</h3>
       <p>{project.tags.slice(0, 3).join(" / ")}</p>
     </article>
   );
 }
 
-export function ProjectVisual({ project }: { project: Project }) {
+export function ProjectVisual({ onOpenPreview, project }: { onOpenPreview?: () => void; project: Project }) {
   const techPreview = project.id === "event-booking-microservices"
     ? ["Kubernetes", "Docker", "GitOps"]
     : project.technologies.slice(0, 3);
   const mediaSrc = project.demo_video_url || project.screenshots[0];
   const isVideo = Boolean(project.demo_video_url);
-  const previewHref = mediaSrc || undefined;
   return (
     <div className="project-visual editorial-photo">
       {mediaSrc ? (
-        <a className="project-visual-media-link" href={mediaSrc} rel="noreferrer" target="_blank" aria-label={`Open ${project.title} preview in a new tab`}>
+        <button className="project-visual-media-link" onClick={onOpenPreview} type="button" aria-label={`Open ${project.title} preview`}>
           {isVideo ? (
             <video autoPlay className="project-visual-media" loop muted playsInline preload="metadata" src={mediaSrc} />
           ) : (
             <img alt="" className="project-visual-media" loading="lazy" src={mediaSrc} />
           )}
-        </a>
+        </button>
       ) : (
         <div className="project-visual-placeholder" aria-hidden="true">
           <b>{project.title}</b>
         </div>
       )}
       <div className="project-visual-footer">
-        {previewHref ? (
-          <a className="visual-playback" href={previewHref} rel="noreferrer" target="_blank">
+        {mediaSrc ? (
+          <button className="visual-playback" onClick={onOpenPreview} type="button">
             <Play size={14} />
             <span>open preview</span>
-          </a>
+          </button>
         ) : null}
         <span>{techPreview.join(" / ")}</span>
+      </div>
+    </div>
+  );
+}
+
+export function ProjectPreviewOverlay({ onClose, project }: { onClose: () => void; project: Project | null }) {
+  if (!project) return null;
+
+  const mediaSrc = project.demo_video_url || project.screenshots[0];
+  const isVideo = Boolean(project.demo_video_url);
+
+  return (
+    <div className="project-preview-overlay rpg-overlay" onClick={onClose} role="presentation">
+      <div className="project-preview-window rpg-window" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={`${project.title} preview`}>
+        <div className="rpg-window-header">
+          <div>
+            <p className="pixel-label">Project preview</p>
+            <h2>{project.title}</h2>
+          </div>
+          <button className="pixel-icon-button" onClick={onClose} type="button" aria-label="Close preview">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="rpg-window-body project-preview-body">
+          {mediaSrc ? (
+            isVideo ? (
+              <video autoPlay controls className="project-preview-media" loop muted playsInline preload="metadata" src={mediaSrc} />
+            ) : (
+              <img alt={project.title} className="project-preview-media" src={mediaSrc} />
+            )
+          ) : (
+            <div className="project-preview-placeholder">
+              <b>{project.title}</b>
+            </div>
+          )}
+          <p>{project.short_description}</p>
+          <p><b>Role:</b> {project.role}</p>
+          <div className="tag-row">{project.technologies.map((tech) => <span key={tech}>{tech}</span>)}</div>
+          <ProjectLinks project={project} />
+        </div>
       </div>
     </div>
   );
