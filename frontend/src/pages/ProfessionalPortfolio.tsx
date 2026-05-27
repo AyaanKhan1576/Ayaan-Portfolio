@@ -2,14 +2,16 @@ import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent, ReactN
 import { useEffect, useRef, useState } from "react";
 import { animate } from "animejs";
 import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
   Award,
   BookOpen,
   BriefcaseBusiness,
   Code2,
-  Copy,
   Database,
   Download,
   ExternalLink,
@@ -22,6 +24,8 @@ import {
   Moon,
   Network,
   Play,
+  Plus,
+  Minus,
   Server,
   Sparkles,
   Sun,
@@ -45,7 +49,6 @@ export type ProjectFilter = "All" | "AI/ML" | "Computer Vision" | "RAG" | "AI Ag
 
 export const projectFilters: ProjectFilter[] = ["All", "AI/ML", "Computer Vision", "RAG", "AI Agents", "Backend", "DevOps", "Data Science"];
 
-const heroTags = ["LLMs", "RAG", "Computer Vision", "AI Agents", "FastAPI", "Python", "Backend Systems"];
 const featuredIds = ["pose2play", "financial-sentiment-rag", "event-booking-microservices"];
 const previewIds = ["synthetic-music-detector", "multimodal-pdf-rag", "semantic-product-search", "online-catalogue-devops", "real-time-crime-analytics", "english-urdu-mbart"];
 
@@ -72,6 +75,8 @@ const sectionOrder = [
   ["honors", "Leadership"],
 ] as const;
 
+const sectionIds: string[] = sectionOrder.map(([id]) => id);
+
 export function useScrollReveal() {
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
@@ -93,7 +98,7 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
     const scope = scopeRef.current;
     if (!scope || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".campaign-media",
@@ -113,7 +118,6 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
 
       gsap.utils.toArray<HTMLElement>(".editorial-scene").forEach((scene, index) => {
         const trigger = scene.querySelector(".scene-trigger");
-        const detail = scene.querySelector(".scene-detail");
         gsap.fromTo(
           trigger,
           { autoAlpha: 0, x: index % 2 === 0 ? -34 : 34 },
@@ -125,17 +129,6 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
             scrollTrigger: { trigger: scene, start: "top 78%" },
           },
         );
-        gsap.fromTo(
-          detail,
-          { autoAlpha: 0, y: 42 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power2.out",
-            scrollTrigger: { trigger: scene, start: "top 66%" },
-          },
-        );
       });
 
       gsap.to(".campaign-media", {
@@ -144,12 +137,74 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
         scrollTrigger: { trigger: ".campaign-hero", start: "top top", end: "bottom top", scrub: 0.75 },
       });
 
+      gsap.to(".hero-orbit", {
+        rotate: 360,
+        duration: 38,
+        repeat: -1,
+        ease: "none",
+      });
+
+      gsap.to(".hero-orbit-item", {
+        rotate: -360,
+        duration: 38,
+        repeat: -1,
+        ease: "none",
+      });
+
+      gsap.fromTo(
+        ".education-entry",
+        { autoAlpha: 0, y: 36 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.12,
+          scrollTrigger: { trigger: ".education-editorial", start: "top 72%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".experience-line",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: { trigger: ".experience-editorial", start: "top 76%", end: "bottom 46%", scrub: 0.8 },
+        },
+      );
+
+      gsap.utils.toArray<HTMLElement>(".experience-station").forEach((station, index) => {
+        const card = station.querySelector(".station-card");
+        const node = station.querySelector(".station-node");
+        const date = station.querySelector(".station-date");
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: station,
+            start: "top 78%",
+            toggleActions: "play none none reverse",
+          },
+        });
+        tl.fromTo(node, { autoAlpha: 0, scale: 0.72 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" })
+          .fromTo(date, { autoAlpha: 0, x: index % 2 === 0 ? -18 : 18 }, { autoAlpha: 1, x: 0, duration: 0.46, ease: "power2.out" }, "-=0.26")
+          .fromTo(card, { autoAlpha: 0, y: 28, rotateX: 6 }, { autoAlpha: 1, y: 0, rotateX: 0, duration: 0.68, ease: "power3.out" }, "-=0.28")
+          .fromTo(station.querySelectorAll(".station-impact li"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.34, stagger: 0.05, ease: "power2.out" }, "-=0.2");
+      });
+
       gsap.to(".editorial-atmosphere", {
         "--atmosphere-drift": 1,
         duration: 9,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
+      });
+
+      ScrollTrigger.create({
+        start: 80,
+        end: "max",
+        onUpdate: (self) => {
+          document.querySelector(".editorial-nav")?.classList.toggle("is-compact", self.scroll() > 120);
+        },
       });
     }, scope);
 
@@ -167,17 +222,74 @@ export function projectMatches(project: Project, filter: ProjectFilter) {
   return categoryMatchers[filter].some((keyword) => haystack.includes(keyword.toLowerCase()));
 }
 
+function experienceImpact(item: { detail: string }, index: number) {
+  const detail = displayText(item.detail);
+  if (index === 0) return ["Structured Jira workflows, PRDs, UATs, and technical reports.", "Improved cross-team clarity across software and hardware requirements."];
+  if (index === 1) return ["Automated preprocessing for 200+ GB of medical PDFs.", "Applied spaCy NER with 90%+ record linkage accuracy.", "Built QA tooling that reduced manual review by about 70%."];
+  if (index === 2) return ["Built a multi-agent weather chatbot with Google ADK and Gemini.", "Added evaluation loops with OpenAI Evals and Pydantic AI."];
+  if (index === 3) return ["Developed and debugged C/C++ modules for embedded Linux.", "Automated engineering workflows with Bash scripting."];
+  return [detail];
+}
+
 export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: PortfolioRoute) => void }) {
   const pageRef = useRef<HTMLElement | null>(null);
   const lastSoundTargetRef = useRef<Element | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
-  const [openScene, setOpenScene] = useState<string>("about");
+  const [activeSection, setActiveSection] = useState<string>("about");
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(() => new Set());
   const sound = useProfessionalSound();
   const { theme, toggleTheme } = useProfessionalTheme();
   const featuredProjects = projects.filter((project) => featuredIds.includes(project.id));
   const previewProjects = projects.filter((project) => previewIds.includes(project.id));
   useScrollReveal();
   useProfessionalMotion(pageRef);
+
+  useEffect(() => {
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const current = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (current?.target.id) setActiveSection(current.target.id);
+      },
+      { rootMargin: "-26% 0px -56% 0px", threshold: [0.16, 0.32, 0.48] },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  function scrollToSection(id: string) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    setActiveSection(id);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      target.scrollIntoView({ block: "start" });
+      return;
+    }
+    gsap.to(window, {
+      duration: 0.9,
+      ease: "power3.inOut",
+      scrollTo: { y: target, offsetY: 92 },
+    });
+  }
+
+  function toggleSection(id: string) {
+    setCollapsedSections((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function navigateFromSection(id: string, direction: -1 | 1) {
+    const currentIndex = sectionIds.indexOf(id);
+    const nextId = sectionIds[Math.min(sectionIds.length - 1, Math.max(0, currentIndex + direction))];
+    if (nextId && nextId !== id) scrollToSection(nextId);
+  }
 
   function handlePointerMove(event: PointerEvent<HTMLElement>) {
     if (!pageRef.current || window.matchMedia("(pointer: coarse)").matches) return;
@@ -236,8 +348,9 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
     >
       <EditorialAtmosphere />
       <ProfessionalNav
-        activeSection={openScene}
+        activeSection={activeSection}
         onNavigate={onNavigate}
+        onScrollToSection={scrollToSection}
         onToggleSound={sound.toggle}
         onToggleTheme={toggleTheme}
         soundEnabled={sound.enabled}
@@ -252,21 +365,14 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
           <p>AI & SOFTWARE ENGINEER</p>
           <h1>Ayaan Khan</h1>
           <span>Building production-ready intelligent systems with LLMs, Computer Vision, RAG, AI Agents, and backend engineering.</span>
-          <div className="editorial-pills">
-            {heroTags.map((tag) => <span key={tag}>{tag}</span>)}
-          </div>
-          <div className="campaign-actions">
-            <a className="pill-primary" href="#about">Explore Story <ArrowRight size={17} /></a>
-            <button className="pill-secondary" onClick={() => onNavigate("/projects")} type="button">Project Archive</button>
-            <button className="pill-secondary" onClick={() => onNavigate("/room")} type="button"><Gamepad2 size={17} /> Enter Interactive Portfolio</button>
-          </div>
+          <button className="pill-primary hero-room-entry" onClick={() => onNavigate("/room")} type="button"><Gamepad2 size={17} /> Enter Interactive Portfolio</button>
           <SocialContactRow copyEmail={copyEmail} copyStatus={copyStatus} />
         </div>
       </section>
 
-      <StoryRail active={openScene} setActive={setOpenScene} />
+      <StoryRail active={activeSection} scrollToSection={scrollToSection} />
 
-      <Scene id="about" number="01" open={openScene === "about"} setOpen={setOpenScene} title="About Me" kicker="The person behind the systems">
+      <Scene collapsed={collapsedSections.has("about")} id="about" number="01" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="About Me" kicker="The person behind the systems">
         <div className="scene-copy-grid">
           <p>I’m an AI & Software Engineer interested in building intelligent systems that are practical, scalable, and production ready.</p>
           <p>Currently pursuing a BS in Computer Science at FAST NUCES, Class of 2026, I’ve worked on LLMs, RAG pipelines, AI agents, fullstack applications, cloud infrastructure, and real-time ML systems.</p>
@@ -274,11 +380,11 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </Scene>
 
-      <Scene id="contact" number="02" open={openScene === "contact"} setOpen={setOpenScene} title="Contact" kicker="Direct professional signals">
+      <Scene collapsed={collapsedSections.has("contact")} id="contact" number="02" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Contact" kicker="Direct professional signals">
         <SocialContactRow copyEmail={copyEmail} copyStatus={copyStatus} expanded />
       </Scene>
 
-      <Scene id="resume" number="03" open={openScene === "resume"} setOpen={setOpenScene} title="Resume" kicker="The concise document layer">
+      <Scene collapsed={collapsedSections.has("resume")} id="resume" number="03" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Resume" kicker="The concise document layer">
         <div className="resume-editorial">
           <div className="document-photo" aria-hidden="true"><FileText size={28} /><b>Ayaan Khan</b><span /></div>
           <div>
@@ -300,41 +406,89 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </Scene>
 
-      <Scene id="education" number="04" open={openScene === "education"} setOpen={setOpenScene} title="Education" kicker="Computer science foundation">
+      <Scene collapsed={collapsedSections.has("education")} id="education" number="04" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Education" kicker="Computer science foundation">
         <div className="education-editorial">
-          <div className="timeline-dot"><GraduationCap size={22} /></div>
-          <div>
-            <h3>{education.university}</h3>
-            <p>{education.degree} / {education.location}</p>
-            <b>{education.period}</b>
-            <div className="editorial-pills">{education.coursework.map((course) => <span key={course}>{course}</span>)}</div>
-          </div>
+          <article className="education-entry university-entry">
+            <div className="education-mark"><GraduationCap size={22} /></div>
+            <div>
+              <span>University</span>
+              <h3>{education.university}</h3>
+              <p>{education.degree} / {education.location}</p>
+              <b>{education.period}</b>
+              <div className="academic-card-grid">
+                <article><span>Standing</span><b>{education.highlights[0]}</b><p>Current academic progression in the BS Computer Science program.</p></article>
+                <article><span>Recognition</span><b>{education.highlights[1]}</b><p>Performance signal from FAST-NUCES coursework.</p></article>
+                <article><span>Societies</span><b>Debating Society / FPDC</b><p>Secretary General Debating Society and Deputy Director General Internals, FAST Parliamentary Debating Championship.</p></article>
+              </div>
+              <div className="editorial-pills">{education.coursework.map((course) => <span key={course}>{course}</span>)}</div>
+            </div>
+          </article>
+          <article className="education-entry">
+            <div className="education-mark"><BookOpen size={21} /></div>
+            <div>
+              <span>A Levels</span>
+              <h3>Beaconhouse Potohar Campus</h3>
+              <b>3A* and 1A / SAT 1500</b>
+              <div className="subject-list">
+                <span>A*: Physics</span>
+                <span>A*: Mathematics</span>
+                <span>A*: Biology</span>
+                <span>A: Chemistry</span>
+                <span>SAT: 790 Math / 710 English</span>
+              </div>
+            </div>
+          </article>
+          <article className="education-entry">
+            <div className="education-mark"><Award size={21} /></div>
+            <div>
+              <span>GCSE O Levels</span>
+              <h3>Beaconhouse Potohar Campus</h3>
+              <b>10A*s</b>
+              <div className="subject-list">
+                {["Mathematics", "Additional Mathematics", "Physics", "Chemistry", "Biology", "English", "Urdu", "Pakistan Studies", "Islamiat", "Global Perspectives"].map((subject) => <span key={subject}>{subject}</span>)}
+              </div>
+            </div>
+          </article>
         </div>
       </Scene>
 
-      <Scene id="experience" number="05" open={openScene === "experience"} setOpen={setOpenScene} title="Experience" kicker="Applied work in motion">
+      <Scene collapsed={collapsedSections.has("experience")} id="experience" number="05" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Experience" kicker="Applied work in motion">
         <div className="experience-editorial">
-          {experience.map((item) => {
+          <div className="experience-story">
+            <span>Progression</span>
+            <p>From embedded systems and automation into agentic AI, data pipelines, and production coordination.</p>
+          </div>
+          <div className="experience-line" aria-hidden="true" />
+          {experience.map((item, index) => {
             const [title, company] = displayText(item.title).split(" - ");
+            const focus = index === 0 ? "Project management" : index === 1 ? "Data automation" : index === 2 ? "Agentic AI" : "Systems programming";
+            const location = index === 0 ? "Islamabad" : index === 1 ? "Remote" : index === 2 ? "Remote" : "Islamabad";
             return (
-              <article key={item.title}>
-                <span>{item.period}</span>
-                <h3>{company ?? item.title}</h3>
-                <b>{title}</b>
-                <p>{displayText(item.detail)}</p>
+              <article className={`experience-station ${index % 2 === 0 ? "station-left" : "station-right"}`} key={item.title} style={{ "--station": index } as CSSProperties}>
+                <div className="station-date"><span>{item.period}</span></div>
+                <div className="station-node"><BriefcaseBusiness size={16} /><span>{String(index + 1).padStart(2, "0")}</span></div>
+                <div className="station-card">
+                  <h3>{company ?? item.title}</h3>
+                  <b>{title}</b>
+                  <span>{location} / {item.period}</span>
+                  <ul className="station-impact">
+                    {experienceImpact(item, index).map((impact) => <li key={impact}>{impact}</li>)}
+                  </ul>
+                  <small>{focus}</small>
+                </div>
               </article>
             );
           })}
         </div>
       </Scene>
 
-      <Scene id="featured" number="06" open={openScene === "featured"} setOpen={setOpenScene} title="Featured Projects" kicker="Three production-facing case studies">
+      <Scene collapsed={collapsedSections.has("featured")} id="featured" number="06" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Featured Projects" kicker="Three production-facing case studies">
         <div className="featured-editorial">
           {featuredProjects.map((project, index) => <FeaturedProjectCard index={index} key={project.id} project={project} />)}
         </div>
       </Scene>
 
-      <Scene id="skills" number="07" open={openScene === "skills"} setOpen={setOpenScene} title="Skills" kicker="Grouped capabilities, no bars">
+      <Scene collapsed={collapsedSections.has("skills")} id="skills" number="07" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Skills" kicker="Grouped capabilities, no bars">
         <div className="skills-editorial">
           {skills.map((group) => (
             <article key={group.category}>
@@ -346,14 +500,14 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         </div>
       </Scene>
 
-      <Scene id="projects-preview" number="08" open={openScene === "projects-preview"} setOpen={setOpenScene} title="All Projects Preview" kicker="A moving catalog before the archive">
+      <Scene collapsed={collapsedSections.has("projects-preview")} id="projects-preview" number="08" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="All Projects Preview" kicker="A moving catalog before the archive">
         <div className="product-rail">
           {[...previewProjects, ...previewProjects].map((project, index) => <PreviewProjectCard key={`${project.id}-${index}`} project={project} />)}
         </div>
         <button className="pill-primary" onClick={() => onNavigate("/projects")} type="button">View All Projects <ArrowRight size={17} /></button>
       </Scene>
 
-      <Scene id="honors" number="09" open={openScene === "honors"} setOpen={setOpenScene} title="Leadership and Honors" kicker="Signals beyond repositories">
+      <Scene collapsed={collapsedSections.has("honors")} id="honors" number="09" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Leadership and Honors" kicker="Signals beyond repositories">
         <div className="honors-editorial">
           {mediaItems.map((item) => (
             <article key={item.id}>
@@ -365,39 +519,50 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
           ))}
         </div>
       </Scene>
+      <ProfessionalFooter copyEmail={copyEmail} copyStatus={copyStatus} onNavigate={onNavigate} scrollToSection={scrollToSection} />
     </main>
   );
 }
 
-function Scene({ children, id, kicker, number, open, setOpen, title }: {
+function Scene({ children, collapsed, id, number, onNavigate, onToggleCollapse, title }: {
   children: ReactNode;
+  collapsed: boolean;
   id: string;
-  kicker: string;
+  kicker?: string;
   number: string;
-  open: boolean;
-  setOpen: (id: string) => void;
+  onNavigate: (id: string, direction: -1 | 1) => void;
+  onToggleCollapse: (id: string) => void;
   title: string;
 }) {
+  const currentIndex = sectionIds.indexOf(id);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < sectionIds.length - 1;
+
   return (
-    <section className={`editorial-scene scene-${id} reveal ${open ? "open" : ""}`} id={id}>
-      <button className="scene-trigger" onClick={() => setOpen(id)} type="button">
+    <section className={`editorial-scene scene-${id} reveal open ${collapsed ? "collapsed" : ""}`} id={id}>
+      <div className="scene-trigger">
         <span>{number}</span>
         <div>
-          <p>{kicker}</p>
           <h2>{title}</h2>
         </div>
-        <ArrowRight size={22} />
-      </button>
+        <div className="scene-controls" aria-label={`${title} controls`}>
+          <button disabled={!hasPrev} onClick={() => onNavigate(id, -1)} type="button" aria-label={`Previous section from ${title}`}><ArrowUp size={16} /></button>
+          <button disabled={!hasNext} onClick={() => onNavigate(id, 1)} type="button" aria-label={`Next section from ${title}`}><ArrowDown size={16} /></button>
+          <button className="collapse-toggle" onClick={() => onToggleCollapse(id)} type="button" aria-expanded={!collapsed} aria-label={`${collapsed ? "Expand" : "Collapse"} ${title}`}>
+            {collapsed ? <Plus size={16} /> : <Minus size={16} />}
+          </button>
+        </div>
+      </div>
       <div className="scene-detail">{children}</div>
     </section>
   );
 }
 
-function StoryRail({ active, setActive }: { active: string; setActive: (id: string) => void }) {
+function StoryRail({ active, scrollToSection }: { active: string; scrollToSection: (id: string) => void }) {
   return (
     <aside className="story-rail" aria-label="Professional portfolio scenes">
       {sectionOrder.map(([id, label], index) => (
-        <button className={active === id ? "active" : ""} key={id} onClick={() => setActive(id)} type="button">
+        <button className={active === id ? "active" : ""} key={id} onClick={() => scrollToSection(id)} type="button">
           <span>{String(index + 1).padStart(2, "0")} /</span>
           <b>{label}</b>
         </button>
@@ -406,9 +571,10 @@ function StoryRail({ active, setActive }: { active: string; setActive: (id: stri
   );
 }
 
-export function ProfessionalNav({ activeSection, onNavigate, onToggleSound, onToggleTheme, soundEnabled, theme = "light" }: {
+export function ProfessionalNav({ activeSection, onNavigate, onScrollToSection, onToggleSound, onToggleTheme, soundEnabled, theme = "light" }: {
   onNavigate: (path: PortfolioRoute) => void;
   activeSection?: string;
+  onScrollToSection?: (id: string) => void;
   onToggleSound?: () => void;
   onToggleTheme?: () => void;
   soundEnabled?: boolean;
@@ -418,7 +584,7 @@ export function ProfessionalNav({ activeSection, onNavigate, onToggleSound, onTo
     <header className="pro-nav editorial-nav" aria-label="Professional portfolio navigation">
       <button className="pro-brand" onClick={() => onNavigate("/")} type="button"><span>AK</span>Ayaan Khan</button>
       <nav className="pro-nav-links" aria-label="Sections">
-        <button className={activeSection ? "active" : ""} onClick={() => onNavigate("/professional")} type="button"><span>01 /</span><b>Story</b></button>
+        <button className={activeSection ? "active" : ""} onClick={() => onScrollToSection ? onScrollToSection("about") : onNavigate("/professional")} type="button"><span>01 /</span><b>Story</b></button>
         <button onClick={() => onNavigate("/projects")} type="button"><span>02 /</span><b>Projects</b></button>
         <button onClick={() => onNavigate("/room")} type="button"><span>03 /</span><b>Interactive Portfolio</b></button>
       </nav>
@@ -454,6 +620,46 @@ function SocialContactRow({ copyEmail, copyStatus, expanded = false }: { copyEma
   );
 }
 
+export function ProfessionalFooter({
+  copyEmail,
+  copyStatus,
+  onNavigate,
+  scrollToSection,
+}: {
+  copyEmail: () => void;
+  copyStatus: "idle" | "copied" | "failed";
+  onNavigate: (path: PortfolioRoute) => void;
+  scrollToSection?: (id: string) => void;
+}) {
+  function goToSection(id: string) {
+    if (scrollToSection) scrollToSection(id);
+    else onNavigate("/professional");
+  }
+
+  return (
+    <footer className="professional-footer">
+      <div className="footer-identity">
+        <h2>Ayaan Khan</h2>
+        <span>AI & Software Engineer building production-ready intelligent systems.</span>
+      </div>
+      <div className="footer-links">
+        {sectionOrder.slice(0, 5).map(([id, label]) => (
+          <button key={id} onClick={() => goToSection(id)} type="button">{label}</button>
+        ))}
+        <button onClick={() => onNavigate("/projects")} type="button">Projects</button>
+        <button onClick={() => onNavigate("/room")} type="button">Interactive Portfolio</button>
+      </div>
+      <div className="footer-contact">
+        <SocialContactRow copyEmail={copyEmail} copyStatus={copyStatus} />
+      </div>
+      <div className="footer-bottom">
+        <span>© {new Date().getFullYear()} Ayaan Khan</span>
+        <span>React / GSAP / Anime.js</span>
+      </div>
+    </footer>
+  );
+}
+
 export function EditorialAtmosphere() {
   return (
     <div className="editorial-atmosphere" aria-hidden="true">
@@ -477,7 +683,7 @@ export function SectionHeader({ eyebrow, title, summary }: { eyebrow: string; ti
 }
 
 function ProductionSystemVisual() {
-  const nodes = ["AI Agents", "RAG", "APIs", "Backend", "Vision", "Data", "Cloud", "Frontend"];
+  const orbitLabels = ["LLMs", "RAG", "Agents", "Vision", "APIs", "Cloud"];
   return (
     <div className="editorial-system" aria-label="Production AI system visual">
       <svg viewBox="0 0 620 620" role="img" aria-label="Connected AI architecture">
@@ -487,8 +693,10 @@ function ProductionSystemVisual() {
         <circle className="data-pulse pulse-a" r="5" />
         <circle className="data-pulse pulse-b" r="4" />
       </svg>
+      <div className="hero-orbit" aria-hidden="true">
+        {orbitLabels.map((label, index) => <span className="hero-orbit-item" key={label} style={{ "--orbit-index": index } as CSSProperties}>{label}</span>)}
+      </div>
       <div className="system-core"><Network size={22} /><b>Production AI</b><span>models + APIs + infrastructure</span></div>
-      {nodes.map((node, index) => <span className={`system-chip chip-${index}`} key={node}>{node}</span>)}
     </div>
   );
 }

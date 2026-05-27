@@ -1,12 +1,14 @@
 import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import { ArrowLeft, ChevronDown } from "lucide-react";
+import { config } from "../config";
 import { projects } from "../data/projects";
 import { useProfessionalTheme } from "../hooks/useProfessionalTheme";
 import type { Project } from "../types";
 import {
   AtmosphericDust,
   PortfolioRoute,
+  ProfessionalFooter,
   ProfessionalNav,
   ProjectFilter,
   ProjectLinks,
@@ -20,12 +22,23 @@ import {
 export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute) => void }) {
   const [projectFilter, setProjectFilter] = useState<ProjectFilter>("All");
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const { theme, toggleTheme } = useProfessionalTheme();
   const filteredProjects = useMemo(
     () => projects.filter((project) => projectMatches(project, projectFilter)),
     [projectFilter],
   );
   useScrollReveal();
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard?.writeText(config.emailAddress);
+    } catch {
+      // Embedded browsers may block clipboard writes; the visible affordance remains best effort.
+    }
+    setCopyStatus("copied");
+    window.setTimeout(() => setCopyStatus("idle"), 1800);
+  }
 
   return (
     <main className="pro-page projects-page" data-theme={theme}>
@@ -88,6 +101,7 @@ export function ProjectsPage({ onNavigate }: { onNavigate: (path: PortfolioRoute
           ))}
         </div>
       </section>
+      <ProfessionalFooter copyEmail={copyEmail} copyStatus={copyStatus} onNavigate={onNavigate} />
     </main>
   );
 }
