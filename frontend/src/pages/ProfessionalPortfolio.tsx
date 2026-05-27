@@ -321,6 +321,67 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
           .fromTo(station.querySelectorAll(".station-impact li"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.34, stagger: 0.05, ease: "power2.out" }, "-=0.2");
       });
 
+      if (window.matchMedia("(max-width: 640px)").matches) {
+        const mobileCards = gsap.utils.toArray<HTMLElement>(".mobile-experience-card");
+        const progressLine = scope.querySelector<HTMLElement>(".mobile-experience-progress span");
+
+        if (progressLine) {
+          gsap.fromTo(
+            progressLine,
+            { scaleY: 0, transformOrigin: "top center" },
+            {
+              scaleY: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".mobile-experience-story",
+                start: "top 72%",
+                end: "bottom 38%",
+                scrub: 0.6,
+              },
+            },
+          );
+        }
+
+        mobileCards.forEach((card) => {
+          const chapter = card.querySelector(".mobile-experience-chapter");
+          const body = card.querySelector(".mobile-experience-body");
+          const tags = card.querySelectorAll(".mobile-experience-tags span");
+          const detailTargets = [body, ...Array.from(tags)].filter(Boolean);
+
+          gsap.set(card, { autoAlpha: 0, y: 34, scale: 0.96 });
+          gsap.set(detailTargets, { autoAlpha: 0, y: 12 });
+
+          const mobileTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: card,
+              start: "top 82%",
+              end: "bottom 48%",
+              toggleActions: "play none none reverse",
+              onEnter: () => card.classList.add("is-active"),
+              onEnterBack: () => card.classList.add("is-active"),
+              onLeave: () => card.classList.remove("is-active"),
+              onLeaveBack: () => card.classList.remove("is-active"),
+            },
+          });
+
+          mobileTl
+            .to(card, { autoAlpha: 1, y: 0, scale: 1, duration: 0.64, ease: "power3.out" })
+            .fromTo(chapter, { letterSpacing: "0.16em", autoAlpha: 0 }, { letterSpacing: "0.08em", autoAlpha: 1, duration: 0.36, ease: "power2.out" }, "-=0.36")
+            .to(body, { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" }, "-=0.2")
+            .to(tags, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.045, ease: "power2.out" }, "-=0.16");
+
+          gsap.to(card, {
+            "--mobile-card-energy": 1,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 58%",
+              end: "bottom 42%",
+              scrub: 0.5,
+            },
+          });
+        });
+      }
+
       gsap.to(".editorial-atmosphere", {
         "--atmosphere-drift": 1,
         duration: 9,
@@ -401,6 +462,13 @@ function experienceImpact(item: { detail: string }, index: number) {
   if (index === 2) return ["Built a multi-agent weather chatbot with Google ADK and Gemini.", "Added evaluation loops with OpenAI Evals and Pydantic AI."];
   if (index === 3) return ["Developed and debugged C/C++ modules for embedded Linux.", "Automated engineering workflows with Bash scripting."];
   return [detail];
+}
+
+function experienceMobileTags(index: number) {
+  if (index === 0) return ["Jira", "PRDs", "UATs", "Project management"];
+  if (index === 1) return ["Python", "PostgreSQL", "spaCy NER", "Pandas"];
+  if (index === 2) return ["Google ADK", "Gemini API", "WeatherAPI", "OpenAI Evals"];
+  return ["C/C++", "Embedded Linux", "Bash", "Automation"];
 }
 
 export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: PortfolioRoute) => void }) {
@@ -691,6 +759,38 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
               </article>
             );
           })}
+          <div className="mobile-experience-story" aria-label="Mobile experience timeline">
+            <div className="mobile-experience-progress" aria-hidden="true"><span /></div>
+            {experience.map((item, index) => {
+              const [title, company] = displayText(item.title).split(" - ");
+              const focus = index === 0 ? "Project management" : index === 1 ? "Data automation" : index === 2 ? "Agentic AI" : "Systems programming";
+              const location = index === 0 ? "Islamabad" : index === 1 ? "Remote" : index === 2 ? "Remote" : "Islamabad";
+              return (
+                <article className="mobile-experience-card" key={`mobile-${item.title}`} style={{ "--mobile-card-energy": 0 } as CSSProperties}>
+                  <div className="mobile-experience-chapter">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <small>{item.period}</small>
+                  </div>
+                  <div className="mobile-experience-surface">
+                    <div className="mobile-experience-heading">
+                      <p>{focus}</p>
+                      <h3>{title}</h3>
+                      <b>{company ?? item.title}</b>
+                      <span>{location}</span>
+                    </div>
+                    <div className="mobile-experience-body">
+                      <ul>
+                        {experienceImpact(item, index).map((impact) => <li key={impact}>{impact}</li>)}
+                      </ul>
+                      <div className="mobile-experience-tags">
+                        {experienceMobileTags(index).map((tag) => <span key={tag}>{tag}</span>)}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </Scene>
 
