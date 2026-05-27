@@ -13,11 +13,16 @@ class ContactRepository:
             return False
         try:
             self.client.table("contact_submissions").insert(
-                {"name": name, "email": email, "subject": subject, "message": message}
+                {
+                    "name": name[:120],
+                    "email": email[:254],
+                    "subject": subject[:160],
+                    "message": message[:2000],
+                }
             ).execute()
             return True
         except Exception:
-            logger.exception("Failed to persist contact submission.")
+            logger.warning("Failed to persist contact submission.")
             return False
 
     def table_available(self) -> bool:
@@ -26,6 +31,6 @@ class ContactRepository:
         try:
             self.client.table("contact_submissions").select("id").limit(1).execute()
             return True
-        except Exception as exc:
-            logger.warning("Contact submissions table is not reachable: %s", exc)
+        except Exception:
+            logger.warning("Contact submissions table is not reachable.")
             return False

@@ -9,6 +9,33 @@ create table if not exists analytics_events (
   created_at timestamptz not null default now()
 );
 
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'analytics_events_event_type_length_chk'
+  ) then
+    alter table analytics_events
+      add constraint analytics_events_event_type_length_chk
+      check (char_length(event_type) <= 64) not valid;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint where conname = 'analytics_events_user_agent_length_chk'
+  ) then
+    alter table analytics_events
+      add constraint analytics_events_user_agent_length_chk
+      check (user_agent is null or char_length(user_agent) <= 180) not valid;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint where conname = 'analytics_events_metadata_size_chk'
+  ) then
+    alter table analytics_events
+      add constraint analytics_events_metadata_size_chk
+      check (octet_length(metadata::text) <= 2048) not valid;
+  end if;
+end $$;
+
 create index if not exists analytics_events_event_type_created_at_idx
   on analytics_events (event_type, created_at desc);
 
@@ -35,7 +62,7 @@ alter table analytics_events enable row level security;
 alter table contact_submissions enable row level security;
 
 comment on table analytics_events is
-  'Best-effort portfolio analytics written by server-side API routes with a service-role key.';
+  'Best-effort portfolio analytics written by server-side API routes with a service-role key. IP storage is intentionally avoided by application code.';
 
 comment on table contact_submissions is
   'Legacy contact message storage. The current portfolio contact section uses external social/email links.';

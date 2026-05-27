@@ -19,9 +19,12 @@ class AnalyticsRepository:
         if self.client is None:
             return False
         try:
-            payload: dict[str, Any] = {"event_type": event_type, "metadata": metadata or {}}
+            payload: dict[str, Any] = {
+                "event_type": event_type[:64],
+                "metadata": metadata or {},
+            }
             if user_agent:
-                payload["user_agent"] = user_agent
+                payload["user_agent"] = user_agent[:180]
             if ip_address:
                 payload["ip_address"] = ip_address
             self.client.table("analytics_events").insert(
@@ -29,7 +32,7 @@ class AnalyticsRepository:
             ).execute()
             return True
         except Exception:
-            logger.exception("Failed to persist analytics event.")
+            logger.warning("Failed to persist analytics event.")
             return False
 
     def table_available(self) -> bool:
@@ -38,6 +41,6 @@ class AnalyticsRepository:
         try:
             self.client.table("analytics_events").select("id").limit(1).execute()
             return True
-        except Exception as exc:
-            logger.warning("Analytics table is not reachable: %s", exc)
+        except Exception:
+            logger.warning("Analytics table is not reachable.")
             return False

@@ -1,30 +1,32 @@
-import { getRequestIp, getSupabaseAdmin } from "../server/supabaseAdmin.js";
-
-function normalizeBody(body) {
-  if (!body) return {};
-  if (typeof body === "string") {
-    try {
-      return JSON.parse(body);
-    } catch {
-      return {};
-    }
-  }
-  return body;
-}
+import { getSupabaseAdmin } from "../server/supabaseAdmin.js";
+import {
+  applySecurityHeaders,
+  checkBodySize,
+  methodAllowed,
+  parseJsonBody,
+  rateLimit,
+  requireJson,
+  safeUserAgent,
+  sanitizeAnalyticsBody,
+} from "./_security.js";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ accepted: false, persisted: false });
+  applySecurityHeaders(res);
+  if (!methodAllowed(req, res, "POST")) return;
+  if (!checkBodySize(req, res, 4096)) return;
+  if (!requireJson(req, res)) return;
+  if (!rateLimit(req, res, { keyPrefix: "analytics", limit: 40 })) return;
+
+  const parsedBody = parseJsonBody(req.body);
+  const sanitized = sanitizeAnalyticsBody(parsedBody);
+  if (!sanitized) {
+    return res.status(400).json({ accepted: false, persisted: false });
   }
 
-  const body = normalizeBody(req.body);
-  const eventType = typeof body.eventType === "string" ? body.eventType : "unknown";
-  const metadata = body.metadata && typeof body.metadata === "object" ? body.metadata : {};
+  const { eventType, metadata } = sanitized;
   const supabase = getSupabaseAdmin();
 
   if (!supabase) {
-    console.warn("Supabase admin client is not configured; analytics event skipped.");
     return res.status(200).json({ accepted: true, persisted: false });
   }
 
@@ -32,18 +34,16 @@ export default async function handler(req, res) {
     const { error } = await supabase.from("analytics_events").insert({
       event_type: eventType,
       metadata,
-      user_agent: req.headers["user-agent"] ?? null,
-      ip_address: getRequestIp(req) ?? null,
+      user_agent: safeUserAgent(req),
+      ip_address: null,
     });
 
     if (error) {
-      console.error("Failed to persist analytics event:", error);
       return res.status(200).json({ accepted: true, persisted: false });
     }
 
     return res.status(200).json({ accepted: true, persisted: true });
-  } catch (error) {
-    console.error("Unexpected analytics failure:", error);
+  } catch {
     return res.status(200).json({ accepted: true, persisted: false });
   }
 }

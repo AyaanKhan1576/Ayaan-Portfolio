@@ -1,9 +1,9 @@
 import { getSupabaseAdmin } from "../server/supabaseAdmin.js";
+import { applySecurityHeaders, methodAllowed, rateLimit } from "./_security.js";
 
 async function logResumeDownload() {
   const supabase = getSupabaseAdmin();
   if (!supabase) {
-    console.warn("Supabase admin client is not configured; resume download event skipped.");
     return false;
   }
 
@@ -13,7 +13,6 @@ async function logResumeDownload() {
   });
 
   if (error) {
-    console.error("Failed to persist resume download event:", error);
     return false;
   }
 
@@ -21,21 +20,19 @@ async function logResumeDownload() {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  applySecurityHeaders(res);
+  if (!methodAllowed(req, res, "GET")) return;
+  if (!rateLimit(req, res, { keyPrefix: "resume", limit: 10 })) return;
 
   const resumeUrl = process.env.RESUME_FILE_URL;
   if (!resumeUrl) {
-    console.warn("RESUME_FILE_URL is not configured.");
-    return res.status(503).json({ error: "Resume URL is not configured." });
+    return res.status(503).json({ error: "Request failed" });
   }
 
   try {
     await logResumeDownload();
-  } catch (error) {
-    console.error("Unexpected resume tracking failure:", error);
+  } catch {
+    // Resume access should continue even if tracking fails.
   }
 
   return res.status(200).json({ resumeUrl });

@@ -25,14 +25,14 @@ VITE_GITHUB_URL=https://github.com/AyaanKhan1576
 VITE_LINKEDIN_URL=https://www.linkedin.com/in/ayaan-khan-b7ba11325
 VITE_EMAIL_ADDRESS=khanayaan.2003@gmail.com
 VITE_RESUME_FALLBACK_URL=/assets/resume/AyaanKhan_Resume.pdf
-VITE_SUPABASE_URL=https://kwcnenbmhykonjlggtow.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_upHuj_TL8YHKuX3z-AfgSQ_J4gEonOm
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 ```
 
 Server-only Vercel environment variables:
 
 ```env
-SUPABASE_URL=https://kwcnenbmhykonjlggtow.supabase.co
+SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 RESUME_FILE_URL=https://your-domain.vercel.app/assets/resume/AyaanKhan_Resume.pdf
 ```
@@ -78,13 +78,13 @@ The service-role API key is not a Postgres password and cannot run this DDL by i
 For this project, the transaction pooler URL should look like:
 
 ```text
-postgresql://postgres.kwcnenbmhykonjlggtow:<database-password>@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres
+postgresql://postgres.<project-ref>:<database-password>@aws-1-<region>.pooler.supabase.com:6543/postgres
 ```
 
 The direct database URL usually looks like:
 
 ```text
-postgresql://postgres:<database-password>@db.kwcnenbmhykonjlggtow.supabase.co:5432/postgres
+postgresql://postgres:<database-password>@db.<project-ref>.supabase.co:5432/postgres
 ```
 
 If your password contains special characters such as `@`, `#`, `/`, `?`, or `:`, URL-encode them in `DATABASE_URL`.
