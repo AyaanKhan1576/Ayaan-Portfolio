@@ -6575,23 +6575,50 @@ a {
 
   .experience-editorial .station-date,
   .experience-editorial .station-right .station-date,
-  .experience-editorial .station-node,
   .experience-editorial .station-card,
   .experience-editorial .station-left .station-card,
   .experience-editorial .station-right .station-card {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: auto;
     justify-self: stretch;
     max-width: none;
   }
 
   .experience-editorial .station-node {
-    justify-items: start;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .experience-editorial .station-node {
+    place-items: center;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
   }
 
   .experience-editorial .station-date span {
     max-width: none;
     white-space: nowrap;
+  }
+
+  .experience-editorial .experience-station:nth-child(3),
+  .experience-editorial .experience-station:nth-child(5) {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-editorial .experience-station:nth-child(3) .station-date,
+  .experience-editorial .experience-station:nth-child(5) .station-date,
+  .experience-editorial .experience-station:nth-child(3) .station-node,
+  .experience-editorial .experience-station:nth-child(5) .station-node,
+  .experience-editorial .experience-station:nth-child(3) .station-card,
+  .experience-editorial .experience-station:nth-child(5) .station-card {
+    grid-column: 1;
+  }
+
+  .experience-editorial .experience-station:nth-child(3) .station-card,
+  .experience-editorial .experience-station:nth-child(5) .station-card {
+    max-width: none;
+    width: 100%;
   }
 
   .education-editorial::before {
@@ -6610,8 +6637,8 @@ a {
 
   .experience-line {
     left: 16px;
-    top: 14px;
-    bottom: 14px;
+    top: var(--experience-line-top, 14px);
+    bottom: var(--experience-line-bottom, 14px);
   }
 
   .experience-station,

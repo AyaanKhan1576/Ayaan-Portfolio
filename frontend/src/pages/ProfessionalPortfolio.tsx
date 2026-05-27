@@ -102,6 +102,30 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
     if (!scope || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    const updateMobileExperienceLine = () => {
+      const editorial = scope.querySelector<HTMLElement>(".experience-editorial");
+      if (!editorial) return;
+
+      if (!window.matchMedia("(max-width: 620px)").matches) {
+        editorial.style.removeProperty("--experience-line-top");
+        editorial.style.removeProperty("--experience-line-bottom");
+        return;
+      }
+
+      const stations = Array.from(editorial.querySelectorAll<HTMLElement>(".experience-station"));
+      const firstCard = stations[0]?.querySelector<HTMLElement>(".station-card");
+      const lastCard = stations[stations.length - 1]?.querySelector<HTMLElement>(".station-card");
+      if (!firstCard || !lastCard) return;
+
+      const containerRect = editorial.getBoundingClientRect();
+      const firstRect = firstCard.getBoundingClientRect();
+      const lastRect = lastCard.getBoundingClientRect();
+
+      editorial.style.setProperty("--experience-line-top", `${Math.max(0, firstRect.top - containerRect.top)}px`);
+      editorial.style.setProperty("--experience-line-bottom", `${Math.max(0, containerRect.bottom - lastRect.bottom)}px`);
+    };
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".campaign-media",
@@ -272,6 +296,9 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
         },
       );
 
+      updateMobileExperienceLine();
+      window.addEventListener("resize", updateMobileExperienceLine);
+
       gsap.utils.toArray<HTMLElement>(".experience-station").forEach((station, index) => {
         const card = station.querySelector(".station-card");
         const node = station.querySelector(".station-node");
@@ -395,7 +422,10 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
       { rootMargin: "-26% 0px -56% 0px", threshold: [0.16, 0.32, 0.48] },
     );
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener("resize", updateMobileExperienceLine);
+      ctx.revert();
+    };
   }, []);
 
   function scrollToSection(id: string) {
