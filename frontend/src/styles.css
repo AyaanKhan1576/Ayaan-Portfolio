@@ -4984,6 +4984,16 @@ a {
   background: color-mix(in srgb, var(--ink) 14%, var(--panel));
 }
 
+.pro-page[data-theme="dark"] .scene-projects-preview .pill-primary {
+  background: var(--inverse);
+  color: #ffffff;
+  border: 1px solid var(--inverse);
+}
+
+.pro-page[data-theme="dark"] .scene-projects-preview .pill-primary:hover {
+  background: color-mix(in srgb, var(--inverse) 88%, var(--paper));
+}
+
 .pro-page[data-theme="dark"] .download-button,
 .editorial-intro[data-theme="dark"] .download-button {
   background: var(--panel-strong);
