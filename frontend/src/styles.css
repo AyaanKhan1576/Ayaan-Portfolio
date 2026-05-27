@@ -6494,9 +6494,9 @@ a {
 
 @media (max-width: 620px) {
   .editorial-system {
-    width: min(100%, 250px);
+    width: min(100%, 292px);
     margin-inline: auto;
-    transform: scale(0.82);
+    transform: scale(0.92);
     transform-origin: center;
   }
 
@@ -6506,36 +6506,37 @@ a {
   }
 
   .system-core {
-    min-width: 72px;
-    min-height: 44px;
-    padding: 4px 6px;
+    min-width: 66px;
+    min-height: 40px;
+    padding: 4px 5px;
+    z-index: 1;
   }
 
   .system-core svg {
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
   }
 
   .system-core b {
-    font-size: 0.58rem;
+    font-size: 0.54rem;
   }
 
   .system-core span {
-    font-size: 0.46rem;
+    font-size: 0.42rem;
     line-height: 1.2;
   }
 
   .hero-orbit {
-    width: min(60%, 186px);
+    width: min(68%, 214px);
   }
 
   .hero-orbit-item {
-    font-size: 0.44rem;
-    min-width: 34px;
+    font-size: 0.46rem;
+    min-width: 36px;
     min-height: 24px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(38px, 18vw, 68px))
+      translateX(clamp(42px, 19vw, 76px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
@@ -6627,71 +6628,71 @@ a {
 
 @media (max-width: 480px) {
   .editorial-system {
-    width: min(100%, 196px);
-    transform: scale(0.68);
+    width: min(100%, 248px);
+    transform: scale(0.84);
   }
 
   .hero-orbit {
-    width: min(56%, 146px);
+    width: min(64%, 172px);
   }
 
   .hero-orbit-item {
-    font-size: 0.38rem;
-    min-width: 28px;
-    min-height: 20px;
+    font-size: 0.4rem;
+    min-width: 30px;
+    min-height: 21px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(28px, 14vw, 50px))
+      translateX(clamp(32px, 15vw, 56px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
   .system-core {
-    min-width: 66px;
-    min-height: 40px;
-    padding: 4px 5px;
+    min-width: 62px;
+    min-height: 38px;
+    padding: 3px 4px;
   }
 
   .system-core b {
-    font-size: 0.5rem;
+    font-size: 0.48rem;
   }
 
   .system-core span {
-    font-size: 0.4rem;
+    font-size: 0.38rem;
   }
 }
 
 @media (max-width: 380px) {
   .editorial-system {
-    width: min(100%, 176px);
-    transform: scale(0.62);
+    width: min(100%, 214px);
+    transform: scale(0.78);
   }
 
   .hero-orbit {
-    width: min(52%, 124px);
+    width: min(60%, 140px);
   }
 
   .hero-orbit-item {
-    font-size: 0.34rem;
-    min-width: 24px;
+    font-size: 0.36rem;
+    min-width: 26px;
     min-height: 18px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(24px, 12vw, 42px))
+      translateX(clamp(26px, 13vw, 46px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
   .system-core {
-    min-width: 60px;
-    min-height: 36px;
+    min-width: 58px;
+    min-height: 34px;
     padding: 3px 4px;
   }
 
   .system-core b {
-    font-size: 0.46rem;
+    font-size: 0.44rem;
   }
 
   .system-core span {
-    font-size: 0.38rem;
+    font-size: 0.36rem;
   }
 }
 
