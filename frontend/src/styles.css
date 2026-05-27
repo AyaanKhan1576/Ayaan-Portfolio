@@ -6506,37 +6506,40 @@ a {
   }
 
   .system-core {
-    min-width: 20px;
-    min-height: 16px;
-    padding: 1px 2px;
+    width: min(96px, 28vw);
+    min-width: 96px;
+    min-height: 208px;
+    padding: 12px 10px;
     z-index: 1;
   }
 
   .system-core svg {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   .system-core b {
-    font-size: 0.34rem;
+    font-size: 0.45rem;
   }
 
   .system-core span {
-    font-size: 0.22rem;
+    font-size: 0.34rem;
     line-height: 1.2;
   }
 
   .hero-orbit {
+    inset: 50%;
     width: min(100%, 392px);
+    translate: -50% -50%;
   }
 
   .hero-orbit-item {
-    font-size: 0.76rem;
-    min-width: 94px;
-    min-height: 58px;
+    font-size: 0.72rem;
+    min-width: 84px;
+    min-height: 52px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(112px, 32vw, 184px))
+      translateX(clamp(100px, 30vw, 172px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
@@ -6633,31 +6636,34 @@ a {
   }
 
   .hero-orbit {
+    inset: 50%;
     width: min(100%, 344px);
+    translate: -50% -50%;
   }
 
   .hero-orbit-item {
-    font-size: 0.7rem;
-    min-width: 82px;
-    min-height: 50px;
+    font-size: 0.66rem;
+    min-width: 74px;
+    min-height: 46px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(94px, 28vw, 156px))
+      translateX(clamp(88px, 26vw, 142px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
   .system-core {
-    min-width: 18px;
-    min-height: 14px;
-    padding: 1px 2px;
+    width: min(90px, 30vw);
+    min-width: 90px;
+    min-height: 188px;
+    padding: 10px 8px;
   }
 
   .system-core b {
-    font-size: 0.3rem;
+    font-size: 0.4rem;
   }
 
   .system-core span {
-    font-size: 0.2rem;
+    font-size: 0.3rem;
   }
 }
 
@@ -6668,31 +6674,34 @@ a {
   }
 
   .hero-orbit {
+    inset: 50%;
     width: min(100%, 300px);
+    translate: -50% -50%;
   }
 
   .hero-orbit-item {
-    font-size: 0.62rem;
-    min-width: 72px;
-    min-height: 44px;
+    font-size: 0.6rem;
+    min-width: 68px;
+    min-height: 42px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(82px, 26vw, 132px))
+      translateX(clamp(76px, 24vw, 122px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
   .system-core {
-    min-width: 16px;
-    min-height: 12px;
-    padding: 1px 2px;
+    width: min(78px, 30vw);
+    min-width: 78px;
+    min-height: 168px;
+    padding: 10px 8px;
   }
 
   .system-core b {
-    font-size: 0.26rem;
+    font-size: 0.36rem;
   }
 
   .system-core span {
-    font-size: 0.18rem;
+    font-size: 0.26rem;
   }
 }
 
