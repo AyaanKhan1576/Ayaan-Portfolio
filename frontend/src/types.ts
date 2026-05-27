@@ -13,6 +13,14 @@ export type SectionId =
 
 export type ProjectStatus = "deployed" | "prototype" | "research" | "archived";
 
+export interface ProjectMedia {
+  type: "image" | "gif" | "video" | "diagram" | "poster";
+  src: string;
+  thumbnail?: string;
+  caption?: string;
+  alt: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -28,6 +36,7 @@ export interface Project {
   tags: string[];
   featured: boolean;
   status: ProjectStatus;
+  media?: ProjectMedia[];
 }
 
 export interface MediaItem {
