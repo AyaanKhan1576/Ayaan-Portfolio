@@ -915,18 +915,31 @@ export function ProjectVisual({ project }: { project: Project }) {
     : project.technologies.slice(0, 3);
   const mediaSrc = project.demo_video_url || project.screenshots[0];
   const isVideo = Boolean(project.demo_video_url);
+  const previewHref = mediaSrc || undefined;
   return (
-    <div className="project-visual editorial-photo" aria-hidden="true">
+    <div className="project-visual editorial-photo">
       {mediaSrc ? (
-        isVideo ? (
-          <video autoPlay className="project-visual-media" loop muted playsInline preload="metadata" src={mediaSrc} />
-        ) : (
-          <img alt="" className="project-visual-media" loading="lazy" src={mediaSrc} />
-        )
-      ) : null}
-      <div className="visual-playback"><Play size={14} /><span>preview</span></div>
-      <b>{project.title.split(" ").slice(0, 3).join(" ")}</b>
-      <span>{techPreview.join(" / ")}</span>
+        <a className="project-visual-media-link" href={mediaSrc} rel="noreferrer" target="_blank" aria-label={`Open ${project.title} preview in a new tab`}>
+          {isVideo ? (
+            <video autoPlay className="project-visual-media" loop muted playsInline preload="metadata" src={mediaSrc} />
+          ) : (
+            <img alt="" className="project-visual-media" loading="lazy" src={mediaSrc} />
+          )}
+        </a>
+      ) : (
+        <div className="project-visual-placeholder" aria-hidden="true">
+          <b>{project.title}</b>
+        </div>
+      )}
+      <div className="project-visual-footer">
+        {previewHref ? (
+          <a className="visual-playback" href={previewHref} rel="noreferrer" target="_blank">
+            <Play size={14} />
+            <span>open preview</span>
+          </a>
+        ) : null}
+        <span>{techPreview.join(" / ")}</span>
+      </div>
     </div>
   );
 }

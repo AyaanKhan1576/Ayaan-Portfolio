@@ -3,8 +3,5 @@
 - interactive projects
 - LLM RAG Chatbot
 - add pictures and videos
-- verify information and text in each object
-- add home screen or something animated to make this look more impressive. have it alsso mention to view on pc/laptop for best experience
-- add github link to projects
-
+- improve mobile view for professional website
 
