@@ -29,12 +29,26 @@ export async function downloadResume(): Promise<void> {
     sameOriginOrRelative(trackedResumeUrl) || !sameOriginOrRelative(config.resumeFallbackUrl)
       ? trackedResumeUrl
       : config.resumeFallbackUrl;
+  let objectUrl: string | null = null;
   const anchor = document.createElement("a");
-  anchor.href = resumeUrl;
+
+  try {
+    const response = await fetch(resumeUrl);
+    if (!response.ok) throw new Error("Resume download failed.");
+    const blob = await response.blob();
+    objectUrl = URL.createObjectURL(blob);
+    anchor.href = objectUrl;
+  } catch {
+    anchor.href = resumeUrl;
+  }
+
   anchor.download = "AyaanKhan_Resume.pdf";
   anchor.rel = "noopener noreferrer";
   anchor.style.display = "none";
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+  if (objectUrl) {
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  }
 }

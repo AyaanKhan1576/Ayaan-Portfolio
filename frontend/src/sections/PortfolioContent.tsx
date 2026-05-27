@@ -422,6 +422,32 @@ function ExperienceTimeline() {
 }
 
 function Resume() {
+  const [resumePreviewUrl, setResumePreviewUrl] = useState(config.resumeFallbackUrl);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+    let cancelled = false;
+
+    async function loadResumePreview() {
+      try {
+        const response = await fetch(config.resumeFallbackUrl);
+        if (!response.ok) throw new Error("Resume preview failed.");
+        const blob = await response.blob();
+        objectUrl = URL.createObjectURL(blob);
+        if (!cancelled) setResumePreviewUrl(objectUrl);
+      } catch {
+        if (!cancelled) setResumePreviewUrl(config.resumeFallbackUrl);
+      }
+    }
+
+    void loadResumePreview();
+
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
+
   return (
     <div className="dialogue-copy resume-viewer">
       <div className="resume-actions">
@@ -430,7 +456,7 @@ function Resume() {
           <FileDown size={16} /> Download Resume
         </button>
       </div>
-      <embed className="resume-frame" src={config.resumeFallbackUrl} title="Ayaan Khan resume" type="application/pdf" />
+      <embed className="resume-frame" src={resumePreviewUrl} title="Ayaan Khan resume" type="application/pdf" />
     </div>
   );
 }
