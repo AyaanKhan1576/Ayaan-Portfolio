@@ -371,7 +371,10 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
       });
     }, scope);
 
-    return () => ctx.revert();
+    return () => {
+      window.removeEventListener("resize", updateMobileExperienceLine);
+      ctx.revert();
+    };
   }, [scopeRef]);
 }
 
@@ -422,10 +425,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
       { rootMargin: "-26% 0px -56% 0px", threshold: [0.16, 0.32, 0.48] },
     );
     sections.forEach((section) => observer.observe(section));
-    return () => {
-      window.removeEventListener("resize", updateMobileExperienceLine);
-      ctx.revert();
-    };
+    return () => observer.disconnect();
   }, []);
 
   function scrollToSection(id: string) {
