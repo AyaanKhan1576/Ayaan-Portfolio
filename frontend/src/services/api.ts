@@ -15,8 +15,20 @@ export async function getTrackedResumeUrl(): Promise<string> {
   return resumeUrl;
 }
 
+function sameOriginOrRelative(url: string): boolean {
+  try {
+    return new URL(url, window.location.origin).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export async function downloadResume(): Promise<void> {
-  const resumeUrl = await getTrackedResumeUrl();
+  const trackedResumeUrl = await getTrackedResumeUrl();
+  const resumeUrl =
+    sameOriginOrRelative(trackedResumeUrl) || !sameOriginOrRelative(config.resumeFallbackUrl)
+      ? trackedResumeUrl
+      : config.resumeFallbackUrl;
   const anchor = document.createElement("a");
   anchor.href = resumeUrl;
   anchor.download = "AyaanKhan_Resume.pdf";
