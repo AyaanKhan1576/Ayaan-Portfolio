@@ -4849,6 +4849,28 @@ a {
   background: color-mix(in srgb, var(--ink) 14%, var(--panel));
 }
 
+.pro-page[data-theme="dark"] .campaign-actions .pill-primary {
+  background: color-mix(in srgb, var(--panel) 82%, var(--paper));
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+}
+
+.pro-page[data-theme="dark"] .campaign-actions .pill-primary:hover {
+  background: color-mix(in srgb, var(--ink) 14%, var(--panel));
+}
+
+.pro-page[data-theme="dark"] .download-button,
+.editorial-intro[data-theme="dark"] .download-button {
+  background: var(--panel-strong);
+  color: var(--inverse);
+  border-color: var(--panel-strong);
+}
+
+.pro-page[data-theme="dark"] .download-button:hover,
+.editorial-intro[data-theme="dark"] .download-button:hover {
+  background: color-mix(in srgb, var(--panel-strong) 88%, var(--paper));
+}
+
 .editorial-home,
 .projects-page {
   --editorial-paper: var(--paper);
