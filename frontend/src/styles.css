@@ -5517,7 +5517,7 @@ a {
     margin-right: 0;
     padding: calc(10px + env(safe-area-inset-top)) 8px 10px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(92px, auto);
     grid-template-areas:
       "brand actions"
       "links links";
@@ -5530,7 +5530,7 @@ a {
   .editorial-nav .pro-brand {
     grid-area: brand;
     min-width: 0;
-    max-width: calc(100vw - 148px);
+    max-width: calc(100vw - 168px);
     justify-self: start;
     white-space: nowrap;
     overflow: hidden;
@@ -5560,18 +5560,22 @@ a {
     flex: 0 0 100%;
     width: 100%;
     max-width: 100%;
-    white-space: nowrap;
-    padding-inline: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.1;
+    padding: 8px 10px;
   }
 
   .editorial-nav .pro-nav-actions {
     grid-area: actions;
     position: static;
     display: inline-flex;
+    flex-wrap: wrap;
     justify-self: end;
     align-items: center;
     gap: 6px;
-    width: auto;
+    width: min(100%, 168px);
     padding: 0;
     margin: 0;
   }
@@ -5579,6 +5583,7 @@ a {
   .editorial-nav .pro-theme-toggle,
   .editorial-nav .pro-sound-toggle {
     min-height: 34px;
+    flex: 0 0 auto;
     padding: 7px 9px;
   }
 
@@ -5597,6 +5602,7 @@ a {
 
   .editorial-nav .pro-nav-actions .pill-secondary {
     width: 100%;
+    flex-basis: 100%;
     justify-content: center;
   }
 }
