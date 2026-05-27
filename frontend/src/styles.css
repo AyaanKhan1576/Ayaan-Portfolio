@@ -6508,7 +6508,7 @@ a {
   .system-core {
     width: min(96px, 28vw);
     min-width: 96px;
-    min-height: 208px;
+    min-height: 104px;
     padding: 12px 10px;
     z-index: 1;
   }
@@ -6654,7 +6654,7 @@ a {
   .system-core {
     width: min(90px, 30vw);
     min-width: 90px;
-    min-height: 188px;
+    min-height: 94px;
     padding: 10px 8px;
   }
 
@@ -6692,7 +6692,7 @@ a {
   .system-core {
     width: min(78px, 30vw);
     min-width: 78px;
-    min-height: 168px;
+    min-height: 84px;
     padding: 10px 8px;
   }
 
