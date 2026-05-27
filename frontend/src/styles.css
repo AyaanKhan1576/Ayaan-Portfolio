@@ -6493,41 +6493,49 @@ a {
 }
 
 @media (max-width: 620px) {
+  .editorial-system {
+    width: min(100%, 250px);
+    margin-inline: auto;
+    transform: scale(0.82);
+    transform-origin: center;
+  }
+
   .editorial-system svg {
-    width: min(72%, 280px);
-    height: min(72%, 280px);
+    width: 100%;
+    height: auto;
   }
 
   .system-core {
-    min-width: 84px;
-    min-height: 52px;
-    padding: 6px 7px;
+    min-width: 72px;
+    min-height: 44px;
+    padding: 4px 6px;
   }
 
   .system-core svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   .system-core b {
-    font-size: 0.64rem;
+    font-size: 0.58rem;
   }
 
   .system-core span {
-    font-size: 0.52rem;
+    font-size: 0.46rem;
     line-height: 1.2;
   }
 
   .hero-orbit {
-    width: min(70%, 240px);
+    width: min(60%, 186px);
   }
 
   .hero-orbit-item {
-    font-size: 0.5rem;
-    min-width: 40px;
+    font-size: 0.44rem;
+    min-width: 34px;
+    min-height: 24px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(48px, 22vw, 86px))
+      translateX(clamp(38px, 18vw, 68px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
@@ -6614,6 +6622,76 @@ a {
 
   .station-node svg {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .editorial-system {
+    width: min(100%, 196px);
+    transform: scale(0.68);
+  }
+
+  .hero-orbit {
+    width: min(56%, 146px);
+  }
+
+  .hero-orbit-item {
+    font-size: 0.38rem;
+    min-width: 28px;
+    min-height: 20px;
+    transform:
+      rotate(calc(var(--orbit-index) * 60deg))
+      translateX(clamp(28px, 14vw, 50px))
+      rotate(calc(var(--orbit-index) * -60deg));
+  }
+
+  .system-core {
+    min-width: 66px;
+    min-height: 40px;
+    padding: 4px 5px;
+  }
+
+  .system-core b {
+    font-size: 0.5rem;
+  }
+
+  .system-core span {
+    font-size: 0.4rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .editorial-system {
+    width: min(100%, 176px);
+    transform: scale(0.62);
+  }
+
+  .hero-orbit {
+    width: min(52%, 124px);
+  }
+
+  .hero-orbit-item {
+    font-size: 0.34rem;
+    min-width: 24px;
+    min-height: 18px;
+    transform:
+      rotate(calc(var(--orbit-index) * 60deg))
+      translateX(clamp(24px, 12vw, 42px))
+      rotate(calc(var(--orbit-index) * -60deg));
+  }
+
+  .system-core {
+    min-width: 60px;
+    min-height: 36px;
+    padding: 3px 4px;
+  }
+
+  .system-core b {
+    font-size: 0.46rem;
+  }
+
+  .system-core span {
+    font-size: 0.38rem;
   }
 }
 
