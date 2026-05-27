@@ -7833,3 +7833,103 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile navigation/header/footer behavior only. Desktop and tablet rules above remain unchanged. */
+@media (max-width: 768px) {
+  .pro-page.editorial-home,
+  .pro-page.projects-page {
+    padding-top: 0;
+    overflow-x: hidden;
+  }
+
+  .pro-page .editorial-nav {
+    position: relative;
+    inset: auto;
+    z-index: 5;
+    width: min(100% - 24px, 1440px);
+    min-height: 0;
+    margin: 0 auto 18px;
+    padding: calc(12px + env(safe-area-inset-top)) 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    transform: none !important;
+  }
+
+  .pro-page .editorial-nav.is-compact {
+    min-height: 0;
+    background: transparent;
+  }
+
+  .pro-page .editorial-nav .pro-brand {
+    min-width: 0;
+    max-width: calc(100vw - 142px);
+    color: var(--text-primary);
+  }
+
+  .pro-page .editorial-nav .pro-brand span {
+    transform: none !important;
+  }
+
+  .pro-page .editorial-nav .pro-nav-links,
+  .pro-page .story-rail {
+    display: none !important;
+  }
+
+  .pro-page .editorial-nav .pro-nav-actions {
+    position: static;
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 128px;
+    padding: 0;
+    margin: 0;
+    justify-self: auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .pro-page .editorial-nav .pro-room-switch {
+    display: none;
+  }
+
+  .pro-page .editorial-nav .pro-theme-toggle,
+  .pro-page .editorial-nav .pro-sound-toggle {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 8px;
+  }
+
+  .pro-page .editorial-nav .pro-theme-toggle span,
+  .pro-page .editorial-nav .pro-sound-toggle span {
+    display: none;
+  }
+
+  .editorial-home .campaign-hero,
+  .editorial-home .editorial-scene,
+  .editorial-home .professional-footer,
+  .projects-page .projects-hero,
+  .projects-page .archive-section,
+  .projects-page .professional-footer {
+    width: min(100% - 24px, 1440px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .editorial-home .professional-footer,
+  .projects-page .professional-footer,
+  .pro-page .professional-footer {
+    position: relative;
+    inset: auto;
+    z-index: 1;
+    margin-top: clamp(30px, 10vw, 56px);
+    margin-bottom: 0;
+    transform: none !important;
+  }
+}
