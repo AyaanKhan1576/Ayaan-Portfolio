@@ -6500,6 +6500,12 @@ a {
     transform-origin: center;
   }
 
+  .editorial-system .data-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.5);
+  }
+
   .editorial-system svg {
     width: 100%;
     height: auto;
@@ -6530,7 +6536,7 @@ a {
   .hero-orbit {
     inset: 50%;
     width: min(100%, 392px);
-    translate: -50% -50%;
+    translate: -50% -54%;
   }
 
   .hero-orbit-item {
@@ -6539,7 +6545,7 @@ a {
     min-height: 52px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(100px, 30vw, 172px))
+      translateX(clamp(150px, 45vw, 258px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
@@ -6635,10 +6641,16 @@ a {
     transform: scale(1);
   }
 
+  .editorial-system .data-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.5);
+  }
+
   .hero-orbit {
     inset: 50%;
     width: min(100%, 344px);
-    translate: -50% -50%;
+    translate: -50% -54%;
   }
 
   .hero-orbit-item {
@@ -6647,7 +6659,7 @@ a {
     min-height: 46px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(88px, 26vw, 142px))
+      translateX(clamp(132px, 39vw, 213px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
@@ -6673,10 +6685,16 @@ a {
     transform: scale(1);
   }
 
+  .editorial-system .data-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.5);
+  }
+
   .hero-orbit {
     inset: 50%;
     width: min(100%, 300px);
-    translate: -50% -50%;
+    translate: -50% -54%;
   }
 
   .hero-orbit-item {
@@ -6685,7 +6703,7 @@ a {
     min-height: 42px;
     transform:
       rotate(calc(var(--orbit-index) * 60deg))
-      translateX(clamp(76px, 24vw, 122px))
+      translateX(clamp(114px, 36vw, 183px))
       rotate(calc(var(--orbit-index) * -60deg));
   }
 
