@@ -17,7 +17,6 @@ export const education = {
   ],
   highlights: [
     "Semester 8",
-    "Dean's List - Fall 2025",
     "Top 50 in Pakistan - National Mathematics Olympiad Camp",
   ],
   summary: "Computer Science student focused on AI engineering, backend systems, cloud workflows, and production-ready software.",

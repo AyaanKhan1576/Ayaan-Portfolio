@@ -6,6 +6,7 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUp,
   Award,
@@ -44,6 +45,7 @@ import { useProfessionalTheme, type ProfessionalTheme } from "../hooks/useProfes
 import { downloadResume } from "../services/api";
 import { trackEvent } from "../services/analytics";
 import type { Project } from "../types";
+import type { MediaItem } from "../types";
 
 export type PortfolioRoute = "/" | "/professional" | "/projects" | "/room";
 export type ProjectFilter = "All" | "AI/ML" | "Computer Vision" | "RAG" | "AI Agents" | "Backend" | "DevOps" | "Data Science";
@@ -666,16 +668,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
       </Scene>
 
       <Scene collapsed={collapsedSections.has("honors")} id="honors" number="09" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Leadership and Honors" kicker="Signals beyond repositories">
-        <div className="honors-editorial">
-          {mediaItems.map((item) => (
-            <article key={item.id}>
-              <div>{item.type === "pdf" ? <FileText size={24} /> : <Award size={24} />}</div>
-              <span>{item.type}</span>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </article>
-          ))}
-        </div>
+        <HonorsGallery />
       </Scene>
       <ProfessionalFooter copyEmail={copyEmail} copyStatus={copyStatus} onNavigate={onNavigate} scrollToSection={scrollToSection} />
       <ProjectPreviewOverlay onClose={() => setPreviewProject(null)} project={previewProject} />
@@ -992,6 +985,119 @@ export function ProjectPreviewOverlay({ onClose, project }: { onClose: () => voi
           <p><b>Role:</b> {project.role}</p>
           <div className="tag-row">{project.technologies.map((tech) => <span key={tech}>{tech}</span>)}</div>
           <ProjectLinks project={project} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type HonorPreview = {
+  description: string;
+  src: string;
+  title: string;
+};
+
+export function HonorsGallery() {
+  const [preview, setPreview] = useState<HonorPreview | null>(null);
+
+  return (
+    <>
+      <div className="honors-editorial">
+        {mediaItems.map((item) => (
+          <HonorCard key={item.id} item={item} onPreview={setPreview} />
+        ))}
+      </div>
+      <MediaPreviewOverlay onClose={() => setPreview(null)} preview={preview} />
+    </>
+  );
+}
+
+function HonorCard({ item, onPreview }: { item: MediaItem; onPreview: (preview: HonorPreview) => void }) {
+  const mediaSources = item.gallery?.length ? item.gallery : item.url ? [item.url] : [];
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (mediaSources.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % mediaSources.length);
+    }, 2800);
+    return () => window.clearInterval(timer);
+  }, [mediaSources.length]);
+
+  useEffect(() => {
+    if (activeIndex >= mediaSources.length) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, mediaSources.length]);
+
+  const activeMedia = mediaSources[activeIndex];
+
+  const goToPrevious = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!mediaSources.length) return;
+    setActiveIndex((currentIndex) => (currentIndex - 1 + mediaSources.length) % mediaSources.length);
+  };
+
+  const goToNext = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!mediaSources.length) return;
+    setActiveIndex((currentIndex) => (currentIndex + 1) % mediaSources.length);
+  };
+
+  return (
+    <article className="honor-card">
+      {activeMedia ? (
+        <div className={`honor-media-frame ${mediaSources.length > 1 ? "honor-media-carousel" : ""}`}>
+          <button className="honor-media-button" onClick={() => onPreview({ description: item.description, src: activeMedia, title: item.title })} type="button">
+            <img alt={item.title} className="honor-media" loading="lazy" src={activeMedia} />
+          </button>
+          {mediaSources.length > 1 ? (
+            <>
+              <button className="honor-carousel-control honor-carousel-control-prev" onClick={goToPrevious} type="button" aria-label={`Previous image for ${item.title}`}>
+                <ArrowLeft size={18} />
+              </button>
+              <button className="honor-carousel-control honor-carousel-control-next" onClick={goToNext} type="button" aria-label={`Next image for ${item.title}`}>
+                <ArrowRight size={18} />
+              </button>
+              <span className="honor-carousel-badge">{activeIndex + 1}/{mediaSources.length}</span>
+            </>
+          ) : null}
+        </div>
+      ) : (
+        <div className="honor-media-frame honor-media-empty">
+          <Award size={24} />
+          <b>{item.title}</b>
+        </div>
+      )}
+      <div className="honor-copy">
+        <span>{item.type}</span>
+        <h3>{item.title}</h3>
+        <p>{item.description}</p>
+      </div>
+    </article>
+  );
+}
+
+function MediaPreviewOverlay({ onClose, preview }: { onClose: () => void; preview: HonorPreview | null }) {
+  if (!preview) return null;
+
+  return (
+    <div className="project-preview-overlay rpg-overlay" onClick={onClose} role="presentation">
+      <div className="project-preview-window rpg-window" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={`${preview.title} preview`}>
+        <div className="rpg-window-header">
+          <div>
+            <p className="pixel-label">Honor preview</p>
+            <h2>{preview.title}</h2>
+          </div>
+          <button className="pixel-icon-button" onClick={onClose} type="button" aria-label="Close preview">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="rpg-window-body project-preview-body">
+          <img alt={preview.title} className="project-preview-media honor-preview-media" src={preview.src} />
+          <p>{preview.description}</p>
         </div>
       </div>
     </div>

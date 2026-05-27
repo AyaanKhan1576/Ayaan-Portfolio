@@ -35,6 +35,7 @@ export interface MediaItem {
   title: string;
   type: "video" | "image" | "pdf" | "diagram";
   url: string;
+  gallery?: string[];
   projectId?: string;
   description: string;
 }

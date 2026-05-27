@@ -1,13 +1,13 @@
-import { ExternalLink, FileDown, Github, Linkedin, Mail } from "lucide-react";
+import { FileDown, Github, Linkedin, Mail } from "lucide-react";
 import { useState } from "react";
 import { config } from "../config";
 import { education } from "../data/education";
 import { experience } from "../data/experience";
-import { mediaItems } from "../data/media";
 import { projects } from "../data/projects";
 import { skills } from "../data/skills";
 import { downloadResume } from "../services/api";
 import { trackEvent } from "../services/analytics";
+import { HonorsGallery } from "../pages/ProfessionalPortfolio";
 import type { Project, SectionId } from "../types";
 
 export function PortfolioContent({ section, openSection }: { section: SectionId; openSection: (section: SectionId) => void }) {
@@ -140,24 +140,7 @@ function Projects({ onlyFeatured = false }: { onlyFeatured?: boolean }) {
 }
 
 function LeadershipAndHonors() {
-  return (
-    <div className="quest-grid">
-      {mediaItems.map((item) => (
-        <article className="quest-card static" key={item.id}>
-          <span>{item.type}</span>
-          <b>{item.title}</b>
-          <p>{item.description}</p>
-          {item.type === "video" && item.url ? (
-            <iframe className="media-frame" src={item.url} title={item.title} />
-          ) : item.url ? (
-            <a href={item.url} rel="noreferrer" target="_blank">Open media <ExternalLink size={14} /></a>
-          ) : (
-            <small>Media URL can be added later.</small>
-          )}
-        </article>
-      ))}
-    </div>
-  );
+  return <HonorsGallery />;
 }
 
 function Education() {

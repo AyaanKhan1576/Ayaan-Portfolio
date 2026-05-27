@@ -4,4 +4,4 @@
 - LLM RAG Chatbot
 - add pictures and videos
 - improve mobile view for professional website
-
+- fix project filters
