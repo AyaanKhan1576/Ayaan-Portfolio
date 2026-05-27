@@ -131,6 +131,101 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
         );
       });
 
+      gsap.fromTo(
+        ".scene-about .scene-copy-grid p",
+        { autoAlpha: 0, y: 26, filter: "blur(8px)" },
+        {
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.78,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".scene-about", start: "top 68%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".scene-contact .social-contact-row > *",
+        { autoAlpha: 0, x: -20 },
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.48,
+          stagger: 0.08,
+          ease: "back.out(1.6)",
+          scrollTrigger: { trigger: ".scene-contact", start: "top 70%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".scene-resume .resume-preview-frame",
+        { autoAlpha: 0, rotateX: -14, y: 34 },
+        {
+          autoAlpha: 1,
+          rotateX: 0,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".scene-resume", start: "top 70%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".featured-editorial-card",
+        { autoAlpha: 0, y: 54, rotateX: 8 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          rotateX: 0,
+          duration: 0.8,
+          stagger: 0.11,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".scene-featured", start: "top 70%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".skills-editorial article",
+        { autoAlpha: 0, scale: 0.92, y: 18 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.58,
+          stagger: { amount: 0.5, from: "center" },
+          ease: "back.out(1.4)",
+          scrollTrigger: { trigger: ".scene-skills", start: "top 70%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".scene-projects-preview .preview-product",
+        { autoAlpha: 0, x: 40 },
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.55,
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: { trigger: ".scene-projects-preview", start: "top 72%" },
+        },
+      );
+
+      gsap.fromTo(
+        ".honors-editorial article",
+        { autoAlpha: 0, y: 36, rotation: -1.5 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          rotation: 0,
+          duration: 0.72,
+          stagger: 0.09,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".scene-honors", start: "top 72%" },
+        },
+      );
+
       gsap.to(".campaign-media", {
         yPercent: -6,
         ease: "none",
@@ -160,7 +255,7 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
           duration: 0.8,
           ease: "power3.out",
           stagger: 0.12,
-          scrollTrigger: { trigger: ".education-editorial", start: "top 72%" },
+          scrollTrigger: { trigger: ".scene-education", start: "top 72%" },
         },
       );
 
@@ -197,6 +292,44 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
+      });
+
+      gsap.to(".professional-ambient .ambient-orb", {
+        x: (index) => (index % 2 === 0 ? 34 : -28),
+        y: (index) => (index % 2 === 0 ? -42 : 36),
+        scale: (index) => (index % 2 === 0 ? 1.08 : 0.94),
+        duration: 10,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.8,
+      });
+
+      gsap.utils.toArray<HTMLElement>(".section-atmosphere").forEach((atmosphere, index) => {
+        const scene = atmosphere.closest(".editorial-scene");
+        const isExperience = atmosphere.classList.contains("atmosphere-experience");
+        gsap.to(atmosphere.querySelector(".atm-grid"), {
+          xPercent: index % 2 === 0 ? 5 : -5,
+          yPercent: -6,
+          ease: "none",
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: 1.2 },
+        });
+        gsap.to(atmosphere.querySelector(".atm-line"), {
+          [isExperience ? "scaleY" : "scaleX"]: 1,
+          transformOrigin: isExperience ? "top center" : index % 2 === 0 ? "left center" : "right center",
+          ease: "none",
+          scrollTrigger: { trigger: scene, start: "top 76%", end: "bottom 42%", scrub: 0.9 },
+        });
+        gsap.to(atmosphere.querySelectorAll(".atm-drift, .atm-pulse"), {
+          x: (dotIndex) => (dotIndex % 2 === 0 ? 22 : -18),
+          y: (dotIndex) => (dotIndex % 2 === 0 ? -18 : 24),
+          opacity: (dotIndex) => (dotIndex % 2 === 0 ? 0.64 : 0.38),
+          duration: 5 + index * 0.35,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          stagger: 0.24,
+        });
       });
 
       ScrollTrigger.create({
@@ -298,6 +431,8 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
     const y = ((event.clientY - rect.top) / Math.max(rect.height, window.innerHeight) - 0.5) * 2;
     pageRef.current.style.setProperty("--mx", x.toFixed(3));
     pageRef.current.style.setProperty("--my", y.toFixed(3));
+    pageRef.current.style.setProperty("--spot-x", `${Math.round(((event.clientX - rect.left) / rect.width) * 100)}%`);
+    pageRef.current.style.setProperty("--spot-y", `${Math.round((event.clientY / window.innerHeight) * 100)}%`);
   }
 
   function handlePointerOver(event: PointerEvent<HTMLElement>) {
@@ -347,6 +482,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
       ref={pageRef}
     >
       <EditorialAtmosphere />
+      <ProfessionalAmbientLayer />
       <ProfessionalNav
         activeSection={activeSection}
         onNavigate={onNavigate}
@@ -376,7 +512,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
         <div className="scene-copy-grid">
           <p>I’m an AI & Software Engineer interested in building intelligent systems that are practical, scalable, and production ready.</p>
           <p>Currently pursuing a BS in Computer Science at FAST NUCES, Class of 2026, I’ve worked on LLMs, RAG pipelines, AI agents, fullstack applications, cloud infrastructure, and real-time ML systems.</p>
-          <p>I primarily work with Python, FastAPI, and modern AI frameworks, with a strong C/C++ foundation and experience across Docker, Kubernetes, CI/CD, data pipelines, and backend system design.</p>
+          <p>I primarily work with Python and modern AI frameworks, with a strong C/C++ foundation and experience across Docker, Kubernetes, CI/CD, data pipelines, and backend system design.</p>
         </div>
       </Scene>
 
@@ -386,9 +522,25 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
 
       <Scene collapsed={collapsedSections.has("resume")} id="resume" number="03" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="Resume" kicker="The concise document layer">
         <div className="resume-editorial">
-          <div className="document-photo" aria-hidden="true"><FileText size={28} /><b>Ayaan Khan</b><span /></div>
+          <div className="resume-preview-frame" aria-label="Scrollable resume preview">
+            <div className="resume-preview-paper">
+              <b>Ayaan Khan</b>
+              <span>AI & Software Engineer</span>
+              <p>LLMs / RAG / Computer Vision / AI Agents / Backend Systems</p>
+              <hr />
+              <strong>Experience</strong>
+              <p>Kodifly — Project Associate</p>
+              <p>sïParadigm — Data Analyst Intern</p>
+              <p>DreamAI Software — Agentic AI Intern</p>
+              <p>Teresol — Software Development Intern</p>
+              <strong>Education</strong>
+              <p>FAST-NUCES — BS Computer Science</p>
+              <strong>Selected Systems</strong>
+              <p>Pose2Play, Financial Sentiment RAG, Event Booking Microservices</p>
+            </div>
+          </div>
           <div>
-            <p>View or download the current resume while preserving the existing tracked download behavior.</p>
+            <p>View or download resume from here.</p>
             <div className="campaign-actions">
               <a className="pill-secondary" href={config.resumeFallbackUrl} rel="noreferrer" target="_blank">View Resume</a>
               <button
@@ -417,7 +569,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
               <b>{education.period}</b>
               <div className="academic-card-grid">
                 <article><span>Standing</span><b>{education.highlights[0]}</b><p>Current academic progression in the BS Computer Science program.</p></article>
-                <article><span>Recognition</span><b>{education.highlights[1]}</b><p>Performance signal from FAST-NUCES coursework.</p></article>
+                <article><span>Recognition</span><b>{education.highlights[1]}</b><p>Academic recognition during the BS Computer Science program.</p></article>
                 <article><span>Societies</span><b>Debating Society / FPDC</b><p>Secretary General Debating Society and Deputy Director General Internals, FAST Parliamentary Debating Championship.</p></article>
               </div>
               <div className="editorial-pills">{education.coursework.map((course) => <span key={course}>{course}</span>)}</div>
@@ -540,6 +692,7 @@ function Scene({ children, collapsed, id, number, onNavigate, onToggleCollapse, 
 
   return (
     <section className={`editorial-scene scene-${id} reveal open ${collapsed ? "collapsed" : ""}`} id={id}>
+      <SectionAtmosphere id={id} />
       <div className="scene-trigger">
         <span>{number}</span>
         <div>
@@ -571,6 +724,27 @@ function StoryRail({ active, scrollToSection }: { active: string; scrollToSectio
   );
 }
 
+function SectionAtmosphere({ id }: { id: string }) {
+  return (
+    <div className={`section-atmosphere atmosphere-${id}`} aria-hidden="true">
+      <span className="atm-grid" />
+      <span className="atm-line" />
+      <span className="atm-drift" />
+      <span className="atm-pulse" />
+    </div>
+  );
+}
+
+function ProfessionalAmbientLayer() {
+  return (
+    <div className="professional-ambient" aria-hidden="true">
+      <span className="ambient-orb orb-a" />
+      <span className="ambient-orb orb-b" />
+      <span className="ambient-orb orb-c" />
+    </div>
+  );
+}
+
 export function ProfessionalNav({ activeSection, onNavigate, onScrollToSection, onToggleSound, onToggleTheme, soundEnabled, theme = "light" }: {
   onNavigate: (path: PortfolioRoute) => void;
   activeSection?: string;
@@ -580,12 +754,14 @@ export function ProfessionalNav({ activeSection, onNavigate, onScrollToSection, 
   soundEnabled?: boolean;
   theme?: ProfessionalTheme;
 }) {
+  const storyActive = Boolean(activeSection && activeSection !== "projects");
+  const projectsActive = activeSection === "projects";
   return (
     <header className="pro-nav editorial-nav" aria-label="Professional portfolio navigation">
       <button className="pro-brand" onClick={() => onNavigate("/")} type="button"><span>AK</span>Ayaan Khan</button>
       <nav className="pro-nav-links" aria-label="Sections">
-        <button className={activeSection ? "active" : ""} onClick={() => onScrollToSection ? onScrollToSection("about") : onNavigate("/professional")} type="button"><span>01 /</span><b>Story</b></button>
-        <button onClick={() => onNavigate("/projects")} type="button"><span>02 /</span><b>Projects</b></button>
+        <button className={storyActive ? "active" : ""} onClick={() => onScrollToSection ? onScrollToSection("about") : onNavigate("/professional")} type="button"><span>01 /</span><b>Story</b></button>
+        <button className={projectsActive ? "active" : ""} onClick={() => onNavigate("/projects")} type="button"><span>02 /</span><b>Projects</b></button>
         <button onClick={() => onNavigate("/room")} type="button"><span>03 /</span><b>Interactive Portfolio</b></button>
       </nav>
       <div className="pro-nav-actions">
@@ -702,14 +878,22 @@ function ProductionSystemVisual() {
 }
 
 export function FeaturedProjectCard({ project, index }: { project: Project; index: number }) {
+  const isDevOpsCaseStudy = project.id === "event-booking-microservices";
+  const description = isDevOpsCaseStudy
+    ? "DevOps-focused event platform covering service containerization, Kubernetes delivery, GitOps automation, infrastructure provisioning, and observability."
+    : project.short_description;
+  const technologies = isDevOpsCaseStudy
+    ? ["Docker", "Kubernetes", "Terraform", "Argo CD", "GitHub Actions", "Prometheus"]
+    : project.technologies.slice(0, 6);
+
   return (
     <article className="featured-editorial-card" style={{ "--stagger": `${index * 80}ms` } as CSSProperties}>
       <ProjectVisual project={project} />
       <span>{project.tags.slice(0, 2).join(" / ")}</span>
       <h3>{project.title}</h3>
-      <p>{project.short_description}</p>
+      <p>{description}</p>
       <b>{project.role}</b>
-      <div className="editorial-pills">{project.technologies.slice(0, 6).map((tech) => <span key={tech}>{tech}</span>)}</div>
+      <div className="editorial-pills">{technologies.map((tech) => <span key={tech}>{tech}</span>)}</div>
       <ProjectLinks project={project} />
     </article>
   );
@@ -726,11 +910,14 @@ function PreviewProjectCard({ project }: { project: Project }) {
 }
 
 export function ProjectVisual({ project }: { project: Project }) {
+  const techPreview = project.id === "event-booking-microservices"
+    ? ["Kubernetes", "Docker", "GitOps"]
+    : project.technologies.slice(0, 3);
   return (
     <div className="project-visual editorial-photo" aria-hidden="true">
       <div className="visual-playback"><Play size={14} /><span>preview</span></div>
       <b>{project.title.split(" ").slice(0, 3).join(" ")}</b>
-      <span>{project.technologies.slice(0, 3).join(" / ")}</span>
+      <span>{techPreview.join(" / ")}</span>
     </div>
   );
 }

@@ -6649,6 +6649,346 @@ a {
   padding-top: 10px;
 }
 
+/* Additive professional atmosphere layers. These stay behind content and preserve readability. */
+.professional-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.62;
+}
+
+.professional-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--text-primary) 10%, transparent) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 62%, color-mix(in srgb, var(--text-primary) 8%, transparent) 0 1px, transparent 1.5px);
+  background-size: 46px 46px, 72px 72px;
+  mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent);
+}
+
+.ambient-orb {
+  position: absolute;
+  width: clamp(180px, 28vw, 420px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--text-primary) 10%, transparent), transparent 68%);
+  filter: blur(18px);
+  opacity: 0.42;
+}
+
+.orb-a { left: 4%; top: 18%; }
+.orb-b { right: 8%; top: 42%; opacity: 0.32; }
+.orb-c { left: 42%; bottom: -12%; opacity: 0.24; }
+
+.editorial-scene > :not(.section-atmosphere) {
+  position: relative;
+  z-index: 1;
+}
+
+.section-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.86;
+  mix-blend-mode: multiply;
+}
+
+[data-theme="dark"] .section-atmosphere {
+  mix-blend-mode: screen;
+  opacity: 0.48;
+}
+
+.section-atmosphere span {
+  position: absolute;
+  display: block;
+}
+
+.atm-grid {
+  inset: -18%;
+  background:
+    linear-gradient(color-mix(in srgb, var(--text-primary) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 6%, transparent) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(circle at var(--spot-x, 52%) var(--spot-y, 42%), #000 0 24%, transparent 68%);
+}
+
+.atm-line {
+  left: 8%;
+  right: 8%;
+  top: 22%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-primary) 32%, transparent), transparent);
+  transform: scaleX(0);
+}
+
+.atm-drift,
+.atm-pulse {
+  width: clamp(110px, 18vw, 260px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--text-primary) 9%, transparent), transparent 64%);
+  filter: blur(8px);
+}
+
+.atm-drift {
+  right: 8%;
+  bottom: 8%;
+}
+
+.atm-pulse {
+  left: 10%;
+  top: 18%;
+  width: clamp(72px, 11vw, 150px);
+  opacity: 0.36;
+}
+
+.atmosphere-about::after {
+  content: "AI  SYSTEMS  BACKEND  VISION";
+  position: absolute;
+  right: -5%;
+  top: 18%;
+  color: color-mix(in srgb, var(--text-primary) 7%, transparent);
+  font-size: clamp(2rem, 7vw, 7rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transform: rotate(-8deg);
+  white-space: nowrap;
+}
+
+.atmosphere-contact .atm-grid {
+  background-size: 64px 64px;
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 8%, transparent) 1px, transparent 1px),
+    radial-gradient(circle, color-mix(in srgb, var(--text-primary) 18%, transparent) 0 2px, transparent 2.5px);
+}
+
+.atmosphere-resume .atm-grid {
+  background-size: 100% 18px;
+  background-image: repeating-linear-gradient(0deg, transparent 0 16px, color-mix(in srgb, var(--text-primary) 8%, transparent) 17px 18px);
+}
+
+.atmosphere-resume .atm-line {
+  top: 12%;
+  height: 120%;
+  width: 22%;
+  left: -20%;
+  right: auto;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-primary) 9%, transparent), transparent);
+  transform: skewX(-14deg);
+}
+
+.atmosphere-education .atm-grid {
+  background-size: 28px 28px;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--text-primary) 7%, transparent) 1px, transparent 1px),
+    radial-gradient(circle, color-mix(in srgb, var(--text-primary) 18%, transparent) 0 1.5px, transparent 2px);
+}
+
+.atmosphere-experience .atm-line {
+  top: 8%;
+  bottom: 8%;
+  left: 50%;
+  right: auto;
+  width: 1px;
+  height: auto;
+  transform: scaleY(0);
+  background: linear-gradient(transparent, color-mix(in srgb, var(--text-primary) 34%, transparent), transparent);
+}
+
+.atmosphere-featured .atm-grid {
+  background-size: 54px 54px;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--text-primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(135deg, transparent 46%, color-mix(in srgb, var(--text-primary) 8%, transparent) 47% 48%, transparent 49%);
+}
+
+.atmosphere-skills .atm-grid {
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--text-primary) 20%, transparent) 0 2px, transparent 2.5px),
+    linear-gradient(45deg, transparent 48%, color-mix(in srgb, var(--text-primary) 6%, transparent) 49% 50%, transparent 51%);
+  background-size: 72px 72px;
+}
+
+.atmosphere-projects-preview .atm-grid {
+  background-size: 82px 32px;
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px);
+}
+
+.atmosphere-honors .atm-grid {
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--text-primary) 7%, transparent), transparent 32%),
+    radial-gradient(circle at 20% 25%, color-mix(in srgb, var(--text-primary) 10%, transparent), transparent 28%);
+  background-size: 180px 180px;
+}
+
+.professional-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--text-primary) 8%, transparent), transparent 34%),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-primary) 5%, transparent), transparent);
+  opacity: 0.7;
+}
+
+.editorial-scene:has(.featured-editorial-card:hover) .section-atmosphere,
+.editorial-scene:has(.skills-editorial article:hover) .section-atmosphere,
+.editorial-scene:has(.honors-editorial article:hover) .section-atmosphere {
+  opacity: 1;
+}
+
+.projects-page .featured-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid color-mix(in srgb, var(--text-primary) 24%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  color: var(--text-primary);
+  padding: 5px 10px;
+  font-size: 0.72rem;
+}
+
+.projects-page .archive-card:hover .featured-meta span,
+.projects-page .archive-card.expanded .featured-meta span {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--text-primary);
+}
+
+.projects-page .archive-card.expanded,
+.projects-page .archive-card.expanded * {
+  visibility: visible;
+}
+
+.projects-page .archive-card.expanded .archive-details,
+.projects-page .archive-card.expanded .archive-details * {
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .professional-ambient .orb-c,
+  .section-atmosphere .atm-pulse {
+    display: none;
+  }
+
+  .section-atmosphere {
+    opacity: 0.5;
+  }
+}
+
+.resume-preview-frame {
+  position: relative;
+  min-height: 340px;
+  max-height: 420px;
+  border: 1px solid var(--hairline);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--text-primary) 5%, transparent), transparent 44%),
+    var(--surface-elevated);
+  padding: 18px;
+  overflow: hidden;
+  perspective: 900px;
+}
+
+.resume-preview-frame::after {
+  content: "";
+  position: absolute;
+  inset: auto 18px 18px;
+  height: 72px;
+  pointer-events: none;
+  background: linear-gradient(transparent, var(--surface-elevated));
+}
+
+.resume-preview-paper {
+  max-height: 370px;
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, var(--text-primary) 14%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--text-primary);
+  padding: 18px;
+  box-shadow: 0 18px 60px rgba(17, 17, 17, 0.08);
+  scrollbar-width: thin;
+}
+
+.resume-preview-paper b {
+  display: block;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  line-height: 1;
+}
+
+.resume-preview-paper span,
+.resume-preview-paper p {
+  color: var(--text-secondary);
+}
+
+.resume-preview-paper strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.resume-preview-paper p {
+  margin: 8px 0 0;
+  line-height: 1.45;
+}
+
+.resume-preview-paper hr {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin: 18px 0;
+}
+
+.featured-editorial-card .project-links,
+.project-links {
+  position: relative;
+  z-index: 4;
+}
+
+.featured-editorial-card .project-links a,
+.project-links a {
+  pointer-events: auto;
+}
+
+.projects-page .archive-card.reveal,
+.projects-page .archive-card.reveal.is-visible,
+.projects-page .archive-card.expanded {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.projects-page .archive-card.expanded {
+  transform: none;
+}
+
+.projects-page .archive-card.expanded:hover {
+  transform: translateY(-4px);
+}
+
+.projects-page .archive-card.expanded .archive-card-main,
+.projects-page .archive-card.expanded .pro-tag-row,
+.projects-page .archive-card.expanded .archive-expand,
+.projects-page .archive-card.expanded .project-visual {
+  opacity: 1;
+  visibility: visible;
+}
+
+.projects-page .archive-card.expanded .archive-details {
+  max-height: none;
+  overflow: visible;
+}
+
 @media (max-width: 960px) {
   .scene-detail {
     padding-left: 0;
