@@ -8872,10 +8872,15 @@ a {
   .pro-page .editorial-nav {
     border-bottom: 0;
     margin-bottom: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .pro-page .editorial-nav .pro-nav-actions {
+    width: 100%;
     max-width: none;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     gap: 7px;
   }
 
