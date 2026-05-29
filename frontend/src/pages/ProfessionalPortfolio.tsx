@@ -428,6 +428,32 @@ export function useProfessionalMotion(scopeRef: RefObject<HTMLElement | null>) {
         });
       });
 
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        gsap.fromTo(
+          ".mobile-chapter-dock",
+          { autoAlpha: 0, y: 22, scale: 0.97 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.62, delay: 0.2, ease: "power3.out" },
+        );
+
+        gsap.utils.toArray<HTMLElement>(".editorial-scene").forEach((scene) => {
+          gsap.fromTo(
+            scene.querySelector(".scene-detail"),
+            { autoAlpha: 0, y: 18 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.64,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: scene,
+                start: "top 66%",
+                toggleActions: "play none none reverse",
+              },
+            },
+          );
+        });
+      }
+
       ScrollTrigger.create({
         start: 80,
         end: "max",
@@ -635,6 +661,7 @@ export function ProfessionalPortfolio({ onNavigate }: { onNavigate: (path: Portf
       </section>
 
       <StoryRail active={activeSection} scrollToSection={scrollToSection} />
+      <MobileChapterDock active={activeSection} scrollToSection={scrollToSection} />
 
       <Scene collapsed={collapsedSections.has("about")} id="about" number="01" onNavigate={navigateFromSection} onToggleCollapse={toggleSection} title="About Me" kicker="The person behind the systems">
         <div className="scene-copy-grid">
@@ -877,6 +904,19 @@ function StoryRail({ active, scrollToSection }: { active: string; scrollToSectio
         </button>
       ))}
     </aside>
+  );
+}
+
+function MobileChapterDock({ active, scrollToSection }: { active: string; scrollToSection: (id: string) => void }) {
+  return (
+    <nav className="mobile-chapter-dock" aria-label="Mobile portfolio chapters">
+      {sectionOrder.map(([id, label], index) => (
+        <button className={active === id ? "active" : ""} key={id} onClick={() => scrollToSection(id)} type="button">
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <b>{label}</b>
+        </button>
+      ))}
+    </nav>
   );
 }
 
