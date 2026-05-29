@@ -961,6 +961,8 @@ export function ProfessionalNav({ activeSection, onNavigate, onScrollToSection, 
         <button onClick={() => onNavigate("/room")} type="button"><span>03 /</span><b>Interactive Portfolio</b></button>
       </nav>
       <div className="pro-nav-actions">
+        <button className="mobile-header-link" onClick={() => onNavigate("/professional")} type="button">Home</button>
+        <button className="mobile-header-link" onClick={() => onNavigate("/projects")} type="button">Projects</button>
         {onToggleTheme ? (
           <button className="pro-theme-toggle" onClick={onToggleTheme} type="button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
             {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}

@@ -8855,6 +8855,10 @@ a {
   display: none;
 }
 
+.mobile-header-link {
+  display: none;
+}
+
 /* Mobile app/journal mode: chapters, focused panels, and thumb-first navigation only on phones. */
 @media (max-width: 768px) {
   .pro-page.editorial-home,
@@ -8868,6 +8872,32 @@ a {
   .pro-page .editorial-nav {
     border-bottom: 0;
     margin-bottom: 0;
+  }
+
+  .pro-page .editorial-nav .pro-nav-actions {
+    max-width: none;
+    gap: 7px;
+  }
+
+  .mobile-header-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    border: 1px solid color-mix(in srgb, var(--text-primary) 12%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface-elevated) 82%, transparent);
+    color: var(--text-primary);
+    padding: 8px 11px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .pro-page .editorial-nav .pro-theme-toggle,
+  .pro-page .editorial-nav .pro-sound-toggle {
+    min-width: 38px;
+    flex: 0 0 auto;
   }
 
   .mobile-chapter-dock {
